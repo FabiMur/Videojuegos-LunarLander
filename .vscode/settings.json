@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "dibujable.h": "c",
+        "letras.h": "c"
+    }
+}
