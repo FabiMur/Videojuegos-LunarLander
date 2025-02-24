@@ -32,6 +32,84 @@ void DrawLine(HDC hdc, int x1, int y1, int x2, int y2, COLORREF color) {
     }
 }
 
+/**
+ * @brief Funcion para realizar pruebas de dibujo de las letras
+ * 
+ * @param hdc
+ */
+void dibujoLetras(HDC hdc){
+    struct Dibujable* letraB = crearDibujable(&Letra_B_Base);
+    trasladarDibujable(letraB, (struct Punto){50, 50});
+    struct Dibujable* letraA = crearDibujable(&Letra_A_Base);
+    trasladarDibujable(letraA, (struct Punto){50+ANCHURA_MAX+5, 50});
+    struct Dibujable* letraI = crearDibujable(&Letra_I_Base);
+    trasladarDibujable(letraI, (struct Punto){50+2*(ANCHURA_MAX+5), 50});
+    rotarDibujable(letraI, 1);
+    struct Dibujable* palabraBA[] = {letraB, letraA, letraI};
+
+    for(int i = 0; i < (sizeof(palabraBA) / sizeof(palabraBA[0])); i++){
+        for(int j = 0; j < palabraBA[i]->num_aristas; j++){
+            DrawLine(hdc, palabraBA[i]->aristas[j].origen->x,
+                     palabraBA[i]->aristas[j].origen->y,
+                     palabraBA[i]->aristas[j].destino->x,
+                     palabraBA[i]->aristas[j].destino->y,
+                     RGB(255, 255, 255));
+        }
+    }
+}
+
+/**
+ * @brief Funcion para realizar pruebas de dibujo de las naves
+ * 
+ * @param hdc
+ */
+void dibujoNaves(HDC hdc){
+    struct Dibujable* naveMax = crearDibujable(&Nave_Base);
+    trasladarDibujable(naveMax, (struct Punto){150, 10});
+    struct Dibujable* nave_propulsion_max = crearDibujable(&Nave_Propulsion_Maxima);
+    trasladarDibujable(nave_propulsion_max, (struct Punto){150, 10});
+
+    struct Dibujable* naveMedia = crearDibujable(&Nave_Base);
+    trasladarDibujable(naveMedia, (struct Punto){180, 10});
+    struct Dibujable* nave_propulsion_media = crearDibujable(&Nave_Propulsion_Media);
+    trasladarDibujable(nave_propulsion_media, (struct Punto){180, 10});
+
+    struct Dibujable* naveMin = crearDibujable(&Nave_Base);
+    trasladarDibujable(naveMin, (struct Punto){210, 10});
+    struct Dibujable* nave_propulsion_min = crearDibujable(&Nave_Propulsion_Minima);
+    trasladarDibujable(nave_propulsion_min, (struct Punto){210, 10});
+
+    struct Dibujable* naveMaxRotacion = crearDibujable(&Nave_Base);
+    trasladarDibujable(naveMaxRotacion, (struct Punto){280, 10});
+    rotarDibujable(naveMaxRotacion, 0);
+    struct Dibujable* nave_propulsion_maxRotacion = crearDibujable(&Nave_Propulsion_Maxima);
+    rotarDibujable(nave_propulsion_maxRotacion, 0);
+    trasladarDibujable(nave_propulsion_maxRotacion, (struct Punto){280, 10});
+
+    struct Dibujable* naveMaxRotacion2 = crearDibujable(&Nave_Base);
+    trasladarDibujable(naveMaxRotacion2, (struct Punto){340, 30});
+    rotarDibujable(naveMaxRotacion2, 1);
+    struct Dibujable* nave_propulsion_maxRotacion2 = crearDibujable(&Nave_Propulsion_Maxima);
+    rotarDibujable(nave_propulsion_maxRotacion2, 1);
+    trasladarDibujable(nave_propulsion_maxRotacion2, (struct Punto){340, 30});
+
+    struct Dibujable* naves[] = {naveMax, nave_propulsion_max, naveMedia,
+                                 nave_propulsion_media, naveMin,
+                                 nave_propulsion_min,
+                                 naveMaxRotacion, nave_propulsion_maxRotacion,
+                                 naveMaxRotacion2, nave_propulsion_maxRotacion2};
+
+    for(int i = 0; i < (sizeof(naves) / sizeof(naves[0])); i++){
+        for(int j = 0; j < naves[i]->num_aristas; j++){
+            DrawLine(hdc, naves[i]->aristas[j].origen->x,
+                     naves[i]->aristas[j].origen->y,
+                     naves[i]->aristas[j].destino->x,
+                     naves[i]->aristas[j].destino->y,
+                     RGB(255, 255, 255));
+        }
+    }    
+}
+
 // Función de ventana
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
@@ -39,32 +117,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
 
-            // Dibuja una línea de ejemplo
-            struct Dibujable* letraB = crearDibujable(&Letra_B_Base);
-            trasladarDibujable(letraB, (struct Punto){50, 50});
-            struct Dibujable* letraA = crearDibujable(&Letra_A_Base);
-            trasladarDibujable(letraA, (struct Punto){50+ANCHURA_MAX+5, 50});
-            struct Dibujable* letraI = crearDibujable(&Letra_I_Base);
-            struct Dibujable* palabraBA[] = {letraB, letraA};
-
-            struct Dibujable* nave = crearDibujable(&Nave_Base);
-            trasladarDibujable(nave, (struct Punto){10, 10});
-            struct Dibujable* nave_propulsion = crearDibujable(&Nave_Propulsion);
-            trasladarDibujable(nave_propulsion, (struct Punto){10, 10});
-            
-
-            for(int i = 0; i < (sizeof(palabraBA) / sizeof(palabraBA[0])); i++){
-                for(int j = 0; j < palabraBA[i]->num_aristas; j++){
-                    DrawLine(hdc, palabraBA[i]->aristas[j].origen->x, palabraBA[i]->aristas[j].origen->y, palabraBA[i]->aristas[j].destino->x, palabraBA[i]->aristas[j].destino->y, RGB(255, 255, 255));
-                }
-            }
-
-            for(int i = 0; i < nave->num_aristas; i++){
-                DrawLine(hdc, nave->aristas[i].origen->x, nave->aristas[i].origen->y, nave->aristas[i].destino->x, nave->aristas[i].destino->y, RGB(255, 255, 255));
-            }
-            for(int i = 0; i < nave_propulsion->num_aristas; i++){
-                DrawLine(hdc, nave_propulsion->aristas[i].origen->x, nave_propulsion->aristas[i].origen->y, nave_propulsion->aristas[i].destino->x, nave_propulsion->aristas[i].destino->y, RGB(255, 255, 255));
-            }
+            // Pruebas de rasterizado
+            dibujoLetras(hdc);  
+            dibujoNaves(hdc);
 
             EndPaint(hwnd, &ps);
         } break;

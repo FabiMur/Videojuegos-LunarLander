@@ -86,8 +86,6 @@ struct DibujableConstante {
  */
 struct Dibujable* crearDibujable(const struct DibujableConstante* constante);
 
-void actualizarAristas(struct Dibujable* dibujable);
-
 
 /**
  * @brief Libera la memoria ocupada por un objeto Dibujable

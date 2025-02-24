@@ -1,36 +1,18 @@
 #ifndef NAVE_H
 #define NAVE_H
 
-
 #include "../code/dibujable.h"
 
+#define CENTRO_CONST_NAVE {11, 5}
+
 const struct DibujableConstante Nave_Base = {
-    {11, 5},
+    CENTRO_CONST_NAVE,
     (struct Punto[]){
-        {0, 18}, //0
-        {2, 18},
-        {3, 18},
-        {4, 12},
-        {4, 10},
-        {8, 10}, // 5
-        {6, 8},
-        {6, 2},
-        {8, 0},
-        {14, 0},
-        {16, 2}, //10
-        {16, 8},
-        {14, 10},
-        {18, 10},
-        {18, 12},
-        {20, 18}, //15
-        {19, 18},
-        {22, 18},
-        {8, 12},
-        {6, 16},
-        {7, 18}, //20
-        {14, 12},
-        {16, 16},
-        {15, 18}
+        {0, 18}, {2, 18}, {3, 18}, {4, 12}, {4, 10}, // 0-4
+        {8, 10}, {6, 8}, {6, 2}, {8, 0}, {14, 0}, // 5-9
+        {16, 2}, {16, 8}, {14, 10}, {18, 10}, {18, 12}, // 10-14
+        {20, 18}, {19, 18}, {22, 18}, {8, 12}, {6, 16}, // 15-19
+        {7, 18}, {14, 12}, {16, 16}, {15, 18} // 20-23
     },
     (struct UnionAristas[]){
         {0, 1}, {1, 2}, {1, 3}, // Pata izq (3)
@@ -43,15 +25,40 @@ const struct DibujableConstante Nave_Base = {
     26
 };
 
-
-
-// Habrá que ver como hacerlo porque igual el punto de esquina se desplaza
-const struct DibujableConstante Nave_Propulsion = {
-    {11, 5},
+const struct DibujableConstante Nave_Propulsion_Maxima = {
+    CENTRO_CONST_NAVE,
     (struct Punto[]){
         {6, 16}, // 19
         {16, 16}, // 22
-        {11, 35} // Centro
+        {11, 48} // Centro
+    },
+    (struct UnionAristas[]){
+        {0, 1}, {1, 2}, {2, 0}
+    },
+    3,
+    3
+};
+
+const struct DibujableConstante Nave_Propulsion_Media = {
+    CENTRO_CONST_NAVE,
+    (struct Punto[]){
+        {6, 16}, // 19
+        {16, 16}, // 22
+        {11, 38} // Centro
+    },
+    (struct UnionAristas[]){
+        {0, 1}, {1, 2}, {2, 0}
+    },
+    3,
+    3
+};
+
+const struct DibujableConstante Nave_Propulsion_Minima = {
+    CENTRO_CONST_NAVE,
+    (struct Punto[]){
+        {6, 16}, // 19
+        {16, 16}, // 22
+        {11, 28} // Centro
     },
     (struct UnionAristas[]){
         {0, 1}, {1, 2}, {2, 0}
