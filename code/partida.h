@@ -8,14 +8,17 @@
 
 #include <wtypes.h>
 #include "lunar_lander.h"
+#include "fisicas.h"
 #include "transformaciones.h"
 #include "../resources/nave.h"
 #include "../resources/letras.h"
 
-static struct Dibujable* nave;
+static struct objetoFisico* nave;
 static int combustible = 0;
 
 void dibujarEscena(HDC hdc);
+
+void manejar_instante_partida();
 
 void inicializarPartida();
 

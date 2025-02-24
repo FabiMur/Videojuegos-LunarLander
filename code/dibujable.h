@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <wtypes.h>
+#include "transformaciones.h"
 
 /** 
  * @brief Estructura que representa un punto en el plano cartesiano
@@ -94,6 +95,8 @@ struct Dibujable* crearDibujable(const struct DibujableConstante* constante);
  * @param dibujable Puntero al objeto dibujable a liberar
  */
 void destruirDibujable(struct Dibujable* dibujable);
+
+void destruirArista(struct Arista* arista);
 
 /**
  * @brief Dibuja por pantalla un dibujable

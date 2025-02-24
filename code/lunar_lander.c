@@ -45,8 +45,8 @@ void manejar_tecla(int tecla){
 }
 
 void manejar_instante(){
-    if(estado == JUGANDO){
-        // Actualizar fisicas
+    if(estado == JUGANDO && fisicas == ACTIVADAS){
+        manejar_instante_partida();
     }
 }
 

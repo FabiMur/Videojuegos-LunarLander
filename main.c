@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <windows.h>
 
+#define timer 1
+
 void AttachConsoleToStdout() {
     AllocConsole();
     freopen("CONOUT$", "w", stdout);  // Redirige stdout a la consola
@@ -31,6 +33,16 @@ void dibujoNaves(HDC hdc){
 // Función de ventana
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
+        case WM_CREATE:
+            SetTimer(hwnd, timer, intervalo_fisicas_ms, NULL);
+            break;
+
+        case WM_TIMER:
+            if (wParam == timer) {
+                manejar_instante();
+            }
+            break;
+
         case WM_PAINT: {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
@@ -39,7 +51,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             dibujoNaves(hdc);
 
             dibujarEscena(hdc);
-
             EndPaint(hwnd, &ps);
         } break;
 
@@ -52,6 +63,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         } break;
         
         case WM_DESTROY:
+            KillTimer(hwnd, timer);
             PostQuitMessage(0);
             return 0;
     }

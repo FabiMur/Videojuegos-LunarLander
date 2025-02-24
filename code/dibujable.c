@@ -32,10 +32,28 @@ struct Dibujable* crearDibujable(const struct DibujableConstante* constante) {
 }
 
 void destruirDibujable(struct Dibujable* dibujable) {
-    if (!dibujable) return;
-    free(dibujable->puntos);
-    free(dibujable->aristas);
+    if(dibujable == NULL) return;
+    if(dibujable -> puntos != NULL){
+        free(dibujable -> puntos);
+    }
+    if(dibujable -> aristas != NULL) {
+        for(uint8_t i = 0; i < dibujable -> num_aristas; i++){
+            destruirArista(&dibujable -> aristas[i]);
+        }
+        free(dibujable -> aristas);
+    }
     free(dibujable);
+}
+
+void destruirArista(struct Arista* arista){
+    if(arista == NULL) return;
+    if(arista -> origen != NULL){
+        free(arista -> origen);
+    }
+    if(arista -> destino != NULL){
+        free(arista -> destino);
+    }
+    free(arista);
 }
 
 
