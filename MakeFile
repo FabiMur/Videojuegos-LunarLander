@@ -30,4 +30,4 @@ $(TARGET): $(OBJS)
 
 # Limpiar archivos compilados
 clean:
-	rm -f $(SRC_DIR)/*.o $(RES_DIR)/*.o $(TARGET)
+	del /Q $(SRC_DIR)\*.o $(RES_DIR)\*.o main.o $(TARGET) 2>nul
