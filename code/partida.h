@@ -6,11 +6,25 @@
 #ifndef PARTIDA_H
 #define PARTIDA_H
 
-// Funcion que establezca el sistema para empezar la simulacion de fisicas de la partida.
-// Añadir los parametros necesarios de configuracion de la partida
-inicializarPartida();
+#include <wtypes.h>
+#include "lunar_lander.h"
+#include "transformaciones.h"
+#include "../resources/nave.h"
+#include "../resources/letras.h"
 
-// Funcion que maneja la partida en si
-comenzarPartida();
+static struct Dibujable* nave;
+static int combustible = 0;
+
+void dibujarEscena(HDC hdc);
+
+void inicializarPartida();
+
+void anyadirMoneda();
+
+void comenzarPartida();
+
+void finalizarPartida();
+
+void findeJuego();
 
 #endif // PARTIDA_H

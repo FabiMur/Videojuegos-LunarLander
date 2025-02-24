@@ -7,8 +7,26 @@
 #ifndef LUNAR_LANDER_H
 #define LUNAR_LANDER_H
 
+#include "partida.h"
 
+enum tecla {
+    ARRIBA,
+    IZQUIERDA,
+    DERECHA,
+    ESPACIO,
+    MONEDA
+};
 
-iniciar_lunar_lander();
+enum estado {
+    PEDIR,
+    MENU,
+    JUGANDO
+};
+
+void manejar_tecla(int tecla);
+
+void manejar_instante();
+
+void cambiar_estado(int nuevo_estado);
 
 #endif // LUNAR_LANDER_H

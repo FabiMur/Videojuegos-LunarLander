@@ -1,6 +1,5 @@
 #include "dibujable.h"
 
-
 struct Dibujable* crearDibujable(const struct DibujableConstante* constante) {
     // Reservar memoria para el Dibujable
     struct Dibujable* dibujable = (struct Dibujable*)malloc(sizeof(struct Dibujable));
@@ -37,4 +36,36 @@ void destruirDibujable(struct Dibujable* dibujable) {
     free(dibujable->puntos);
     free(dibujable->aristas);
     free(dibujable);
+}
+
+
+// Algoritmo de Bresenham para rasterizar una línea
+void DrawLine(HDC hdc, int x1, int y1, int x2, int y2, COLORREF color) {
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+    int err = dx - dy;
+
+    while (1) {
+        SetPixel(hdc, x1, y1, color); // Dibuja el pixel actual
+
+        if (x1 == x2 && y1 == y2) break; // Si llegamos al final, salimos
+
+        int e2 = 2 * err;
+        if (e2 > -dy) { err -= dy; x1 += sx; }
+        if (e2 < dx) { err += dx; y1 += sy; }
+    }
+}
+
+
+
+void dibujarDibujable(HDC hdc, const struct Dibujable* dibujable){
+    for(uint8_t i = 0; i < dibujable->num_aristas; i++) {
+        DrawLine(hdc, dibujable->aristas[i].origen->x,
+            dibujable->aristas[i].origen->y,
+            dibujable->aristas[i].destino->x,
+            dibujable->aristas[i].destino->y,
+            RGB(255, 255, 255));
+    }
 }
