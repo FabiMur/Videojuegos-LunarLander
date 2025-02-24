@@ -1,5 +1,6 @@
 #include "code/dibujable.h"
 #include "resources/letras.h"
+#include "resources/nave.h"
 #include "code/transformaciones.h"
 
 #include <stdio.h>
@@ -46,15 +47,25 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             struct Dibujable* letraI = crearDibujable(&Letra_I_Base);
             struct Dibujable* palabraBA[] = {letraB, letraA};
 
-            for(int i = 0; i < sizeof(palabraBA); i++){
+            struct Dibujable* nave = crearDibujable(&Nave_Base);
+            trasladarDibujable(nave, (struct Punto){10, 10});
+            struct Dibujable* nave_propulsion = crearDibujable(&Nave_Propulsion);
+            trasladarDibujable(nave_propulsion, (struct Punto){10, 10});
+            
+
+            for(int i = 0; i < (sizeof(palabraBA) / sizeof(palabraBA[0])); i++){
                 for(int j = 0; j < palabraBA[i]->num_aristas; j++){
                     DrawLine(hdc, palabraBA[i]->aristas[j].origen->x, palabraBA[i]->aristas[j].origen->y, palabraBA[i]->aristas[j].destino->x, palabraBA[i]->aristas[j].destino->y, RGB(255, 255, 255));
                 }
             }
 
-            for(int i = 0; i < letraI->num_aristas; i++){
-                DrawLine(hdc, letraI->aristas[i].origen->x, letraI->aristas[i].origen->y, letraI->aristas[i].destino->x, letraI->aristas[i].destino->y, RGB(255, 255, 255));
+            for(int i = 0; i < nave->num_aristas; i++){
+                DrawLine(hdc, nave->aristas[i].origen->x, nave->aristas[i].origen->y, nave->aristas[i].destino->x, nave->aristas[i].destino->y, RGB(255, 255, 255));
             }
+            for(int i = 0; i < nave_propulsion->num_aristas; i++){
+                DrawLine(hdc, nave_propulsion->aristas[i].origen->x, nave_propulsion->aristas[i].origen->y, nave_propulsion->aristas[i].destino->x, nave_propulsion->aristas[i].destino->y, RGB(255, 255, 255));
+            }
+
             EndPaint(hwnd, &ps);
         } break;
 
