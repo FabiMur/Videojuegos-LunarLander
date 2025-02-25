@@ -45,7 +45,6 @@ void trasladarDibujable(struct Dibujable* dibujable, struct Punto traslacion){
     trasladarPunto(&dibujable->origen, traslacion);
     if (!dibujable->puntos) return;
     for(uint8_t i = 0; i < dibujable->num_puntos; i++){
-        //dibujable->puntos[i] = trasladarPunto(dibujable->puntos[i], traslacion);
         trasladarPunto(&dibujable->puntos[i], traslacion);
     }
 }
@@ -89,3 +88,27 @@ void rotarDibujable(struct Dibujable* dibujable, unsigned char direccion){
         rotarPuntoDadoCentro(&dibujable->puntos[i], dibujable->origen, sentido);
     }
 }
+
+
+void escalarXPuntoDadoCentro(struct Punto* punto, struct Punto centro, double factor){
+    int16_t x = punto->x - centro.x;
+    punto->x = (int16_t)(x * factor + centro.x);
+}
+
+void escalarYPuntoDadoCentro(struct Punto* punto, struct Punto centro, double factor){
+    int16_t y = punto->y - centro.y;
+    punto->y = (int16_t)(y * factor + centro.y);
+}
+
+void escalarDibujable(struct Dibujable* dibujable, double factor){
+    escalarDibujableDadosEjes(dibujable, factor, factor);
+}
+
+void escalarDibujableDadosEjes(struct Dibujable* dibujable, double factorX, double factorY){
+    if (!dibujable->puntos) return;
+    for(uint8_t i = 0; i < dibujable->num_puntos; i++){
+        escalarXPuntoDadoCentro(&dibujable->puntos[i], dibujable->origen, factorX);
+        escalarYPuntoDadoCentro(&dibujable->puntos[i], dibujable->origen, factorY);
+    }
+}
+        

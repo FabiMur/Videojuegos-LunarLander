@@ -2,6 +2,8 @@
     "files.associations": {
         "dibujable.h": "c",
         "letras.h": "c",
-        "nave.h": "c"
+        "nave.h": "c",
+        "fisicas.h": "c",
+        "partida.h": "c"
     }
 }

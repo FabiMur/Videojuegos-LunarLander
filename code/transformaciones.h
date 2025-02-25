@@ -25,5 +25,22 @@ void trasladarDibujable(struct Dibujable* dibujable, struct Punto traslacion);
  */
 void rotarDibujable(struct Dibujable* dibujable, unsigned char direccion);
 
+/**
+ * @brief Escala un dibujable en el eje x e y
+ * 
+ * @param dibujable Dibujable a escalar
+ * @param factor Factor de escala
+ */
+void escalarDibujable(struct Dibujable* dibujable, double factor);
+
+/**
+ * @brief Escala un dibujable en el eje x y el eje y dados los factores de
+ *        escalado de cada eje
+ * 
+ * @param dibujable Dibujable a escalar
+ * @param factorX Factor de escala en el eje x
+ * @param factorY Factor de escala en el eje y
+ */
+void escalarDibujableDadosEjes(struct Dibujable* dibujable, double factorX, double factorY);
 
 #endif // TRANSFORMACIONES_H

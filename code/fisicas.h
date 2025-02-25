@@ -7,14 +7,10 @@
 #define FISICAS_H
 
 #include "dibujable.h"
+#include "transformaciones.h"
 
-#define intervalo_fisicas_ms 100
-#define gravedad_m_ms 0.001625
-
-enum fisicas {
-    ACTIVADAS,
-    DESACTIVADAS
-};
+#define intervalo_fisicas_ms 64
+#define gravedad_m_ms -0.000001
 
 struct objetoFisico {
     struct Dibujable* objeto;
@@ -23,16 +19,15 @@ struct objetoFisico {
     int masa;
 };
 
-static int fisicas = DESACTIVADAS;
-
 void destruirObjetoFisico(struct objetoFisico* objeto);
 
 void calcularFisicas(struct objetoFisico* objeto);
-
-void acelerar();
+/*
+void propulsar();
 
 void girar_izquierda();
 
 void girar_derecha();
+*/
 
 #endif // FISICAS_H

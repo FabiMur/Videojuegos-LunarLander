@@ -1,4 +1,5 @@
 #include "dibujable.h"
+#include <stdio.h>
 
 struct Dibujable* crearDibujable(const struct DibujableConstante* constante) {
     // Reservar memoria para el Dibujable

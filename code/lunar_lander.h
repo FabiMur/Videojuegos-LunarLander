@@ -8,6 +8,7 @@
 #define LUNAR_LANDER_H
 
 #include "partida.h"
+#include <wtypes.h>
 
 enum tecla {
     ARRIBA,
@@ -26,6 +27,8 @@ enum estado {
 void manejar_tecla(int tecla);
 
 void manejar_instante();
+
+void pintar_pantalla(HDC hdc);
 
 void cambiar_estado(int nuevo_estado);
 

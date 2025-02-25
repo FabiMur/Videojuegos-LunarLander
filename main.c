@@ -18,13 +18,14 @@ void AttachConsoleToStdout() {
  * @param hdc
  */
 void dibujoNaves(HDC hdc){
-    
     struct Dibujable* naveMaxRotacion = crearDibujable(&Nave_Base);
     trasladarDibujable(naveMaxRotacion, (struct Punto){280, 10});
     rotarDibujable(naveMaxRotacion, 0);
     struct Dibujable* nave_propulsion_maxRotacion = crearDibujable(&Nave_Propulsion_Maxima);
     rotarDibujable(nave_propulsion_maxRotacion, 0);
     trasladarDibujable(nave_propulsion_maxRotacion, (struct Punto){280, 10});
+    escalarDibujable(nave_propulsion_maxRotacion, 2);
+    escalarDibujable(naveMaxRotacion, 2);
 
     dibujarDibujable(hdc, naveMaxRotacion);
     dibujarDibujable(hdc, nave_propulsion_maxRotacion);
@@ -40,6 +41,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         case WM_TIMER:
             if (wParam == timer) {
                 manejar_instante();
+                InvalidateRect(hwnd, NULL, FALSE); // Fuerza un repintado 
             }
             break;
 
@@ -47,19 +49,24 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
 
-            // Pruebas de rasterizado 
-            dibujoNaves(hdc);
+            // Limpiar ventana
+            RECT rect;
+            GetClientRect(hwnd, &rect); // Obtener el tamaño de la ventana
+            HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0)); // Pintar negro
+            FillRect(hdc, &rect, brush); // Rellenar la ventana de negro
+            DeleteObject(brush);
 
-            dibujarEscena(hdc);
+            // Pintar ventana
+            pintar_pantalla(hdc);
             EndPaint(hwnd, &ps);
         } break;
 
-        case WM_KEYUP: {
-            if(GetKeyState(VK_UP) & 0x8000) manejar_tecla(ARRIBA);
-            if(GetKeyState(VK_LEFT) & 0x8000) manejar_tecla(IZQUIERDA);
-            if(GetKeyState(VK_RIGHT) & 0x8000) manejar_tecla(DERECHA);
-            if(GetKeyState(VK_SPACE) & 0x8000) manejar_tecla(ESPACIO);
-            if(GetKeyState(0x35) & 0x8000 || GetKeyState(VK_NUMPAD5) & 0x8000) manejar_tecla(MONEDA);
+        case WM_KEYDOWN: {
+            if(wParam == VK_UP) manejar_tecla(ARRIBA);
+            if(wParam == VK_LEFT) manejar_tecla(IZQUIERDA);
+            if(wParam == VK_RIGHT) manejar_tecla(DERECHA);
+            if(wParam == VK_SPACE) manejar_tecla(ESPACIO);
+            if(wParam == 0x35 || wParam == VK_NUMPAD5) manejar_tecla(MONEDA);
         } break;
         
         case WM_DESTROY:
@@ -73,7 +80,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 // Función principal
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     AttachConsoleToStdout(); // Activa la consola para ver printf
-    printf("Estamos aqui 1\n");
     WNDCLASS wc = {0};
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;

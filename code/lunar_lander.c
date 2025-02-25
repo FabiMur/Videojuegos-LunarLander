@@ -8,6 +8,7 @@ void manejar_tecla(int tecla){
     switch(estado){
         case PEDIR:
             if(tecla == MONEDA){
+                printf("Moneda insertada\n");
                 inicializarPartida();
                 anyadirMoneda();
                 estado = MENU;
@@ -16,9 +17,11 @@ void manejar_tecla(int tecla){
 
         case MENU:
             if(tecla == MONEDA){
+                printf("Moneda insertada\n");
                 anyadirMoneda();
             }
             else if(tecla == ESPACIO){
+                printf("Partida Comenzada\n");
                 comenzarPartida();
                 estado = JUGANDO;
             }
@@ -29,13 +32,13 @@ void manejar_tecla(int tecla){
                 anyadirMoneda();
             }
             else if(tecla == ARRIBA){
-                acelerar();
+                // propulsar();
             }
             else if(tecla == IZQUIERDA){
-                girar_izquierda();
+                // girar_izquierda();
             }
             else if(tecla == DERECHA){
-                girar_derecha();
+                // girar_derecha();
             }
             break;
 
@@ -45,8 +48,14 @@ void manejar_tecla(int tecla){
 }
 
 void manejar_instante(){
-    if(estado == JUGANDO && fisicas == ACTIVADAS){
+    if(estado == JUGANDO){
         manejar_instante_partida();
+    }
+}
+
+void pintar_pantalla(HDC hdc){
+    if(estado == JUGANDO){
+        dibujar_escena(hdc);
     }
 }
 

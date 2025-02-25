@@ -13,7 +13,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <wtypes.h>
-#include "transformaciones.h"
 
 /** 
  * @brief Estructura que representa un punto en el plano cartesiano
