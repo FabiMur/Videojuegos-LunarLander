@@ -6,5 +6,6 @@
         "fisicas.h": "c",
         "partida.h": "c",
         "lunar_lander.h": "c"
-    }
+	},
+	"C_Cpp.default.compilerPath": "C:/mingw64/bin/gcc.exe"
 }
