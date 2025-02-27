@@ -1,13 +1,15 @@
 #include "nave.h"
 
+// Tamaño de la nave: Horizontal = 22
+
 const struct DibujableConstante Nave_Base = {
     CENTRO_CONST_NAVE,
     (struct Punto[]){
-        {0, 18}, {2, 18}, {3, 18}, {4, 12}, {4, 10}, // 0-4
+        {0, ALTURA_NAVE}, {2, ALTURA_NAVE}, {3, ALTURA_NAVE}, {4, 12}, {4, 10}, // 0-4
         {8, 10}, {6, 8}, {6, 2}, {8, 0}, {14, 0}, // 5-9
         {16, 2}, {16, 8}, {14, 10}, {18, 10}, {18, 12}, // 10-14
-        {20, 18}, {19, 18}, {22, 18}, {8, 12}, {6, 16}, // 15-19
-        {7, 18}, {14, 12}, {16, 16}, {15, 18} // 20-23
+        {20, ALTURA_NAVE}, {19, ALTURA_NAVE}, {ANCHURA_NAVE, ALTURA_NAVE}, {8, 12}, {6, 16}, // 15-19
+        {7, ALTURA_NAVE}, {14, 12}, {16, 16}, {15, ALTURA_NAVE} // 20-23
     },
     (struct UnionAristas[]){
         {0, 1}, {1, 2}, {1, 3}, // Pata izq (3)

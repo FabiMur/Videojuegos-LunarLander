@@ -10,7 +10,7 @@
 #include "fisicas.h"
 #include "transformaciones.h"
 #include "../resources/nave.h"
-#include "../resources/letras.h"
+#include "../resources/caracteres.h"
 
 extern struct objetoFisico* nave;
 static int combustible = 0;

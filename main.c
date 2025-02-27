@@ -1,4 +1,5 @@
 #include "code/lunar_lander.h"
+#include "code/palabra.h"
 
 #include <stdio.h>
 #include <windows.h>
@@ -17,7 +18,9 @@ void AttachConsoleToStdout() {
  * 
  * @param hdc
  */
-void dibujoNaves(HDC hdc){
+void pruebasDibujables(HDC hdc){
+
+    // Dibujar nave base
     struct Dibujable* naveMaxRotacion = crearDibujable(&Nave_Base);
     trasladarDibujable(naveMaxRotacion, (struct Punto){280, 10});
     rotarDibujable(naveMaxRotacion, 0);
@@ -27,8 +30,16 @@ void dibujoNaves(HDC hdc){
     escalarDibujable(nave_propulsion_maxRotacion, 2);
     escalarDibujable(naveMaxRotacion, 2);
 
+    // Probar palabra
+    struct Palabra* palabra = crear_palabra((struct Punto){50, 50});
+    agregar_letra(palabra, &Letra_A_Base);
+    agregar_letra(palabra, &Letra_B_Base);
+
+    // Dibujar los dibujables
     dibujarDibujable(hdc, naveMaxRotacion);
     dibujarDibujable(hdc, nave_propulsion_maxRotacion);
+
+    dibujar_palabra(palabra, hdc);
 }
 
 // Función de ventana
@@ -55,6 +66,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0)); // Pintar negro
             FillRect(hdc, &rect, brush); // Rellenar la ventana de negro
             DeleteObject(brush);
+
+            // Dibujar dibujables
+            // DESCOMENTAR PARA PRUEBAS DE DIBUJABLES
+            pruebasDibujables(hdc);
 
             // Pintar ventana
             pintar_pantalla(hdc);

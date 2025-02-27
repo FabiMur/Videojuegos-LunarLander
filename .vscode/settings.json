@@ -4,6 +4,7 @@
         "letras.h": "c",
         "nave.h": "c",
         "fisicas.h": "c",
-        "partida.h": "c"
+        "partida.h": "c",
+        "lunar_lander.h": "c"
     }
 }

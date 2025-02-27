@@ -4,6 +4,8 @@
 #include "../code/dibujable.h"
 
 #define CENTRO_CONST_NAVE {11, 5}
+#define ANCHURA_NAVE 22
+#define ALTURA_NAVE 18
 
 // nave.h
 extern const struct DibujableConstante Nave_Base;
