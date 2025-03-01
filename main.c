@@ -31,15 +31,52 @@ void pruebasDibujables(HDC hdc){
     escalarDibujable(naveMaxRotacion, 2);
 
     // Probar palabra
-    struct Palabra* palabra = crear_palabra((struct Punto){50, 50});
-    agregar_letra(palabra, &Letra_A_Base);
-    agregar_letra(palabra, &Letra_B_Base);
+    struct Palabra* letras = crear_palabra((struct Punto){20, 100});
+    agregar_letra(letras, &Letra_A_Base);
+    agregar_letra(letras, &Letra_B_Base);
+    agregar_letra(letras, &Letra_C_Base);
+    agregar_letra(letras, &Letra_D_Base);
+    agregar_letra(letras, &Letra_E_Base);
+    agregar_letra(letras, &Letra_F_Base);
+    agregar_letra(letras, &Letra_G_Base);
+    agregar_letra(letras, &Letra_H_Base);
+    agregar_letra(letras, &Letra_I_Base);
+    agregar_letra(letras, &Letra_J_Base);
+    agregar_letra(letras, &Letra_K_Base);
+    agregar_letra(letras, &Letra_L_Base);
+    agregar_letra(letras, &Letra_M_Base);
+    agregar_letra(letras, &Letra_N_Base);
+    agregar_letra(letras, &Letra_O_Base);
+    agregar_letra(letras, &Letra_P_Base);
+    agregar_letra(letras, &Letra_Q_Base);
+    agregar_letra(letras, &Letra_R_Base);
+    agregar_letra(letras, &Letra_S_Base);
+    agregar_letra(letras, &Letra_T_Base);
+    agregar_letra(letras, &Letra_U_Base);
+    agregar_letra(letras, &Letra_V_Base);
+    agregar_letra(letras, &Letra_W_Base);
+    agregar_letra(letras, &Letra_X_Base);
+    agregar_letra(letras, &Letra_Y_Base);
+    agregar_letra(letras, &Letra_Z_Base);
+
+    struct Palabra* numeros = crear_palabra((struct Punto){20, 140});
+    agregar_letra(numeros, &Numero_0_Base);
+    agregar_letra(numeros, &Numero_1_Base);
+    agregar_letra(numeros, &Numero_2_Base);
+    agregar_letra(numeros, &Numero_3_Base);
+    agregar_letra(numeros, &Numero_4_Base);
+    agregar_letra(numeros, &Numero_5_Base);
+    agregar_letra(numeros, &Numero_6_Base);
+    agregar_letra(numeros, &Numero_7_Base);
+    agregar_letra(numeros, &Numero_8_Base);
+    agregar_letra(numeros, &Numero_9_Base);
 
     // Dibujar los dibujables
     dibujarDibujable(hdc, naveMaxRotacion);
     dibujarDibujable(hdc, nave_propulsion_maxRotacion);
 
-    dibujar_palabra(palabra, hdc);
+    dibujar_palabra(letras, hdc);
+    dibujar_palabra(numeros, hdc);
 }
 
 // Función de ventana
