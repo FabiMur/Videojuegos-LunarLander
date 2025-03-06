@@ -12,9 +12,6 @@
 #include "../resources/nave.h"
 #include "../resources/caracteres.h"
 
-extern struct objetoFisico* nave;
-static int combustible = 0;
-
 void dibujar_escena(HDC hdc);
 
 void manejar_instante_partida();

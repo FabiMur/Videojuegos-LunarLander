@@ -32,7 +32,7 @@ void manejar_tecla(int tecla){
                 anyadirMoneda();
             }
             else if(tecla == ARRIBA){
-                // propulsar();
+                propulsar();
             }
             else if(tecla == IZQUIERDA){
                 // girar_izquierda();

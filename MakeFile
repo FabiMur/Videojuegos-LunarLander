@@ -31,3 +31,9 @@ $(TARGET): $(OBJS)
 # Limpiar archivos compilados
 clean:
 	del /Q $(SRC_DIR)\*.o $(RES_DIR)\*.o main.o 2>nul
+
+# Recompilar todo y ejecutar
+run:
+	mingw32-make clean
+	mingw32-make -f MakeFile
+	./lunar_lander.exe

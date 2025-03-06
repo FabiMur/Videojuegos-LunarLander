@@ -37,15 +37,26 @@ const struct Rotacion Rotacion_45 = {
  * @param traslacion Punto de traslación
  */
 void trasladarPunto(struct Punto* origen, struct Punto traslacion){
-    origen->x = origen->x + traslacion.x;
-    origen->y = origen->y + traslacion.y;
+    origen -> x = origen -> x + traslacion.x;
+    origen -> y = origen -> y + traslacion.y;
 }
 
 void trasladarDibujable(struct Dibujable* dibujable, struct Punto traslacion){
-    trasladarPunto(&dibujable->origen, traslacion);
-    if (!dibujable->puntos) return;
-    for(uint8_t i = 0; i < dibujable->num_puntos; i++){
-        trasladarPunto(&dibujable->puntos[i], traslacion);
+    trasladarPunto(&dibujable -> origen, traslacion);
+    if (!dibujable -> puntos) return;
+    for(uint8_t i = 0; i < dibujable -> num_puntos; i++){
+        trasladarPunto(&dibujable -> puntos[i], traslacion);
+    }
+}
+
+void colocarDibujable(struct Dibujable* dibujable, struct Punto destino){
+	struct Punto traslacion = {
+		destino.x - dibujable -> origen.x,
+		destino.y - dibujable -> origen.y
+	};
+    if (!dibujable -> puntos) return;
+    for(uint8_t i = 0; i < dibujable -> num_puntos; i++){
+        trasladarPunto(&dibujable -> puntos[i], traslacion);
     }
 }
 

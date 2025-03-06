@@ -120,7 +120,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     HWND hwnd = CreateWindowEx(0, "RasterWindow", "VentanaPruebas",
                                WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-                               500, 500, NULL, NULL, hInstance, NULL);
+                               1024, 768, NULL, NULL, hInstance, NULL);
 
     if (!hwnd) return 0;
     ShowWindow(hwnd, nCmdShow);

@@ -18,6 +18,14 @@
 void trasladarDibujable(struct Dibujable* dibujable, struct Punto traslacion);
 
 /**
+ * @brief Coloca un dibujable en un punto dado
+ * 
+ * @param dibujable Dibujable a trasladar
+ * @param destino Punto de destino
+ */
+void colocarDibujable(struct Dibujable* dibujable, struct Punto destino);
+
+/**
  * @brief Rota un dibujable en sentido horario o antihorario
  * 
  * @param dibujable Dibujable a rotar
