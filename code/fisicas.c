@@ -25,7 +25,6 @@ void calcularFisicas(struct objetoFisico* elemento){
     // Trasladar el objeto
     trasladarDibujable(elemento -> objeto, nueva_posicion);
 
-
 	elemento -> aceleracion[0] = 0;
 	elemento -> aceleracion[1] = 0;
 	
