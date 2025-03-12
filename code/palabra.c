@@ -13,7 +13,7 @@ struct Palabra* crear_palabra(struct Punto origen){
     return palabra;
 }
 
-void agregar_letra(struct Palabra* palabra, struct DibujableConstante* letra) {
+void agregar_letra(struct Palabra* palabra, const struct DibujableConstante* letra) {
     // Aumentar el tamaño del arreglo de letras
     palabra->num_letras++;
     palabra->letras = (struct Dibujable*)realloc(palabra->letras,

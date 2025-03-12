@@ -21,7 +21,7 @@
  * @param y Coordenada y del punto
  */
 struct Punto{
-    int16_t x, y;
+    float x, y;
 };
 
 /**
@@ -85,7 +85,7 @@ struct DibujableConstante {
  * 
  * @return struct Dibujable* Puntero al objeto dibujable creado
  */
-struct Dibujable* crearDibujable(struct DibujableConstante* constante);
+struct Dibujable* crearDibujable(const struct DibujableConstante* constante);
 
 
 /**

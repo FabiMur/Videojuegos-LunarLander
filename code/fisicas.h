@@ -19,7 +19,7 @@ struct objetoFisico {
     float velocidad[2];
     float aceleracion[2];
     int masa;
-	uint16_t rotacion;
+	int8_t rotacion;
 };
 
 void destruirObjetoFisico(struct objetoFisico* objeto);
