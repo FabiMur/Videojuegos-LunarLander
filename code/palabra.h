@@ -1,3 +1,6 @@
+#ifndef PALABRA_H
+#define PALABRA_H
+
 #include "dibujable.h"
 
 /**
@@ -6,7 +9,9 @@
 struct Palabra {
     struct Dibujable* letras;
     uint8_t num_letras;
-    struct Punto origen;
+    struct Punto origen; // Se corresponde con el origen de la primera letra
+    double factor_escalado_x;
+    double factor_escalado_y;
 };
 
 /**
@@ -24,6 +29,9 @@ struct Palabra* crear_palabra(struct Punto origen);
  */
 void agregar_letra(struct Palabra* palabra, struct DibujableConstante* letra);
 
+
+int16_t calcular_centro_x_palabra(struct Palabra* palabra);
+
 /**
  * @brief Dibuja una palabra
  * 
@@ -38,3 +46,5 @@ void dibujar_palabra(struct Palabra* palabra, HDC hdc);
  * @param palabra Palabra a destruir
  */
 void destruir_palabra(struct Palabra* palabra);
+
+#endif // PALABRA_H

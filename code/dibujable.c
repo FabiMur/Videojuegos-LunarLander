@@ -1,7 +1,8 @@
 #include "dibujable.h"
+#include <stdio.h>
 
 
-struct Dibujable* crearDibujable(const struct DibujableConstante* constante) {
+struct Dibujable* crearDibujable(struct DibujableConstante* constante) {
     // Reservar memoria para el Dibujable
     struct Dibujable* dibujable = (struct Dibujable*)malloc(sizeof(struct Dibujable));
     if (!dibujable) return NULL;  // Si falla malloc(), retorna NULL
@@ -38,9 +39,9 @@ void destruirDibujable(struct Dibujable* dibujable) {
         free(dibujable -> puntos);
     }
     if(dibujable -> aristas != NULL) {
-        for(uint8_t i = 0; i < dibujable -> num_aristas; i++){
-            destruirArista(&dibujable -> aristas[i]);
-        }
+        //for(uint8_t i = 0; i < dibujable -> num_aristas; i++){
+        //    destruirArista(&dibujable -> aristas[i]);
+        //}
         free(dibujable -> aristas);
     }
     free(dibujable);

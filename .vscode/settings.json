@@ -5,7 +5,11 @@
         "nave.h": "c",
         "fisicas.h": "c",
         "partida.h": "c",
-        "lunar_lander.h": "c"
-	},
+        "lunar_lander.h": "c",
+        "gestorplataformas.h": "c",
+        "superficie_lunar.h": "c",
+        "caracteres.h": "c",
+        "gestor_plataformas.h": "c"
+    },
 	"C_Cpp.default.compilerPath": "C:/mingw64/bin/gcc.exe"
 }

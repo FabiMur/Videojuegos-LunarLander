@@ -85,7 +85,7 @@ struct DibujableConstante {
  * 
  * @return struct Dibujable* Puntero al objeto dibujable creado
  */
-struct Dibujable* crearDibujable(const struct DibujableConstante* constante);
+struct Dibujable* crearDibujable(struct DibujableConstante* constante);
 
 
 /**

@@ -1,10 +1,16 @@
 #include "code/lunar_lander.h"
 #include "code/palabra.h"
+#include "resources/superficie_lunar.h"
+#include "code/gestor_plataformas.h"
 
 #include <stdio.h>
 #include <windows.h>
 
 #define timer 1
+
+uint8_t primera_vez = 1;
+uint8_t num_plataformas = 0;
+struct Plataforma* plataformas;
 
 void AttachConsoleToStdout() {
     AllocConsole();
@@ -20,26 +26,38 @@ void AttachConsoleToStdout() {
  */
 void pruebasDibujables(HDC hdc){
 
-    // Dibujar nave base
-    struct Dibujable* naveMaxRotacion = crearDibujable(&Nave_Base);
-    trasladarDibujable(naveMaxRotacion, (struct Punto){280, 10});
-    rotarDibujable(naveMaxRotacion, 0);
-    struct Dibujable* nave_propulsion_maxRotacion = crearDibujable(&Nave_Propulsion_Maxima);
-    rotarDibujable(nave_propulsion_maxRotacion, 0);
-    trasladarDibujable(nave_propulsion_maxRotacion, (struct Punto){280, 10});
-    escalarDibujable(nave_propulsion_maxRotacion, 2);
-    escalarDibujable(naveMaxRotacion, 2);
+    // Nave
+    //struct Dibujable* naveMaxRotacion = crearDibujable(&Nave_Base);
+    //trasladarDibujable(naveMaxRotacion, (struct Punto){200, 200});
+    //dibujarDibujable(hdc, naveMaxRotacion);
 
-    // Probar palabra
-    struct Palabra* palabra = crear_palabra((struct Punto){50, 50});
-    agregar_letra(palabra, &Letra_A_Base);
-    agregar_letra(palabra, &Letra_B_Base);
+    // Palabra
+    //struct Palabra* palabra = crear_palabra((struct Punto){50, 50});
+    //agregar_letra(palabra, &Letra_A_Base);
+    //agregar_letra(palabra, &Letra_B_Base);
+    //agregar_letra(palabra, &Letra_I_Base);
+    //dibujar_palabra(palabra, hdc);
+    //escalar_palabra_centrada(palabra, 0.6);
+    //colocar_palabra(palabra, (struct Punto){200, 200});
+    //dibujar_palabra(palabra, hdc);
 
-    // Dibujar los dibujables
-    dibujarDibujable(hdc, naveMaxRotacion);
-    dibujarDibujable(hdc, nave_propulsion_maxRotacion);
 
-    dibujar_palabra(palabra, hdc);
+    struct Dibujable* terreno = crearDibujable(&Terreno);
+    dibujarDibujable(hdc, terreno);
+    //struct Dibujable* terreno1 = crearDibujable(&Terreno);
+    //trasladarDibujable(terreno1, (struct Punto){ANCHURA_TERRENO, 0});
+    //dibujarDibujable(hdc, terreno1);
+
+    
+    if(primera_vez == 1) {
+        primera_vez = 0;
+        num_plataformas = 0;
+        plataformas = generar_plataformas(&Terreno, &num_plataformas);
+    }
+    for(uint8_t i = 0; i < num_plataformas; i++){
+        dibujar_plataforma(hdc, plataformas[i]);
+    }
+    
 }
 
 // Función de ventana
@@ -47,6 +65,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     switch (uMsg) {
         case WM_CREATE:
             SetTimer(hwnd, timer, intervalo_fisicas_ms, NULL);
+
             break;
 
         case WM_TIMER:
@@ -120,8 +139,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     HWND hwnd = CreateWindowEx(0, "RasterWindow", "VentanaPruebas",
                                WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-                               500, 500, NULL, NULL, hInstance, NULL);
+                               1024, 768, NULL, NULL, hInstance, NULL);
 
+    inicializar_aleatoriedad(); // Inicializar rand
     if (!hwnd) return 0;
     ShowWindow(hwnd, nCmdShow);
 
