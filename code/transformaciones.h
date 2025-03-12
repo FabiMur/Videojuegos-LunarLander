@@ -23,7 +23,15 @@ void colocar_dibujable(struct Dibujable* dibujable, struct Punto destino);
 void colocar_palabra(struct Palabra* palabra, struct Punto destio);
 
 /**
- * @brief Rota un dibujable ANGULO_ROTACION grados en sentido horario o antihorario
+ * @brief Coloca un dibujable en un punto dado
+ * 
+ * @param dibujable Dibujable a trasladar
+ * @param destino Punto de destino
+ */
+void colocarDibujable(struct Dibujable* dibujable, struct Punto destino);
+
+/**
+ * @brief Rota un dibujable en sentido horario o antihorario
  * 
  * @param dibujable Dibujable a rotar
  * @param direccion 0 para izquierda, 1 para derecha
