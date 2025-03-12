@@ -1,10 +1,16 @@
 #include "code/lunar_lander.h"
 #include "code/palabra.h"
+#include "resources/superficie_lunar.h"
+#include "code/gestor_plataformas.h"
 
 #include <stdio.h>
 #include <windows.h>
 
 #define timer 1
+
+uint8_t primera_vez = 1;
+uint8_t num_plataformas = 0;
+struct Plataforma* plataformas;
 
 void AttachConsoleToStdout() {
     AllocConsole();
@@ -20,63 +26,6 @@ void AttachConsoleToStdout() {
  */
 void pruebasDibujables(HDC hdc){
 
-    // Dibujar nave base
-    struct Dibujable* naveMaxRotacion = crearDibujable(&Nave_Base);
-    trasladarDibujable(naveMaxRotacion, (struct Punto){280, 10});
-    rotarDibujable(naveMaxRotacion, 0);
-    struct Dibujable* nave_propulsion_maxRotacion = crearDibujable(&Nave_Propulsion_Maxima);
-    rotarDibujable(nave_propulsion_maxRotacion, 0);
-    trasladarDibujable(nave_propulsion_maxRotacion, (struct Punto){280, 10});
-    escalarDibujable(nave_propulsion_maxRotacion, 2);
-    escalarDibujable(naveMaxRotacion, 2);
-
-    // Probar palabra
-    struct Palabra* letras = crear_palabra((struct Punto){20, 100});
-    agregar_letra(letras, &Letra_A_Base);
-    agregar_letra(letras, &Letra_B_Base);
-    agregar_letra(letras, &Letra_C_Base);
-    agregar_letra(letras, &Letra_D_Base);
-    agregar_letra(letras, &Letra_E_Base);
-    agregar_letra(letras, &Letra_F_Base);
-    agregar_letra(letras, &Letra_G_Base);
-    agregar_letra(letras, &Letra_H_Base);
-    agregar_letra(letras, &Letra_I_Base);
-    agregar_letra(letras, &Letra_J_Base);
-    agregar_letra(letras, &Letra_K_Base);
-    agregar_letra(letras, &Letra_L_Base);
-    agregar_letra(letras, &Letra_M_Base);
-    agregar_letra(letras, &Letra_N_Base);
-    agregar_letra(letras, &Letra_O_Base);
-    agregar_letra(letras, &Letra_P_Base);
-    agregar_letra(letras, &Letra_Q_Base);
-    agregar_letra(letras, &Letra_R_Base);
-    agregar_letra(letras, &Letra_S_Base);
-    agregar_letra(letras, &Letra_T_Base);
-    agregar_letra(letras, &Letra_U_Base);
-    agregar_letra(letras, &Letra_V_Base);
-    agregar_letra(letras, &Letra_W_Base);
-    agregar_letra(letras, &Letra_X_Base);
-    agregar_letra(letras, &Letra_Y_Base);
-    agregar_letra(letras, &Letra_Z_Base);
-
-    struct Palabra* numeros = crear_palabra((struct Punto){20, 140});
-    agregar_letra(numeros, &Numero_0_Base);
-    agregar_letra(numeros, &Numero_1_Base);
-    agregar_letra(numeros, &Numero_2_Base);
-    agregar_letra(numeros, &Numero_3_Base);
-    agregar_letra(numeros, &Numero_4_Base);
-    agregar_letra(numeros, &Numero_5_Base);
-    agregar_letra(numeros, &Numero_6_Base);
-    agregar_letra(numeros, &Numero_7_Base);
-    agregar_letra(numeros, &Numero_8_Base);
-    agregar_letra(numeros, &Numero_9_Base);
-
-    // Dibujar los dibujables
-    dibujarDibujable(hdc, naveMaxRotacion);
-    dibujarDibujable(hdc, nave_propulsion_maxRotacion);
-
-    dibujar_palabra(letras, hdc);
-    dibujar_palabra(numeros, hdc);
 }
 
 // Función de ventana
@@ -84,6 +33,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     switch (uMsg) {
         case WM_CREATE:
             SetTimer(hwnd, timer, intervalo_fisicas_ms, NULL);
+
             break;
 
         case WM_TIMER:
@@ -157,8 +107,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     HWND hwnd = CreateWindowEx(0, "RasterWindow", "VentanaPruebas",
                                WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-                               500, 500, NULL, NULL, hInstance, NULL);
+                               1024, 768, NULL, NULL, hInstance, NULL);
 
+    inicializar_aleatoriedad(); // Inicializar rand
     if (!hwnd) return 0;
     ShowWindow(hwnd, nCmdShow);
 

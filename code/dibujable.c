@@ -1,7 +1,8 @@
 #include "dibujable.h"
+#include <stdio.h>
 
 
-struct Dibujable* crearDibujable(const struct DibujableConstante* constante) {
+struct Dibujable* crearDibujable(struct DibujableConstante* constante) {
     // Reservar memoria para el Dibujable
     struct Dibujable* dibujable = (struct Dibujable*)malloc(sizeof(struct Dibujable));
     if (!dibujable) return NULL;  // Si falla malloc(), retorna NULL

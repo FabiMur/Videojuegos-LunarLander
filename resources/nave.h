@@ -3,8 +3,8 @@
 
 #include "../code/dibujable.h"
 
-#define CENTRO_CONST_NAVE {11, 5}
-#define ANCHURA_NAVE 22
+#define CENTRO_CONST_NAVE {9, 5}
+#define ANCHURA_NAVE 18
 #define ALTURA_NAVE 18
 
 // nave.h

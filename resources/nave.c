@@ -5,11 +5,11 @@
 const struct DibujableConstante Nave_Base = {
     CENTRO_CONST_NAVE,
     (struct Punto[]){
-        {0, ALTURA_NAVE}, {2, ALTURA_NAVE}, {3, ALTURA_NAVE}, {4, 12}, {4, 10}, // 0-4
-        {8, 10}, {6, 8}, {6, 2}, {8, 0}, {14, 0}, // 5-9
-        {16, 2}, {16, 8}, {14, 10}, {18, 10}, {18, 12}, // 10-14
-        {20, ALTURA_NAVE}, {19, ALTURA_NAVE}, {ANCHURA_NAVE, ALTURA_NAVE}, {8, 12}, {6, 16}, // 15-19
-        {7, ALTURA_NAVE}, {14, 12}, {16, 16}, {15, ALTURA_NAVE} // 20-23
+        {0, ALTURA_NAVE}, {1, ALTURA_NAVE}, {2, ALTURA_NAVE}, {3, 12}, {3, 10}, // 0-4
+        {6, 10}, {4, 8}, {4, 2}, {6, 0}, {12, 0}, // 5-9
+        {14, 2}, {14, 8}, {12, 10}, {15, 10}, {15, 12}, // 10-14
+        {17, ALTURA_NAVE}, {16, ALTURA_NAVE}, {ANCHURA_NAVE, ALTURA_NAVE}, {6, 12}, {4, 16}, // 15-19
+        {5, ALTURA_NAVE}, {12, 12}, {14, 16}, {13, ALTURA_NAVE} // 20-23
     },
     (struct UnionAristas[]){
         {0, 1}, {1, 2}, {1, 3}, // Pata izq (3)
@@ -25,8 +25,8 @@ const struct DibujableConstante Nave_Base = {
 const struct DibujableConstante Nave_Propulsion_Maxima = {
     CENTRO_CONST_NAVE,
     (struct Punto[]){
-        {6, 16}, // 19
-        {16, 16}, // 22
+        {4, 16}, // 19
+        {14, 16}, // 22
         {11, 48} // Centro
     },
     (struct UnionAristas[]){
@@ -39,8 +39,8 @@ const struct DibujableConstante Nave_Propulsion_Maxima = {
 const struct DibujableConstante Nave_Propulsion_Media = {
     CENTRO_CONST_NAVE,
     (struct Punto[]){
-        {6, 16}, // 19
-        {16, 16}, // 22
+        {4, 16}, // 19
+        {14, 16}, // 22
         {11, 38} // Centro
     },
     (struct UnionAristas[]){
@@ -53,8 +53,8 @@ const struct DibujableConstante Nave_Propulsion_Media = {
 const struct DibujableConstante Nave_Propulsion_Minima = {
     CENTRO_CONST_NAVE,
     (struct Punto[]){
-        {6, 16}, // 19
-        {16, 16}, // 22
+        {4, 16}, // 19
+        {14, 16}, // 22
         {11, 28} // Centro
     },
     (struct UnionAristas[]){
