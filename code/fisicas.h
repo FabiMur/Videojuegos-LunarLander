@@ -19,6 +19,7 @@ struct objetoFisico {
     float velocidad[2];
     float aceleracion[2];
     int masa;
+	uint16_t rotacion;
 };
 
 void destruirObjetoFisico(struct objetoFisico* objeto);
@@ -26,11 +27,10 @@ void destruirObjetoFisico(struct objetoFisico* objeto);
 void calcularFisicas(struct objetoFisico* objeto);
 
 void propulsar();
-/*
+
 void girar_izquierda();
 
 void girar_derecha();
-*/
 
 uint8_t obtener_propulsor();
 

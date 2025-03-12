@@ -1,6 +1,9 @@
 #include "fisicas.h"
+#include "partida.h"
 
 static uint8_t propulsor = 0;
+static uint8_t orden_girar_izquierda = 0;
+static uint8_t orden_girar_derecha = 0;
 
 void destruirObjetoFisico(struct objetoFisico* objeto){
     destruirDibujable(objeto -> objeto);
@@ -8,6 +11,17 @@ void destruirObjetoFisico(struct objetoFisico* objeto){
 }
 
 void calcularFisicas(struct objetoFisico* elemento){
+	if(orden_girar_izquierda && !orden_girar_derecha){
+		elemento -> rotacion = (elemento -> rotacion - ANGULO_ROTACION) % 360;
+		rotar_nave(0);
+	}
+	else if (!orden_girar_izquierda && orden_girar_derecha){
+		elemento -> rotacion = (elemento -> rotacion + ANGULO_ROTACION) % 360;
+		rotar_nave(1);
+	}
+	orden_girar_izquierda = 0;
+	orden_girar_derecha = 0;
+
 	if(propulsor){
 		elemento -> aceleracion[1] += propulsor_m_ms;
 	}
@@ -48,14 +62,14 @@ void propulsar(){
 	}
 }
 
-/*
-void girar_izquierda(){
 
+void girar_izquierda(){
+	orden_girar_izquierda = 1;
 }
 
 void girar_derecha(){
-
-}*/
+	orden_girar_derecha = 1;
+}
 
 uint8_t obtener_propulsor(){
 	return propulsor;

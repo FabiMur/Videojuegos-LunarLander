@@ -35,10 +35,10 @@ void manejar_tecla(int tecla){
                 propulsar();
             }
             else if(tecla == IZQUIERDA){
-                // girar_izquierda();
+                girar_izquierda();
             }
             else if(tecla == DERECHA){
-                // girar_derecha();
+                girar_derecha();
             }
             break;
 

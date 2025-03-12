@@ -14,6 +14,8 @@
 
 void dibujar_escena(HDC hdc);
 
+void rotar_nave(uint8_t direccion);
+
 void manejar_instante_partida();
 
 void inicializarPartida();

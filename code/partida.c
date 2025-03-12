@@ -44,6 +44,13 @@ void dibujar_escena(HDC hdc){
 	}
 }
 
+void rotar_nave(uint8_t direccion){
+	rotarDibujable(nave -> objeto, direccion);
+	rotarDibujable(motor_debil, direccion);
+	rotarDibujable(motor_medio, direccion);
+	rotarDibujable(motor_fuerte, direccion);
+}
+
 void manejar_instante_partida(){
     if(fisicas == ACTIVADAS) calcularFisicas(nave);
 }
@@ -64,6 +71,7 @@ void comenzarPartida(){
     nave -> aceleracion[0] = 0;
     nave -> aceleracion[1] = 0;
     nave -> masa = masa_nave;
+	nave -> rotacion = 0;
     trasladarDibujable(nave -> objeto, (struct Punto){50, 50});
 
 	motor_debil = crearDibujable(&Nave_Propulsion_Minima);
