@@ -1,5 +1,7 @@
 #include "partida.h"
 #include "../resources/nave.h"
+#include "../resources/superficie_lunar.h"
+#include "gestor_plataformas.h"
 
 #define fuel_por_moneda 500
 #define masa_nave 1000
@@ -19,24 +21,31 @@ struct objetoFisico* nave = NULL;
 struct Dibujable* motor_debil = NULL;
 struct Dibujable* motor_medio = NULL;
 struct Dibujable* motor_fuerte = NULL;
+struct Dibujable* terreno = NULL;
+struct Plataforma* plataformas_partida = NULL;
+uint8_t numero_plataformas = 0;
 
 static int combustible = 0;
 static uint8_t fisicas = DESACTIVADAS;
 
 void dibujar_escena(HDC hdc){
     dibujarDibujable(hdc, nave -> objeto);
+	dibujarDibujable(hdc, terreno);
+	for(uint8_t i = 0; i < numero_plataformas; i++){
+		dibujar_plataforma(hdc, plataformas_partida[i]);
+	}
 
 	switch(obtener_propulsor()){
 		case 1:
-			colocarDibujable(motor_debil, nave -> objeto -> origen);
+			colocar_dibujable(motor_debil, nave -> objeto -> origen);
 			dibujarDibujable(hdc, motor_debil);
 			break;
 		case 2:
-			colocarDibujable(motor_medio, nave -> objeto -> origen);
+			colocar_dibujable(motor_medio, nave -> objeto -> origen);
 			dibujarDibujable(hdc, motor_medio);
 			break;
 		case 3:
-			colocarDibujable(motor_fuerte, nave -> objeto -> origen);
+			colocar_dibujable(motor_fuerte, nave -> objeto -> origen);
 			dibujarDibujable(hdc, motor_fuerte);
 			break;
 		default:
@@ -57,6 +66,8 @@ void manejar_instante_partida(){
 
 void inicializarPartida(){
     combustible = 0;
+	terreno = crearDibujable(&Terreno);
+	plataformas_partida = generar_plataformas(&Terreno, &numero_plataformas);
 }
 
 void anyadirMoneda(){

@@ -52,16 +52,8 @@ void trasladarDibujable(struct Dibujable* dibujable, struct Punto traslacion){
 
 void colocar_dibujable(struct Dibujable* dibujable, struct Punto destino){
     if (!dibujable->puntos) return;
-    uint16_t diferencia_x = destino.x - dibujable->origen.x;
-    uint16_t diferencia_y = destino.y - dibujable->origen.y; 
-    dibujable->origen.x = destino.x;
-    dibujable->origen.y = destino.y;
-    for(uint8_t i = 0; i < dibujable->num_puntos; i++) {
-        dibujable->puntos[i] = (struct Punto){
-            dibujable->puntos[i].x + diferencia_x,
-            dibujable->puntos[i].y + diferencia_y
-        };
-    }
+    struct Punto traslacion = (struct Punto){ destino.x - dibujable -> origen.x, destino.y - dibujable -> origen.y};
+    trasladarDibujable(dibujable, traslacion);
 }
 
 void colocar_palabra(struct Palabra* palabra, struct Punto destino){

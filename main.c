@@ -25,7 +25,7 @@ void AttachConsoleToStdout() {
  * @param hdc
  */
 void pruebasDibujables(HDC hdc){
-
+    
 }
 
 // Función de ventana

@@ -2,7 +2,7 @@
 #include "../code/palabra.h"
 #include "caracteres.h"
 
-// Hay 14 plataformas posibles
+
 
 const struct DibujableConstante Terreno = {
     {ANCHURA_TERRENO/2, ALTURA_TERRENO},

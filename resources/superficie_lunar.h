@@ -12,12 +12,17 @@
 #define PLATAFORMA_X4 10
 #define PLATAFORMA_X5 8
 
-extern const struct DibujableConstante Terreno;
+// Declaración anticipada de los structs que se referencian
+struct DibujableConstante;
+struct Palabra;
 
+// Definición de la estructura Plataforma
 struct Plataforma {
     struct DibujableConstante* linea;
     uint8_t bonificador;
     struct Palabra* palabra;
 };
+
+extern const struct DibujableConstante Terreno;
 
 #endif // SUPERFICIE_LUNAR_H
