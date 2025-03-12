@@ -22,7 +22,7 @@ void inicializar_aleatoriedad() {
  * 
  * @return todas las aristas que se corresponden a plataformas potenciales
  */
-struct Arista* obtener_aristas_posibles(struct DibujableConstante* terreno, uint8_t* num_aristas) {
+struct Arista* obtener_aristas_posibles(const struct DibujableConstante* terreno, uint8_t* num_aristas) {
     if (!terreno->puntos) return NULL;
 
     // Reservar espacio para un número máximo de aristas posibles
@@ -60,7 +60,7 @@ struct Arista* obtener_aristas_posibles(struct DibujableConstante* terreno, uint
  * 
  * @return valor de la bonificacion dada a la plataforma
  */
-uint8_t calcular_bonificador(struct Arista arista, struct DibujableConstante** b){
+uint8_t calcular_bonificador(struct Arista arista, const struct DibujableConstante** b){
     uint16_t diferencia = arista.destino->x - arista.origen->x;
     if(diferencia <= PLATAFORMA_X5) {
         *b = &Letra_A_Base;
@@ -141,7 +141,7 @@ void generar_aleatorios(uint8_t* resultado, uint8_t num_valores, uint8_t max_val
  * 
  */
 struct Palabra* generar_palabra_plataforma(struct Arista arista, uint8_t* bonificador) {
-    struct DibujableConstante* caracter_bonificador;
+    const struct DibujableConstante* caracter_bonificador;
     *bonificador = calcular_bonificador(arista, &caracter_bonificador);
     
     // Calcular origen de la palabra (palabra de dos letras)

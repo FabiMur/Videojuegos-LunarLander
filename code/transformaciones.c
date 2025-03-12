@@ -4,9 +4,9 @@
 
 struct Rotacion {
     const uint8_t grados;
-    const double radianes;
-    const double seno;
-    const double coseno;
+    const float radianes;
+    const float seno;
+    const float coseno;
 };
 
 // Valores precomputados de sin(15°) y cos(15°)
@@ -52,8 +52,8 @@ void trasladarDibujable(struct Dibujable* dibujable, struct Punto traslacion){
 
 void colocar_dibujable(struct Dibujable* dibujable, struct Punto destino){
     if (!dibujable->puntos) return;
-    uint16_t diferencia_x = destino.x - dibujable->origen.x;
-    uint16_t diferencia_y = destino.y - dibujable->origen.y; 
+    float diferencia_x = destino.x - dibujable->origen.x;
+    float diferencia_y = destino.y - dibujable->origen.y; 
     dibujable->origen.x = destino.x;
     dibujable->origen.y = destino.y;
     for(uint8_t i = 0; i < dibujable->num_puntos; i++) {
@@ -69,13 +69,13 @@ void colocar_palabra(struct Palabra* palabra, struct Punto destino){
     palabra->origen.x = destino.x;
     palabra->origen.y = destino.y;
 
-    uint8_t separacion_centros = (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER) * palabra->factor_escalado_x;
+    float separacion_centros = (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER) * palabra->factor_escalado_x;
     if(separacion_centros < 1) {
         separacion_centros = 1;
     }
 
     for(uint8_t i = 0; i < palabra -> num_letras; i++) {
-        int16_t nuevo_x = destino.x + separacion_centros * i;
+        float nuevo_x = destino.x + separacion_centros * i;
         colocar_dibujable(&palabra->letras[i], (struct Punto){nuevo_x, destino.y});
     } 
 }
@@ -96,9 +96,9 @@ void colocarDibujable(struct Dibujable* dibujable, struct Punto destino){
  * @param sentido 1 para horario, -1 para antihorario
  */
 void rotarPuntoDadoCentro(struct Punto* punto, struct Punto centro, int8_t sentido){
-    int16_t x = punto->x - centro.x;
-    int16_t y = punto->y - centro.y;
-    int16_t nuevaX, nuevaY;
+    float x = punto->x - centro.x;
+    float y = punto->y - centro.y;
+    float nuevaX, nuevaY;
 
     if(ANGULO_ROTACION == 15){
         nuevaX = x * Rotacion_15.coseno - y * sentido * Rotacion_15.seno;
@@ -129,21 +129,21 @@ void rotarDibujable(struct Dibujable* dibujable, unsigned char direccion){
 }
 
 
-void escalarXPuntoDadoCentro(struct Punto* punto, struct Punto centro, double factor){
-    int16_t x = punto->x - centro.x;
-    punto->x = (int16_t)(x * factor + centro.x);
+void escalarXPuntoDadoCentro(struct Punto* punto, struct Punto centro, float factor){
+    float x = punto->x - centro.x;
+    punto->x = (float)(x * factor + centro.x);
 }
 
-void escalarYPuntoDadoCentro(struct Punto* punto, struct Punto centro, double factor){
-    int16_t y = punto->y - centro.y;
-    punto->y = (int16_t)(y * factor + centro.y);
+void escalarYPuntoDadoCentro(struct Punto* punto, struct Punto centro, float factor){
+    float y = punto->y - centro.y;
+    punto->y = (float)(y * factor + centro.y);
 }
 
-void escalarDibujable(struct Dibujable* dibujable, double factor){
+void escalarDibujable(struct Dibujable* dibujable, float factor){
     escalarDibujableDadosEjes(dibujable, factor, factor);
 }
 
-void escalarDibujableDadosEjes(struct Dibujable* dibujable, double factorX, double factorY){
+void escalarDibujableDadosEjes(struct Dibujable* dibujable, float factorX, float factorY){
     if (!dibujable->puntos) return;
     for(uint8_t i = 0; i < dibujable->num_puntos; i++){
         escalarXPuntoDadoCentro(&dibujable->puntos[i], dibujable->origen, factorX);
@@ -152,7 +152,7 @@ void escalarDibujableDadosEjes(struct Dibujable* dibujable, double factorX, doub
 }
         
 
-void escalar_palabra_centrada(struct Palabra* palabra, double factor){
+void escalar_palabra_centrada(struct Palabra* palabra, float factor){
     escalar_palabra_centrada_dados_ejes(palabra, factor, factor);
 }
 
@@ -164,7 +164,7 @@ void escalar_palabra_centrada(struct Palabra* palabra, double factor){
  * @param factorX factor de escalado en el eje X
  * @param factorY factor de escalado en el eje Y
  */
-void escalar_palabra(struct Palabra* palabra, double factorX, double factorY) {
+void escalar_palabra(struct Palabra* palabra, float factorX, float factorY) {
     for(uint8_t i = 0; i < palabra -> num_letras; i++){
         if(!palabra->letras[i].puntos) return;
         for(uint8_t j = 0; j < palabra->letras[i].num_puntos; j++){
@@ -175,15 +175,15 @@ void escalar_palabra(struct Palabra* palabra, double factorX, double factorY) {
 }
 
 
-void escalar_palabra_centrada_dados_ejes(struct Palabra* palabra, double factorX, double factorY){
+void escalar_palabra_centrada_dados_ejes(struct Palabra* palabra, float factorX, float factorY){
     if(!palabra->letras) return;
 
     // Establecer los factores de escalado
     palabra->factor_escalado_x = factorX;
     palabra->factor_escalado_y = factorY;
 
-    int8_t distancia_origen_a_centro = ((palabra->num_letras * ANCHURA_CARACTER_MAX) + ((palabra->num_letras-1)* SEPARACION_CARACTER) - ANCHURA_CARACTER_MAX) / 2;
-    int16_t nuevo_origen_palabra_x = (palabra->origen.x + distancia_origen_a_centro) - (distancia_origen_a_centro * factorX);
+    float distancia_origen_a_centro = ((palabra->num_letras * ANCHURA_CARACTER_MAX) + ((palabra->num_letras-1)* SEPARACION_CARACTER) - ANCHURA_CARACTER_MAX) / 2;
+    float nuevo_origen_palabra_x = (palabra->origen.x + distancia_origen_a_centro) - (distancia_origen_a_centro * factorX);
     
     // Generar el escalado de los caracteres de la palabra
     escalar_palabra(palabra, factorX, factorY);

@@ -14,5 +14,6 @@
         "limits": "c",
         "new": "c"
     },
-	"C_Cpp.default.compilerPath": "C:/mingw64/bin/gcc.exe"
+    "C_Cpp.default.compilerPath": "C:/mingw64/bin/gcc.exe",
+    "makefile.makePath": "mingw32-make"
 }

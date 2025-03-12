@@ -10,8 +10,8 @@ struct Palabra {
     struct Dibujable* letras;
     uint8_t num_letras;
     struct Punto origen; // Se corresponde con el origen de la primera letra
-    double factor_escalado_x;
-    double factor_escalado_y;
+    float factor_escalado_x;
+    float factor_escalado_y;
 };
 
 /**
@@ -27,7 +27,7 @@ struct Palabra* crear_palabra(struct Punto origen);
  * @param palabra Palabra a la que se le agregara la letra
  * @param letra Letra a agregar
  */
-void agregar_letra(struct Palabra* palabra, struct DibujableConstante* letra);
+void agregar_letra(struct Palabra* palabra, const struct DibujableConstante* letra);
 
 
 int16_t calcular_centro_x_palabra(struct Palabra* palabra);

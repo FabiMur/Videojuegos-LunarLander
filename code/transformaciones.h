@@ -44,7 +44,7 @@ void rotarDibujable(struct Dibujable* dibujable, unsigned char direccion);
  * @param dibujable Dibujable a escalar
  * @param factor Factor de escala
  */
-void escalarDibujable(struct Dibujable* dibujable, double factor);
+void escalarDibujable(struct Dibujable* dibujable, float factor);
 
 /**
  * @brief Escala una palabra en el eje x e y
@@ -52,7 +52,7 @@ void escalarDibujable(struct Dibujable* dibujable, double factor);
  * @param palabra Palabra a escalar
  * @param factor Factor de escala
  */
-void escalar_palabra_centrada(struct Palabra* palabra, double factor);
+void escalar_palabra_centrada(struct Palabra* palabra, float factor);
 
 /**
  * @brief Escala un dibujable en el eje x y el eje y dados los factores de
@@ -62,7 +62,7 @@ void escalar_palabra_centrada(struct Palabra* palabra, double factor);
  * @param factorX Factor de escala en el eje x
  * @param factorY Factor de escala en el eje y
  */
-void escalarDibujableDadosEjes(struct Dibujable* dibujable, double factorX, double factorY);
+void escalarDibujableDadosEjes(struct Dibujable* dibujable, float factorX, float factorY);
 
 /**
  * @brief Escala una palabra en el eje x y el eje y dados los factores de
@@ -72,6 +72,6 @@ void escalarDibujableDadosEjes(struct Dibujable* dibujable, double factorX, doub
  * @param factorX Factor de escala en el eje x
  * @param factorY Factor de escala en el eje y
  */
-void escalar_palabra_centrada_dados_ejes(struct Palabra* palabra, double factorX, double factorY);
+void escalar_palabra_centrada_dados_ejes(struct Palabra* palabra, float factorX, float factorY);
 
 #endif // TRANSFORMACIONES_H
