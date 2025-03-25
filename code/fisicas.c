@@ -24,9 +24,8 @@ void calcularFisicas(struct objetoFisico* elemento){
 	orden_girar_derecha = 0;
 
 	if(propulsor){
-		int indice_rotacion = elemento -> rotacion / ANGULO_ROTACION;
-		elemento -> aceleracion[0] += propulsor_m_ms * SIN_TABLA[indice_rotacion];
-		elemento -> aceleracion[1] += propulsor_m_ms * COS_TABLA[indice_rotacion];
+		elemento -> aceleracion[0] += propulsor_m_ms * SIN_TABLA[elemento -> rotacion];
+		elemento -> aceleracion[1] += propulsor_m_ms * COS_TABLA[elemento -> rotacion];
 	}
 
     // Calculo de la aceleracion

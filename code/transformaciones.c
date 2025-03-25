@@ -2,34 +2,6 @@
 
 #include "../resources/caracteres.h"
 
-struct Rotacion {
-    const uint8_t grados;
-    const float radianes;
-    const float seno;
-    const float coseno;
-};
-
-// Valores precomputados de sin(15°) y cos(15°)
-const struct Rotacion Rotacion_15 = {
-    15,
-    0.261799,  // 15 * (π / 180)
-    0.258819,  // sin(15°)
-    0.965926   // cos(15°)
-};
-
-const struct Rotacion Rotacion_30 = {
-    30,
-    0.523599,  // 30 * (π / 180)
-    0.5,       // sin(30°)
-    0.866025   // cos(30°)
-};
-
-const struct Rotacion Rotacion_45 = {
-    45,
-    0.785398,  // 45 * (π / 180)
-    0.707107,  // sin(45°)
-    0.707107   // cos(45°)
-};
 
 /**
  * @brief Traslada un punto en la dirección indicada
@@ -130,7 +102,6 @@ void escalarDibujableDadosEjes(struct Dibujable* dibujable, float factorX, float
     }
 }
         
-
 void escalar_palabra_centrada(struct Palabra* palabra, float factor){
     escalar_palabra_centrada_dados_ejes(palabra, factor, factor);
 }
@@ -173,3 +144,7 @@ void escalar_palabra_centrada_dados_ejes(struct Palabra* palabra, float factorX,
 
 
 
+/*
+
+void traslacion_terreno(struct )
+*/
