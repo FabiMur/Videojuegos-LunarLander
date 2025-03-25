@@ -92,22 +92,9 @@ void rotarPuntoDadoCentro(struct Punto* punto, struct Punto centro, int8_t senti
     float y = punto->y - centro.y;
     float nuevaX, nuevaY;
 
-    if(ANGULO_ROTACION == 15){
-        nuevaX = x * Rotacion_15.coseno - y * sentido * Rotacion_15.seno;
-        nuevaY = x * sentido * Rotacion_15.seno + y * Rotacion_15.coseno;
-    }
-    else if(ANGULO_ROTACION == 30){
-        nuevaX = x * Rotacion_30.coseno - y * sentido * Rotacion_30.seno;
-        nuevaY = x * sentido * Rotacion_30.seno + y * Rotacion_30.coseno;
-    }
-    else if(ANGULO_ROTACION == 45){
-        nuevaX = x * Rotacion_45.coseno - y * sentido * Rotacion_45.seno;
-        nuevaY = x * sentido * Rotacion_45.seno + y * Rotacion_45.coseno;
-    }
-    else{
-        nuevaX = x * cos(ANGULO_ROTACION) - y * sentido * sin(ANGULO_ROTACION);
-        nuevaY = x * sentido * sin(ANGULO_ROTACION) + y * cos(ANGULO_ROTACION);
-    }
+    nuevaX = x * COS_TABLA[ANGULO_ROTACION] - y * sentido * SIN_TABLA[ANGULO_ROTACION];
+    nuevaY = x * sentido * SIN_TABLA[ANGULO_ROTACION] + y * COS_TABLA[ANGULO_ROTACION];
+    
     punto->x = (nuevaX + centro.x);
     punto->y = (nuevaY + centro.y);
 }

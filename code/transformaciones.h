@@ -2,14 +2,11 @@
 #ifndef TRANSFORMACIONES_H
 #define TRANSFORMACIONES_H
 
-#define ANGULO_ROTACION 15 // 15, 30 o 45
-
 #include <stdio.h>
-#include <math.h>
 
 #include "dibujable.h"
 #include "palabra.h"
-
+#include "constantes.h"
 
 /**
  * @brief Traslada un dibujable en la dirección indicada

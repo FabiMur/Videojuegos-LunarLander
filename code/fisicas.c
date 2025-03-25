@@ -1,21 +1,10 @@
 #include "fisicas.h"
+
 #include "partida.h"
 
 static uint8_t propulsor = 0;
 static uint8_t orden_girar_izquierda = 0;
 static uint8_t orden_girar_derecha = 0;
-
-const float SIN_TABLA[24] = {	
-    0.0000, 0.2588, 0.5000, 0.7071, 0.8660, 0.9659, 1.0000, 0.9659,
-    0.8660, 0.7071, 0.5000, 0.2588, 0.0000, -0.2588, -0.5000, -0.7071,
-    -0.8660, -0.9659, -1.0000, -0.9659, -0.8660, -0.7071, -0.5000, -0.2588
-};
-
-const float COS_TABLA[24] = {	
-    1.0000, 0.9659, 0.8660, 0.7071, 0.5000, 0.2588, 0.0000, -0.2588,
-    -0.5000, -0.7071, -0.8660, -0.9659, -1.0000, -0.9659, -0.8660, -0.7071,
-    -0.5000, -0.2588, 0.0000, 0.2588, 0.5000, 0.7071, 0.8660, 0.9659
-};
 
 void destruirObjetoFisico(struct objetoFisico* objeto){
     destruirDibujable(objeto -> objeto);
