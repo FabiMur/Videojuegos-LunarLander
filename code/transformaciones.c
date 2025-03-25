@@ -114,7 +114,7 @@ void rotarPuntoDadoCentro(struct Punto* punto, struct Punto centro, int8_t senti
 
 void rotarDibujable(struct Dibujable* dibujable, unsigned char direccion){
     if (!dibujable->puntos) return;
-    int8_t sentido = (direccion == 0) ? 1 : -1;
+    int8_t sentido = (direccion == 0) ? -1 : 1;
     for(uint8_t i = 0; i < dibujable->num_puntos; i++){
         rotarPuntoDadoCentro(&dibujable->puntos[i], dibujable->origen, sentido);
     }
