@@ -1,6 +1,5 @@
 #include "fisicas.h"
 #include "partida.h"
-#include <stdio.h>
 
 static uint8_t propulsor = 0;
 static uint8_t orden_girar_izquierda = 0;
@@ -37,10 +36,6 @@ void calcularFisicas(struct objetoFisico* elemento){
 
 	if(propulsor){
 		int indice_rotacion = elemento -> rotacion / ANGULO_ROTACION;
-		fprintf(stderr, "Rotacion: %d\n", elemento -> rotacion);
-		fprintf(stderr, "Indice: %d\n", indice_rotacion);
-		fprintf(stderr, "Seno: %f\n", SIN_TABLA[indice_rotacion]);
-		fprintf(stderr, "Coseno: %f\n", COS_TABLA[indice_rotacion]);
 		elemento -> aceleracion[0] += propulsor_m_ms * SIN_TABLA[indice_rotacion];
 		elemento -> aceleracion[1] += propulsor_m_ms * COS_TABLA[indice_rotacion];
 	}

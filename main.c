@@ -76,11 +76,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		break;
 
         case WM_KEYDOWN: {
-            if(wParam == VK_UP) manejar_tecla(ARRIBA);
-            if(wParam == VK_LEFT) manejar_tecla(IZQUIERDA);
-            if(wParam == VK_RIGHT) manejar_tecla(DERECHA);
-            if(wParam == VK_SPACE) manejar_tecla(ESPACIO);
-            if(wParam == 0x35 || wParam == VK_NUMPAD5) manejar_tecla(MONEDA);
+            if (GetAsyncKeyState(VK_UP) & 0x8000) manejar_tecla(ARRIBA);
+            if (GetAsyncKeyState(VK_LEFT) & 0x8000) manejar_tecla(IZQUIERDA);
+            if (GetAsyncKeyState(VK_RIGHT) & 0x8000) manejar_tecla(DERECHA);
+            if (GetAsyncKeyState(VK_SPACE) & 0x8000) manejar_tecla(ESPACIO);
+            if (GetAsyncKeyState(0x35) & 0x8000 || GetAsyncKeyState(VK_NUMPAD5) & 0x8000) manejar_tecla(MONEDA);
         }
 		break;
         
