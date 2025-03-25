@@ -7,6 +7,13 @@
 #include <windows.h>
 
 #define timer 1
+#define tamano_inicial_pantalla_X 1024
+#define tamano_inicial_pantalla_Y 768
+
+uint32_t tamano_pantalla_X = 1024;
+uint32_t tamano_pantalla_Y = 768;
+float factor_resized_X = 1.0;
+float factor_resized_Y = 1.0;
 
 uint8_t primera_vez = 1;
 uint8_t num_plataformas = 0;
@@ -42,7 +49,21 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 InvalidateRect(hwnd, NULL, FALSE); // Fuerza un repintado 
             }
         break;
+        case WM_SIZE:
+            int width = LOWORD(lParam);  // Nuevo ancho de la ventana
+            int height = HIWORD(lParam); // Nueva altura de la ventana
+            
+            // Detectar el tipo de cambio de tamaño
+            if ((wParam == SIZE_MAXIMIZED) || (wParam == SIZE_RESTORED)){
+                printf("Ventana redimensionada");
+    
+                factor_resized_X = (float)width / tamano_pantalla_X;
+                factor_resized_Y = (float)height / tamano_pantalla_Y;
 
+            } else if (wParam == SIZE_MINIMIZED) {
+                printf("Ventana Ninimizada");
+            } 
+        break;
 		case WM_PAINT: {
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hwnd, &ps);
@@ -105,9 +126,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     RegisterClass(&wc);
 
+    // Creacion del rectangulo que será la pantalla con los valores iniciales
+    RECT rc = {0, 0, tamano_inicial_pantalla_X, tamano_inicial_pantalla_Y};
+    // Extender el rectangulo para que asuma el tamaño de bordes y cabecera
+    AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
+    int anchoVentana = rc.right - rc.left;
+    int altoVentana = rc.bottom - rc.top;
+
     HWND hwnd = CreateWindowEx(0, "RasterWindow", "VentanaPruebas",
-                               WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-                               1024, 768, NULL, NULL, hInstance, NULL);
+                            WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+                            (rc.right - rc.left), (rc.bottom - rc.top), NULL,
+                            NULL, hInstance, NULL);
 
     inicializar_aleatoriedad(); // Inicializar rand
     if (!hwnd) return 0;

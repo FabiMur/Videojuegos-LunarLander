@@ -12,7 +12,8 @@
         "type_traits": "c",
         "cmath": "c",
         "limits": "c",
-        "new": "c"
+        "new": "c",
+        "caracteres.h": "c"
     },
     "C_Cpp.default.compilerPath": "C:/mingw64/bin/gcc.exe",
     "makefile.makePath": "mingw32-make"

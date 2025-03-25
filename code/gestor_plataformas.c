@@ -274,10 +274,7 @@ struct Plataforma* generar_plataformas(const struct DibujableConstante* terreno,
             free(indices_plataformas);
             free(aristas_posibles);
         }
-        plataformas[i] = *plataforma;
-
-        // Guardar espacio para la linea
-        
+        plataformas[i] = *plataforma;        
     }
 
     // Liberar memoria
