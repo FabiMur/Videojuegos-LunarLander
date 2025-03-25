@@ -2,6 +2,7 @@
 #include "code/palabra.h"
 #include "resources/superficie_lunar.h"
 #include "code/gestor_plataformas.h"
+#include "code/variables_globales.h"
 
 #include <stdio.h>
 #include <windows.h>
@@ -12,8 +13,6 @@
 
 uint32_t tamano_pantalla_X = 1024;
 uint32_t tamano_pantalla_Y = 768;
-float factor_resized_X = 1.0;
-float factor_resized_Y = 1.0;
 
 uint8_t primera_vez = 1;
 uint8_t num_plataformas = 0;
@@ -139,6 +138,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                             NULL, hInstance, NULL);
 
     inicializar_aleatoriedad(); // Inicializar rand
+
     if (!hwnd) return 0;
     ShowWindow(hwnd, nCmdShow);
 

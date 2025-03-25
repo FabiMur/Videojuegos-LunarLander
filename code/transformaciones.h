@@ -7,6 +7,7 @@
 #include "dibujable.h"
 #include "palabra.h"
 #include "constantes.h"
+#include "../resources/superficie_lunar.h"
 
 /**
  * @brief Traslada un dibujable en la dirección indicada
@@ -71,5 +72,7 @@ void escalarDibujableDadosEjes(struct Dibujable* dibujable, float factorX, float
  * @param factorY Factor de escala en el eje y
  */
 void escalar_palabra_centrada_dados_ejes(struct Palabra* palabra, float factorX, float factorY);
+
+void escalar_plataforma_dados_ejes(struct Plataforma* plataforma, float factorX, float factorY);
 
 #endif // TRANSFORMACIONES_H

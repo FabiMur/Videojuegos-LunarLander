@@ -13,7 +13,8 @@
         "cmath": "c",
         "limits": "c",
         "new": "c",
-        "caracteres.h": "c"
+        "caracteres.h": "c",
+        "palabra.h": "c"
     },
     "C_Cpp.default.compilerPath": "C:/mingw64/bin/gcc.exe",
     "makefile.makePath": "mingw32-make"

@@ -226,9 +226,9 @@ struct Plataforma* generar_plataforma_dada_arista(struct Arista arista, struct P
     // Calculo del bonificador y generacion de la palabra
     uint8_t bonificador;
     struct Palabra* palabra = generar_palabra_plataforma(arista, &bonificador);
-    
+    struct Dibujable* linea_dibujable = crearDibujable(linea);
     // Creacion de la estrcutura plataforma
-    plataforma->linea = linea;
+    plataforma->linea = linea_dibujable;
     plataforma->bonificador = bonificador;
     plataforma->palabra = palabra;
 
@@ -287,7 +287,9 @@ struct Plataforma* generar_plataformas(const struct DibujableConstante* terreno,
 
 void dibujar_plataforma(HDC hdc, struct Plataforma plataforma){
     dibujar_palabra(plataforma.palabra, hdc);
-    struct Dibujable* dibujable_linea = crearDibujable(plataforma.linea);
-    dibujarDibujable(hdc, dibujable_linea);
-    destruirDibujable(dibujable_linea);
+    dibujarDibujable(hdc, plataforma.linea);
+
+    //struct Dibujable* dibujable_linea = crearDibujable(plataforma.linea);
+    //dibujarDibujable(hdc, dibujable_linea);
+    //destruirDibujable(dibujable_linea);
 }

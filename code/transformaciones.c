@@ -143,6 +143,12 @@ void escalar_palabra_centrada_dados_ejes(struct Palabra* palabra, float factorX,
 }
 
 
+void escalar_plataforma_dados_ejes(struct Plataforma* plataforma, float factorX, float factorY){
+    if(!plataforma->linea) return;
+    escalarDibujableDadosEjes(plataforma->linea, factorX, factorY);
+    escalar_palabra_centrada_dados_ejes(plataforma->palabra, factorX, factorY);
+}
+
 
 /*
 

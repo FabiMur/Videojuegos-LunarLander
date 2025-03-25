@@ -2,6 +2,7 @@
 #include "../resources/nave.h"
 #include "../resources/superficie_lunar.h"
 #include "gestor_plataformas.h"
+#include "variables_globales.h"
 
 #define fuel_por_moneda 500
 #define masa_nave 1000
@@ -28,7 +29,23 @@ uint8_t numero_plataformas = 0;
 static int combustible = 0;
 static uint8_t fisicas = DESACTIVADAS;
 
+
+void escalar_escena(){
+	escalarDibujableDadosEjes(terreno, factor_resized_X, factor_resized_Y);
+	escalarDibujableDadosEjes(motor_fuerte, factor_resized_X, factor_resized_Y);
+	escalarDibujableDadosEjes(motor_medio, factor_resized_X, factor_resized_Y);
+	escalarDibujableDadosEjes(motor_debil, factor_resized_X, factor_resized_Y);
+	escalarDibujableDadosEjes(nave->objeto, factor_resized_X, factor_resized_Y);
+	for(uint8_t i = 0; i < numero_plataformas; i++) {
+		escalar_plataforma_dados_ejes(&plataformas_partida[i], factor_resized_X, factor_resized_Y);
+	}
+	factor_resized_X = 1.0;
+	factor_resized_Y = 1.0;
+}
+
+
 void dibujar_escena(HDC hdc){
+	escalar_escena();
     dibujarDibujable(hdc, nave -> objeto);
 	dibujarDibujable(hdc, terreno);
 	for(uint8_t i = 0; i < numero_plataformas; i++){
