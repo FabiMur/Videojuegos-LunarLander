@@ -2,7 +2,7 @@
 
 #include "partida.h"
 
-
+static uint8_t propulsor_activado = 0;
 static uint8_t propulsor = 0;
 static uint8_t orden_girar_izquierda = 0;
 static uint8_t orden_girar_derecha = 0;
@@ -49,12 +49,14 @@ void calcularFisicas(struct objetoFisico* elemento){
 	elemento -> aceleracion[0] = 0;
 	elemento -> aceleracion[1] = 0;
 	
-	switch(propulsor){
-		case 0:
-			break;
-		default:
-			propulsor--;
-			break;
+	if(!propulsor_activado){
+		switch(propulsor){
+			case 0:
+				break;
+			default:
+				propulsor--;
+				break;
+		}
 	}
 }
 
@@ -69,6 +71,13 @@ void propulsar(){
 	}
 }
 
+void activar_propulsor(){
+	propulsor_activado = 1;
+}
+
+void desactivar_propulsor(){
+	propulsor_activado = 0;
+}
 
 void girar_izquierda(){
 	orden_girar_izquierda = 1;

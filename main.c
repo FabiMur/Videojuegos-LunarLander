@@ -47,24 +47,28 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         case WM_TIMER:
             if (wParam == timer) {
                 manejar_instante();
+                manejar_teclas();
                 InvalidateRect(hwnd, NULL, FALSE); // Fuerza un repintado 
             }
         break;
 
-        case WM_GETMINMAXINFO:
+        case WM_GETMINMAXINFO:{
+
             // Limitar tamaño de ventana minima
             MINMAXINFO* pMinMax = (MINMAXINFO*)lParam;
-
+            
             pMinMax->ptMinTrackSize.x = anchura_minima_ventana;
             pMinMax->ptMinTrackSize.y = altura_minima_ventana;
-
+            
+        }
             return 0;
     
-        case WM_SIZE:
+        case WM_SIZE:{
+
             // Cambio de tamaño de la pantalla
             int width = LOWORD(lParam);  // Nuevo ancho de la ventana
             int height = HIWORD(lParam); // Nueva altura de la ventana
-
+            
             if ((wParam == SIZE_MAXIMIZED) || (wParam == SIZE_RESTORED)){  
                 factor_resized_X = (float)width / tamano_pantalla_X;
                 factor_resized_Y = (float)height / tamano_pantalla_Y;
@@ -72,7 +76,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             tamano_pantalla_X = width;
             tamano_pantalla_Y = height;
             escalar_escena(factor_resized_X, factor_resized_Y);
-        break;
+        }
+            break;
 
 		case WM_PAINT: {
 			PAINTSTRUCT ps;
@@ -107,11 +112,20 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		break;
 
         case WM_KEYDOWN: {
-            if (GetAsyncKeyState(VK_UP) & 0x8000) manejar_tecla(ARRIBA);
-            if (GetAsyncKeyState(VK_LEFT) & 0x8000) manejar_tecla(IZQUIERDA);
-            if (GetAsyncKeyState(VK_RIGHT) & 0x8000) manejar_tecla(DERECHA);
-            if (GetAsyncKeyState(VK_SPACE) & 0x8000) manejar_tecla(ESPACIO);
-            if (GetAsyncKeyState(0x35) & 0x8000 || GetAsyncKeyState(VK_NUMPAD5) & 0x8000) manejar_tecla(MONEDA);
+            if (GetAsyncKeyState(VK_UP) & 0x8000) pulsar_tecla(ARRIBA);
+            if (GetAsyncKeyState(VK_LEFT) & 0x8000) pulsar_tecla(IZQUIERDA);
+            if (GetAsyncKeyState(VK_RIGHT) & 0x8000) pulsar_tecla(DERECHA);
+            if (GetAsyncKeyState(VK_SPACE) & 0x8000) pulsar_tecla(ESPACIO);
+            if (GetAsyncKeyState(0x35) & 0x8000 || GetAsyncKeyState(VK_NUMPAD5) & 0x8000) pulsar_tecla(MONEDA);
+        }
+		break;
+
+        case WM_KEYUP: {
+            if (!(GetAsyncKeyState(VK_UP) & 0x8000)) levantar_tecla(ARRIBA);
+            if (!(GetAsyncKeyState(VK_LEFT) & 0x8000)) levantar_tecla(IZQUIERDA);
+            if (!(GetAsyncKeyState(VK_RIGHT) & 0x8000)) levantar_tecla(DERECHA);
+            if (!(GetAsyncKeyState(VK_SPACE) & 0x8000)) levantar_tecla(ESPACIO);
+            if (!(GetAsyncKeyState(0x35) & 0x8000 || GetAsyncKeyState(VK_NUMPAD5) & 0x8000)) levantar_tecla(MONEDA);
         }
 		break;
         

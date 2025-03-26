@@ -29,6 +29,10 @@ void calcularFisicas(struct objetoFisico* objeto);
 
 void propulsar();
 
+void activar_propulsor();
+
+void desactivar_propulsor();
+
 void girar_izquierda();
 
 void girar_derecha();

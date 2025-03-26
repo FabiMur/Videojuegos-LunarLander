@@ -110,7 +110,6 @@ void dibujar_escena(HDC hdc){
 	for(uint8_t i = 0; i < numero_plataformas; i++){
 		dibujar_plataforma(hdc, plataformas_partida[i]);
 	}
-
 	switch(obtener_propulsor()){
 		case 1:
 			colocar_dibujable(motor_debil, nave -> objeto -> origen);
@@ -127,6 +126,7 @@ void dibujar_escena(HDC hdc){
 		default:
 			break;
 	}
+	
 }
 
 void rotar_nave(uint8_t direccion){

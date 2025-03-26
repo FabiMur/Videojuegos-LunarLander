@@ -3,11 +3,26 @@
 #include "fisicas.h"
 
 static int estado = PEDIR;
+static int estado_teclas[5] = {
+    0,
+    0,
+    0,
+    0,
+    0
+};
 
-void manejar_tecla(int tecla){
+void pulsar_tecla(int tecla){
+    estado_teclas[tecla] = 1;
+}
+
+void levantar_tecla(int tecla){
+    estado_teclas[tecla] = 0;
+}
+
+void manejar_teclas(){
     switch(estado){
         case PEDIR:
-            if(tecla == MONEDA){
+            if(estado_teclas[MONEDA]){
                 printf("Moneda insertada\n");
                 inicializarPartida();
                 anyadirMoneda();
@@ -16,11 +31,11 @@ void manejar_tecla(int tecla){
             break;
 
         case MENU:
-            if(tecla == MONEDA){
+            if(estado_teclas[MONEDA]){
                 printf("Moneda insertada\n");
                 anyadirMoneda();
             }
-            else if(tecla == ESPACIO){
+            else if(estado_teclas[ESPACIO]){
                 printf("Partida Comenzada\n");
                 comenzarPartida();
                 estado = JUGANDO;
@@ -28,16 +43,20 @@ void manejar_tecla(int tecla){
             break;
 
         case JUGANDO:
-            if(tecla == MONEDA){
+            if(estado_teclas[MONEDA]){
                 anyadirMoneda();
             }
-            else if(tecla == ARRIBA){
+            if(estado_teclas[ARRIBA]){
+                activar_propulsor();
                 propulsar();
+            } else {
+                desactivar_propulsor();
             }
-            else if(tecla == IZQUIERDA){
+
+            if(estado_teclas[IZQUIERDA]){
                 girar_izquierda();
             }
-            else if(tecla == DERECHA){
+            if(estado_teclas[DERECHA]){
                 girar_derecha();
             }
             break;

@@ -24,7 +24,11 @@ enum estado {
     JUGANDO
 };
 
-void manejar_tecla(int tecla);
+void pulsar_tecla(int tecla);
+
+void levantar_tecla(int tecla);
+
+void manejar_teclas();
 
 void manejar_instante();
 
