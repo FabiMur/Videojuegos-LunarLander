@@ -12,6 +12,8 @@
 #include "../resources/nave.h"
 #include "../resources/caracteres.h"
 
+extern int combustible;
+
 void dibujar_escena(HDC hdc);
 
 void rotar_nave(uint8_t direccion);

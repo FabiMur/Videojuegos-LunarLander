@@ -2,6 +2,7 @@
 
 #include "partida.h"
 
+
 static uint8_t propulsor = 0;
 static uint8_t orden_girar_izquierda = 0;
 static uint8_t orden_girar_derecha = 0;
@@ -23,9 +24,10 @@ void calcularFisicas(struct objetoFisico* elemento){
 	orden_girar_izquierda = 0;
 	orden_girar_derecha = 0;
 
-	if(propulsor){
+	if(propulsor && combustible >= combustible_motor){
 		elemento -> aceleracion[0] += propulsor_m_ms * SIN_TABLA[elemento -> rotacion];
 		elemento -> aceleracion[1] += propulsor_m_ms * COS_TABLA[elemento -> rotacion];
+		combustible -= combustible_motor;
 	}
 
     // Calculo de la aceleracion

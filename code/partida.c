@@ -8,6 +8,9 @@
 #define fuel_por_moneda 500
 #define masa_nave 1000
 
+#define aterrizaje_perfecto 0.5
+#define aterrizaje_brusco 1
+
 int inicio = 1;
 
 /**
@@ -29,7 +32,8 @@ struct Dibujable* terreno = NULL;
 struct Plataforma* plataformas_partida = NULL;
 uint8_t numero_plataformas = 0;
 
-static int combustible = 0;
+int combustible = 0;
+uint16_t puntuacion_partida = 0;
 static uint8_t fisicas = DESACTIVADAS;
 
 
@@ -46,12 +50,60 @@ void escalar_escena(){
 	factor_resized_Y = 1.0;
 }
 
+uint16_t evaluar_aterrizaje(uint8_t bonificador){
+	uint16_t puntuacion = 0;
+	printf("velocidad en x: %f\n", nave->velocidad[0]);
+	printf("velocidad en y: %f\n\n", nave->velocidad[1]);
+
+	if(nave->velocidad[1] > -aterrizaje_perfecto && (aterrizaje_perfecto > nave->velocidad[0] && nave->velocidad[0] > -aterrizaje_perfecto)) {
+		// Aterrizaje perfecto
+		printf("Aterrizaje perfecto\n");
+		puntuacion = 50 * bonificador;
+		combustible += 50;
+	}
+	else if(nave->velocidad[1] > -aterrizaje_brusco && (aterrizaje_brusco > nave->velocidad[0] && nave->velocidad[0] > -aterrizaje_brusco)) {
+		// Aterrizaje brusco
+		printf("Aterrizaje brusco\n");
+		puntuacion = 15 * bonificador;
+	}
+	else{
+		// Colision
+		printf("Colision\n");
+		puntuacion = 5 * bonificador;
+	}
+	return puntuacion;
+}
+
+void se_ha_aterrizado(){
+	nave->velocidad[0] = 0;
+	nave->velocidad[1] = 0;
+	nave->aceleracion[0] = 0;
+	nave->aceleracion[1] = 0;
+	fisicas = DESACTIVADAS;
+	printf("Combustible restante: %d\n", combustible);
+}
+
+void gestionar_colisiones() {
+	if(hay_colision(nave->objeto, terreno)){ // Comprobar colision con el terreno
+		uint8_t bonificador = 1;
+		// Si hay colision con el terreno -> evaluar si ha sido colision con plataforma
+		for(uint8_t i = 0; i < numero_plataformas; i++) {
+			if(hay_colision(nave->objeto, plataformas_partida[i].linea)) {
+				// La colision ha sido con una plataforma
+				bonificador = plataformas_partida[i].bonificador;
+				break;
+			}
+		}
+		// Determinar tipo de aterrizaje y puntos conseguidos
+		uint16_t puntos_conseguidos = evaluar_aterrizaje(bonificador);
+		puntuacion_partida += puntos_conseguidos;
+		printf("Has conseguido %d puntos en este aterrizaje\n", puntos_conseguidos);
+		se_ha_aterrizado();
+	}
+}
+
 
 void dibujar_escena(HDC hdc){
-	if(hay_colision(nave->objeto, terreno)){
-		// Gestionar colisiones
-		printf("Hay colision!!!\n");
-	}
 	escalar_escena();
     dibujarDibujable(hdc, nave -> objeto);
 	dibujarDibujable(hdc, terreno);
@@ -85,7 +137,10 @@ void rotar_nave(uint8_t direccion){
 }
 
 void manejar_instante_partida(){
-    if(fisicas == ACTIVADAS) calcularFisicas(nave);
+    if(fisicas == ACTIVADAS) {
+		calcularFisicas(nave);
+		gestionar_colisiones();
+	}
 }
 
 void inicializarPartida(){
@@ -115,6 +170,7 @@ void comenzarPartida(){
 	motor_fuerte = crearDibujable(&Nave_Propulsion_Maxima);
 
     fisicas = ACTIVADAS;
+	printf("Combustible inicial: %d\n", combustible);
 }
 
 void finalizarPartida(){
