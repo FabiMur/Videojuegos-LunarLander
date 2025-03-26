@@ -63,19 +63,19 @@ struct Arista* obtener_aristas_posibles(const struct DibujableConstante* terreno
 uint8_t calcular_bonificador(struct Arista arista, const struct DibujableConstante** b){
     uint16_t diferencia = arista.destino->x - arista.origen->x;
     if(diferencia <= PLATAFORMA_X5) {
-        *b = &Letra_A_Base;
+        *b = &Numero_5_Base;
         return 5;
     }
     else if(diferencia <= PLATAFORMA_X4) {
-        *b = &Letra_A_Base;
+        *b = &Numero_4_Base;
         return 4;
     }
     else if(diferencia <= PLATAFORMA_X3) {
-        *b = &Letra_A_Base;
+        *b = &Numero_3_Base;
         return 3;
     }
     else {
-        *b = &Letra_A_Base;
+        *b = &Numero_2_Base;
         return 2;
     }
 
@@ -151,7 +151,7 @@ struct Palabra* generar_palabra_plataforma(struct Arista arista, uint8_t* bonifi
     int8_t tam_media_palabra = (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER) / 2;
 
     struct Palabra* palabra = crear_palabra((struct Punto){media_arista_x - tam_media_palabra, y});
-    agregar_letra(palabra, &Letra_B_Base);
+    agregar_letra(palabra, &Letra_X_Base);
     agregar_letra(palabra, caracter_bonificador);
     escalar_palabra_centrada(palabra, 0.6);
 
@@ -288,8 +288,4 @@ struct Plataforma* generar_plataformas(const struct DibujableConstante* terreno,
 void dibujar_plataforma(HDC hdc, struct Plataforma plataforma){
     dibujar_palabra(plataforma.palabra, hdc);
     dibujarDibujable(hdc, plataforma.linea);
-
-    //struct Dibujable* dibujable_linea = crearDibujable(plataforma.linea);
-    //dibujarDibujable(hdc, dibujable_linea);
-    //destruirDibujable(dibujable_linea);
 }
