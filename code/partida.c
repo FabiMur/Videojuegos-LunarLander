@@ -3,9 +3,12 @@
 #include "../resources/superficie_lunar.h"
 #include "gestor_plataformas.h"
 #include "variables_globales.h"
+#include "gestor_colisiones.h"
 
 #define fuel_por_moneda 500
 #define masa_nave 1000
+
+int inicio = 1;
 
 /**
  * @brief Enumeración para el estado de las fisicas
@@ -45,6 +48,15 @@ void escalar_escena(){
 
 
 void dibujar_escena(HDC hdc){
+	if(inicio == 1){
+		for(int j = 0; j < terreno->num_aristas; j++){
+			printf("arista %d terreno: (%f %f), (%f, %f)\n\n", j, terreno->aristas[j].origen->x, terreno->aristas[j].origen->y, terreno->aristas[j].destino->x, terreno->aristas[j].destino->y);
+		}
+		inicio = 0;
+	}
+	if(hay_colision(nave->objeto, terreno)){
+		printf("Hay colision!!!\n");
+	}
 	escalar_escena();
     dibujarDibujable(hdc, nave -> objeto);
 	dibujarDibujable(hdc, terreno);

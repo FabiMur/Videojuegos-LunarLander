@@ -14,7 +14,9 @@
         "limits": "c",
         "new": "c",
         "caracteres.h": "c",
-        "palabra.h": "c"
+        "palabra.h": "c",
+        "transformaciones.h": "c",
+        "gestor_colisiones.h": "c"
     },
     "C_Cpp.default.compilerPath": "C:/mingw64/bin/gcc.exe",
     "makefile.makePath": "mingw32-make"
