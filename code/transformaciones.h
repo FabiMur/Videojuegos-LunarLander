@@ -21,6 +21,9 @@ void colocar_dibujable(struct Dibujable* dibujable, struct Punto destino);
 
 void colocar_palabra(struct Palabra* palabra, struct Punto destio);
 
+void escalar_dibujable_en_escena_dados_ejes(struct Dibujable* dibujable, float factorX, float factorY);
+void escalar_palabra_en_escena_dados_ejes(struct Palabra* palabra, float factorX, float factorY);
+
 /**
  * @brief Coloca un dibujable en un punto dado
  * 

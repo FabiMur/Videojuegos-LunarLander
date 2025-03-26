@@ -10,6 +10,8 @@
 #define timer 1
 #define tamano_inicial_pantalla_X 1024
 #define tamano_inicial_pantalla_Y 768
+#define anchura_minima_ventana 500
+#define altura_minima_ventana 375
 
 uint32_t tamano_pantalla_X = 1024;
 uint32_t tamano_pantalla_Y = 768;
@@ -48,21 +50,30 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 InvalidateRect(hwnd, NULL, FALSE); // Fuerza un repintado 
             }
         break;
+
+        case WM_GETMINMAXINFO:
+            // Limitar tamaño de ventana minima
+            MINMAXINFO* pMinMax = (MINMAXINFO*)lParam;
+
+            pMinMax->ptMinTrackSize.x = anchura_minima_ventana;
+            pMinMax->ptMinTrackSize.y = altura_minima_ventana;
+
+            return 0;
+    
         case WM_SIZE:
+            // Cambio de tamaño de la pantalla
             int width = LOWORD(lParam);  // Nuevo ancho de la ventana
             int height = HIWORD(lParam); // Nueva altura de la ventana
-            
-            // Detectar el tipo de cambio de tamaño
-            if ((wParam == SIZE_MAXIMIZED) || (wParam == SIZE_RESTORED)){
-                printf("Ventana redimensionada");
-    
+
+            if ((wParam == SIZE_MAXIMIZED) || (wParam == SIZE_RESTORED)){  
                 factor_resized_X = (float)width / tamano_pantalla_X;
                 factor_resized_Y = (float)height / tamano_pantalla_Y;
-
-            } else if (wParam == SIZE_MINIMIZED) {
-                printf("Ventana Ninimizada");
-            } 
+            }
+            tamano_pantalla_X = width;
+            tamano_pantalla_Y = height;
+            escalar_escena(factor_resized_X, factor_resized_Y);
         break;
+
 		case WM_PAINT: {
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hwnd, &ps);

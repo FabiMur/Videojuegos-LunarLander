@@ -94,8 +94,28 @@ void escalarDibujable(struct Dibujable* dibujable, float factor){
     escalarDibujableDadosEjes(dibujable, factor, factor);
 }
 
+void escalar_dibujable_en_escena_dados_ejes(struct Dibujable* dibujable, float factorX, float factorY) {
+    if (!dibujable->puntos) return;
+    dibujable->origen.x *= factorX;
+    dibujable->origen.y *= factorY;
+    
+    for(uint8_t i = 0; i < dibujable->num_puntos; i++){
+        dibujable->puntos[i].x *= factorX;
+        dibujable->puntos[i].y *= factorY;      
+    }
+}
+
+void escalar_palabra_en_escena_dados_ejes(struct Palabra* palabra, float factorX, float factorY) {
+    if (!palabra->letras) return;
+    for(uint8_t i = 0; i < palabra->num_letras; i++){
+        escalar_dibujable_en_escena_dados_ejes(&palabra->letras[i], factorX, factorY);
+    }
+
+}
+
 void escalarDibujableDadosEjes(struct Dibujable* dibujable, float factorX, float factorY){
     if (!dibujable->puntos) return;
+
     for(uint8_t i = 0; i < dibujable->num_puntos; i++){
         escalarXPuntoDadoCentro(&dibujable->puntos[i], dibujable->origen, factorX);
         escalarYPuntoDadoCentro(&dibujable->puntos[i], dibujable->origen, factorY);

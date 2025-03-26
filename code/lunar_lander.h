@@ -32,4 +32,7 @@ void pintar_pantalla(HDC hdc);
 
 void cambiar_estado(int nuevo_estado);
 
+void escalar_escena(float factor_x, float factor_y);
+
+
 #endif // LUNAR_LANDER_H

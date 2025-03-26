@@ -30,4 +30,6 @@ void finalizarPartida();
 
 void findeJuego();
 
+void escalar_escena_partida(float factor_x, float factor_y);
+
 #endif // PARTIDA_H

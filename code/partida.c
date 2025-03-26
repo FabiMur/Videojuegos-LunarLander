@@ -11,7 +11,7 @@
 #define aterrizaje_perfecto 0.5
 #define aterrizaje_brusco 1
 
-int inicio = 1;
+int inicio = 0;
 
 /**
  * @brief Enumeración para el estado de las fisicas
@@ -37,23 +37,24 @@ uint16_t puntuacion_partida = 0;
 static uint8_t fisicas = DESACTIVADAS;
 
 
-void escalar_escena(){
-	escalarDibujableDadosEjes(terreno, factor_resized_X, factor_resized_Y);
-	escalarDibujableDadosEjes(motor_fuerte, factor_resized_X, factor_resized_Y);
-	escalarDibujableDadosEjes(motor_medio, factor_resized_X, factor_resized_Y);
-	escalarDibujableDadosEjes(motor_debil, factor_resized_X, factor_resized_Y);
-	escalarDibujableDadosEjes(nave->objeto, factor_resized_X, factor_resized_Y);
-	for(uint8_t i = 0; i < numero_plataformas; i++) {
-		escalar_plataforma_dados_ejes(&plataformas_partida[i], factor_resized_X, factor_resized_Y);
+void escalar_escena_partida(float factor_x, float factor_y){
+	if(inicio == 1) {
+		escalar_dibujable_en_escena_dados_ejes(terreno, factor_x, factor_y);
+		escalar_dibujable_en_escena_dados_ejes(motor_fuerte, factor_x, factor_y);
+		escalar_dibujable_en_escena_dados_ejes(motor_medio, factor_x, factor_y);
+		escalar_dibujable_en_escena_dados_ejes(motor_debil, factor_x, factor_y);
+		escalar_dibujable_en_escena_dados_ejes(nave->objeto, factor_x, factor_y);
+		for(uint8_t i = 0; i < numero_plataformas; i++) {
+			escalar_dibujable_en_escena_dados_ejes(plataformas_partida[i].linea, factor_x, factor_y);
+			for(uint8_t j = 0; j < plataformas_partida[i].palabra->num_letras; j++){
+				escalar_dibujable_en_escena_dados_ejes(&plataformas_partida[i].palabra->letras[j], factor_x, factor_y);
+			}
+		}
 	}
-	factor_resized_X = 1.0;
-	factor_resized_Y = 1.0;
 }
 
 uint16_t evaluar_aterrizaje(uint8_t bonificador){
 	uint16_t puntuacion = 0;
-	printf("velocidad en x: %f\n", nave->velocidad[0]);
-	printf("velocidad en y: %f\n\n", nave->velocidad[1]);
 
 	if(nave->velocidad[1] > -aterrizaje_perfecto && (aterrizaje_perfecto > nave->velocidad[0] && nave->velocidad[0] > -aterrizaje_perfecto)) {
 		// Aterrizaje perfecto
@@ -104,7 +105,6 @@ void gestionar_colisiones() {
 
 
 void dibujar_escena(HDC hdc){
-	escalar_escena();
     dibujarDibujable(hdc, nave -> objeto);
 	dibujarDibujable(hdc, terreno);
 	for(uint8_t i = 0; i < numero_plataformas; i++){
@@ -170,6 +170,7 @@ void comenzarPartida(){
 	motor_fuerte = crearDibujable(&Nave_Propulsion_Maxima);
 
     fisicas = ACTIVADAS;
+	inicio = 1;
 	printf("Combustible inicial: %d\n", combustible);
 }
 
