@@ -150,7 +150,19 @@ void escalar_plataforma_dados_ejes(struct Plataforma* plataforma, float factorX,
 }
 
 
-/*
 
-void traslacion_terreno(struct )
-*/
+void trasladar_palabra(struct Palabra* palabra, struct Punto traslacion){
+    if(!palabra || !palabra->letras) return;
+    trasladarPunto(&palabra->origen, traslacion);
+    for(uint8_t i = 0; i < palabra->num_letras; i++) {
+        trasladarDibujable(&palabra->letras[i], traslacion);
+    }
+}
+
+void trasladar_superficie_lunar(struct Dibujable* terreno, struct Plataforma* plataformas, uint8_t num_plataformas, struct Punto traslacion) {
+    trasladarDibujable(terreno, traslacion);
+    for(uint8_t i = 0; i < num_plataformas; i++) {
+        trasladarDibujable(plataformas[i].linea, traslacion);
+        trasladar_palabra(plataformas[i].palabra, traslacion);
+    }
+}

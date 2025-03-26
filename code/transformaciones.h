@@ -75,4 +75,8 @@ void escalar_palabra_centrada_dados_ejes(struct Palabra* palabra, float factorX,
 
 void escalar_plataforma_dados_ejes(struct Plataforma* plataforma, float factorX, float factorY);
 
+
+
+void trasladar_superficie_lunar(struct Dibujable* terreno, struct Plataforma* plataformas, uint8_t num_plataformas, struct Punto traslacion);
+
 #endif // TRANSFORMACIONES_H

@@ -48,13 +48,8 @@ void escalar_escena(){
 
 
 void dibujar_escena(HDC hdc){
-	if(inicio == 1){
-		for(int j = 0; j < terreno->num_aristas; j++){
-			printf("arista %d terreno: (%f %f), (%f, %f)\n\n", j, terreno->aristas[j].origen->x, terreno->aristas[j].origen->y, terreno->aristas[j].destino->x, terreno->aristas[j].destino->y);
-		}
-		inicio = 0;
-	}
 	if(hay_colision(nave->objeto, terreno)){
+		// Gestionar colisiones
 		printf("Hay colision!!!\n");
 	}
 	escalar_escena();
@@ -97,6 +92,7 @@ void inicializarPartida(){
     combustible = 0;
 	terreno = crearDibujable(&Terreno);
 	plataformas_partida = generar_plataformas(&Terreno, &numero_plataformas);
+	trasladar_superficie_lunar(terreno, plataformas_partida, numero_plataformas, (struct Punto){0, 350});
 }
 
 void anyadirMoneda(){
