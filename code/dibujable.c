@@ -76,6 +76,12 @@ void DrawLine(HDC hdc, int x1, int y1, int x2, int y2, COLORREF color) {
 }
 
 
+uint8_t es_horizontal(struct Arista arista_colision){
+    if(arista_colision.origen->y == arista_colision.destino->y) {
+        return 1;
+    }
+    return 0;
+}
 
 void dibujarDibujable(HDC hdc, const struct Dibujable* dibujable){
     for(uint8_t i = 0; i < dibujable->num_aristas; i++) {

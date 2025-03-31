@@ -73,13 +73,14 @@ uint8_t hay_interseccion(struct Punto p1, struct Punto q1, struct Punto p2, stru
     return 0; // No hay interseccion
 } 
 
-uint8_t hay_colision(struct Dibujable* objeto1, struct Dibujable* objeto2) {
+uint8_t hay_colision(struct Dibujable* objeto1, struct Dibujable* objeto2, struct Arista* arista_colision) {
     if(!objeto1->puntos || !objeto2->puntos) return 0;
     if(!objeto1->aristas || !objeto2->aristas) return 0;
     
     for(uint16_t i = 0; i < objeto2->num_aristas; i++){
         struct Punto p1 = *objeto2->aristas[i].origen;
         struct Punto p2 = *objeto2->aristas[i].destino;
+        *arista_colision = objeto2->aristas[i];
         for(uint16_t j = 0; j < objeto1->num_aristas; j++){
             struct Punto p3 = *objeto1->aristas[j].origen;
             struct Punto p4 = *objeto1->aristas[j].destino;

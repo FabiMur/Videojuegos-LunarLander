@@ -104,4 +104,7 @@ void destruirArista(struct Arista* arista);
  */
 void dibujarDibujable(HDC hdc, const struct Dibujable* dibujable);
 
+
+uint8_t es_horizontal(struct Arista arista_colision);
+
 #endif // DIBUJABLE_H

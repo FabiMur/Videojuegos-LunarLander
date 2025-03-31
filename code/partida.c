@@ -55,33 +55,41 @@ void escalar_escena_partida(float factor_x, float factor_y){
 	}
 }
 
-uint16_t evaluar_aterrizaje(uint8_t bonificador){
+uint16_t evaluar_aterrizaje(uint8_t bonificador, uint8_t es_arista_aterrizable){
 	uint16_t puntuacion = 0;
 
-	if(nave->velocidad[1] > -aterrizaje_perfecto_vel &&
-		(aterrizaje_perfecto_vel > nave->velocidad[0] &&
-		nave->velocidad[0] > -aterrizaje_perfecto_vel) &&
-		(nave->rotacion < aterrizaje_perfecto_rot ||
-		nave->rotacion > 360 - aterrizaje_perfecto_rot)) {
-		// Aterrizaje perfecto
-		printf("Aterrizaje perfecto\n");
-		puntuacion = 50 * bonificador;
-		combustible += 50;
+	if(es_arista_aterrizable == 1){
+		if(nave->velocidad[1] > -aterrizaje_perfecto_vel &&
+			(aterrizaje_perfecto_vel > nave->velocidad[0] &&
+			nave->velocidad[0] > -aterrizaje_perfecto_vel) &&
+			(nave->rotacion < aterrizaje_perfecto_rot ||
+			nave->rotacion > 360 - aterrizaje_perfecto_rot)) {
+			// Aterrizaje perfecto
+			printf("Aterrizaje perfecto\n");
+			puntuacion = 50 * bonificador;
+			combustible += 50;
+		}
+		else if(nave->velocidad[1] > -aterrizaje_brusco_vel &&
+			(aterrizaje_brusco_vel > nave->velocidad[0] &&
+			nave->velocidad[0] > -aterrizaje_brusco_vel) &&
+			(nave->rotacion < aterrizaje_brusco_rot ||
+			nave->rotacion > 360 - aterrizaje_brusco_rot)) {
+			// Aterrizaje brusco
+			printf("Aterrizaje brusco\n");
+			puntuacion = 15 * bonificador;
+		}
+		else{
+			// Colision
+			printf("Colision\n");
+			puntuacion = 5 * bonificador;
+		}
 	}
-	else if(nave->velocidad[1] > -aterrizaje_brusco_vel &&
-		(aterrizaje_brusco_vel > nave->velocidad[0] &&
-		nave->velocidad[0] > -aterrizaje_brusco_vel) &&
-		(nave->rotacion < aterrizaje_brusco_rot ||
-		nave->rotacion > 360 - aterrizaje_brusco_rot)) {
-		// Aterrizaje brusco
-		printf("Aterrizaje brusco\n");
-		puntuacion = 15 * bonificador;
-	}
-	else{
+	else {
 		// Colision
 		printf("Colision\n");
 		puntuacion = 5 * bonificador;
 	}
+	
 	return puntuacion;
 }
 
@@ -95,21 +103,35 @@ void se_ha_aterrizado(){
 }
 
 void gestionar_colisiones() {
-	if(hay_colision(nave->objeto, terreno)){ // Comprobar colision con el terreno
-		uint8_t bonificador = 1;
-		// Si hay colision con el terreno -> evaluar si ha sido colision con plataforma
-		for(uint8_t i = 0; i < numero_plataformas; i++) {
-			if(hay_colision(nave->objeto, plataformas_partida[i].linea)) {
-				// La colision ha sido con una plataforma
-				bonificador = plataformas_partida[i].bonificador;
-				break;
+	struct Arista arista_colision = (struct Arista){};
+	uint8_t bonificador = 1;
+	uint8_t es_arista_aterrizable = 0;
+	uint8_t se_produce_colision = 0;
+
+	// Comprobar colision con el terreno
+	if(hay_colision(nave->objeto, terreno, &arista_colision)){
+		se_produce_colision = 1;
+        printf("arista_colision: %f, %f", arista_colision.origen->y, arista_colision.destino->y);
+		es_arista_aterrizable = es_horizontal(arista_colision);
+		if(es_arista_aterrizable == 1){
+
+			// Si hay colision con el terreno -> evaluar si ha sido colision con plataforma
+			for(uint8_t i = 0; i < numero_plataformas; i++) {
+				if(hay_colision(nave->objeto, plataformas_partida[i].linea, &arista_colision)) {
+					// La colision ha sido con una plataforma
+					bonificador = plataformas_partida[i].bonificador;
+					break;
+				}
 			}
 		}
+	}
+	if(se_produce_colision == 1){
 		// Determinar tipo de aterrizaje y puntos conseguidos
-		uint16_t puntos_conseguidos = evaluar_aterrizaje(bonificador);
+		uint16_t puntos_conseguidos = evaluar_aterrizaje(bonificador, es_arista_aterrizable);
 		puntuacion_partida += puntos_conseguidos;
 		printf("Has conseguido %d puntos en este aterrizaje\n", puntos_conseguidos);
 		se_ha_aterrizado();
+			
 	}
 }
 
