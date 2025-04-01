@@ -17,15 +17,16 @@ uint32_t tamano_pantalla_X = 1024;
 uint32_t tamano_pantalla_Y = 768;
 
 uint8_t primera_vez = 1;
-uint8_t num_plataformas = 0;
-struct Plataforma* plataformas;
+int posicion_x = 0;
+int posicion_y = 0;
+int tamx = 1024;
+int tamy = 768;
 
 void AttachConsoleToStdout() {
     AllocConsole();
     freopen("CONOUT$", "w", stdout);  // Redirige stdout a la consola
     freopen("CONOUT$", "w", stderr);  // Redirige stderr también
 }
-
 
 /**
  * @brief Funcion para realizar pruebas de dibujo de las naves
@@ -51,8 +52,36 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 InvalidateRect(hwnd, NULL, FALSE); // Fuerza un repintado 
             }
         break;
+        
+        case WM_SYSCOMMAND:
+            if((wParam & 0xFFF0) == SC_MAXIMIZE) {
+                RECT rectangulo;
+                GetWindowRect(hwnd, &rectangulo);
+                posicion_x = rectangulo.left;
+                posicion_y = rectangulo.top;
+                tamx = rectangulo.right - rectangulo.left;
+                tamy = rectangulo.bottom - rectangulo.top;
+
+                SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_VISIBLE); // WS_POPUP: estilo de ventana sin bordes
+                SetWindowPos(hwnd, NULL, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
+                            SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+            }
+            else if((wParam & 0xFFF0) == SC_RESTORE && IsZoomed(hwnd)) {
+                SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE); // WS_OVERLAPPEDWINDOW: estilo de la ventana estandar
+                SetWindowPos(hwnd, NULL, posicion_x, posicion_y, tamx, tamy,
+                            SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOOWNERZORDER);
+            }
+        return DefWindowProc(hwnd, uMsg, wParam, lParam);
+        break;
 
         case WM_GETMINMAXINFO:{
+            if (IsZoomed(hwnd)) {  // Si está maximizado, ajustar tamaño
+                MINMAXINFO* mmi = (MINMAXINFO*)lParam;
+                mmi->ptMaxSize.x = GetSystemMetrics(SM_CXSCREEN);
+                mmi->ptMaxSize.y = GetSystemMetrics(SM_CYSCREEN);
+                mmi->ptMaxPosition.x = 0;
+                mmi->ptMaxPosition.y = 0;
+            }
 
             // Limitar tamaño de ventana minima
             MINMAXINFO* pMinMax = (MINMAXINFO*)lParam;
@@ -61,7 +90,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             pMinMax->ptMinTrackSize.y = altura_minima_ventana;
             
         }
-            return 0;
+        break;
     
         case WM_SIZE:{
 
@@ -112,6 +141,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		break;
 
         case WM_KEYDOWN: {
+            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) SendMessage(hwnd, WM_SYSCOMMAND, SC_RESTORE, 0);
             if (GetAsyncKeyState(VK_UP) & 0x8000) pulsar_tecla(ARRIBA);
             if (GetAsyncKeyState(VK_LEFT) & 0x8000) pulsar_tecla(IZQUIERDA);
             if (GetAsyncKeyState(VK_RIGHT) & 0x8000) pulsar_tecla(DERECHA);
@@ -157,7 +187,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     int anchoVentana = rc.right - rc.left;
     int altoVentana = rc.bottom - rc.top;
 
-    HWND hwnd = CreateWindowEx(0, "RasterWindow", "VentanaPruebas",
+    HWND hwnd = CreateWindowEx(0, "RasterWindow", "Lunar Lander",
                             WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
                             (rc.right - rc.left), (rc.bottom - rc.top), NULL,
                             NULL, hInstance, NULL);
