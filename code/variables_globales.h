@@ -4,6 +4,7 @@
 
 extern float factor_resized_X;
 extern float factor_resized_Y;
+extern float factor_resized;
 
 
 #endif // VARIABLES_GLOBALES_H

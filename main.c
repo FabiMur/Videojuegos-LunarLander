@@ -22,6 +22,9 @@ int posicion_y = 0;
 int tamx = 1024;
 int tamy = 768;
 
+int ratio_escena_x = 1024;
+int ratio_escena_y = 768;
+
 void AttachConsoleToStdout() {
     AllocConsole();
     freopen("CONOUT$", "w", stdout);  // Redirige stdout a la consola
@@ -52,8 +55,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 InvalidateRect(hwnd, NULL, FALSE); // Fuerza un repintado 
             }
         break;
-        
-        case WM_SYSCOMMAND:
+
+        case WM_SYSCOMMAND: // Gestion maximizar y restaurar
             if((wParam & 0xFFF0) == SC_MAXIMIZE) {
                 RECT rectangulo;
                 GetWindowRect(hwnd, &rectangulo);
@@ -74,7 +77,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         return DefWindowProc(hwnd, uMsg, wParam, lParam);
         break;
 
-        case WM_GETMINMAXINFO:{
+        case WM_GETMINMAXINFO:{ // Gestion tamaño de la ventana
             if (IsZoomed(hwnd)) {  // Si está maximizado, ajustar tamaño
                 MINMAXINFO* mmi = (MINMAXINFO*)lParam;
                 mmi->ptMaxSize.x = GetSystemMetrics(SM_CXSCREEN);
@@ -93,18 +96,38 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         break;
     
         case WM_SIZE:{
-
             // Cambio de tamaño de la pantalla
             int width = LOWORD(lParam);  // Nuevo ancho de la ventana
             int height = HIWORD(lParam); // Nueva altura de la ventana
-            
-            if ((wParam == SIZE_MAXIMIZED) || (wParam == SIZE_RESTORED)){  
-                factor_resized_X = (float)width / tamano_pantalla_X;
-                factor_resized_Y = (float)height / tamano_pantalla_Y;
+            if ((wParam == SIZE_MAXIMIZED) || (wParam == SIZE_RESTORED)) {
+                // Calcular los factores de escala para X e Y
+                float factor_resized_X = (float)width / tamano_pantalla_X;
+                float factor_resized_Y = (float)height / tamano_pantalla_Y;
+        
+                // Mantener la proporción correcta de la escena
+                float factor_resized = 1.0f;
+                
+                // Decidir qué factor de escala utilizar según las dimensiones de la ventana
+                if (width < ratio_escena_x && height < ratio_escena_y) {
+                    // Elige el menor de los dos factores de escala para evitar que se corte la escena
+                    factor_resized = factor_resized_X < factor_resized_Y ? factor_resized_X : factor_resized_Y;
+                } else if (width < ratio_escena_x) {
+                    factor_resized = factor_resized_X;
+                } else if (height < ratio_escena_y) {
+                    factor_resized = factor_resized_Y;
+                }
+        
+                // Solo aplicar el escalado si el factor ha cambiado
+                if (factor_resized != 1.0f) {
+                    // Escalar la escena según el factor de escala determinado
+                    escalar_escena(factor_resized, factor_resized);
+                    ratio_escena_x *= factor_resized;
+                    ratio_escena_y *= factor_resized;
+                }
             }
             tamano_pantalla_X = width;
             tamano_pantalla_Y = height;
-            escalar_escena(factor_resized_X, factor_resized_Y);
+            
         }
             break;
 
