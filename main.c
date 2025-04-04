@@ -10,20 +10,19 @@
 #define timer 1
 #define tamano_inicial_pantalla_X 1024
 #define tamano_inicial_pantalla_Y 768
-#define anchura_minima_ventana 500
-#define altura_minima_ventana 375
+#define anchura_minima_ventana 512
+#define altura_minima_ventana 384
 
-uint32_t tamano_pantalla_X = 1024;
-uint32_t tamano_pantalla_Y = 768;
+int tamano_pantalla_X = 1024;
+int tamano_pantalla_Y = 768;
 
-uint8_t primera_vez = 1;
 int posicion_x = 0;
 int posicion_y = 0;
 int tamx = 1024;
 int tamy = 768;
 
-int ratio_escena_x = 1024;
-int ratio_escena_y = 768;
+float ratio_escena_x = 1024;
+float ratio_escena_y = 768;
 
 void AttachConsoleToStdout() {
     AllocConsole();
@@ -37,7 +36,9 @@ void AttachConsoleToStdout() {
  * @param hdc
  */
 void pruebasDibujables(HDC hdc){
-    
+    struct Dibujable* dibu = crearDibujable(&Letra_A_Base);
+    colocar_dibujable(dibu, (struct Punto){0, 384});
+    dibujarDibujable(hdc, dibu);
 }
 
 // Función de ventana
@@ -86,11 +87,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 mmi->ptMaxPosition.y = 0;
             }
 
-            // Limitar tamaño de ventana minima
+            // Limitar tamaño de ventana minima (sin tener en cuenta bordes ni cabecera)
             MINMAXINFO* pMinMax = (MINMAXINFO*)lParam;
-            
-            pMinMax->ptMinTrackSize.x = anchura_minima_ventana;
-            pMinMax->ptMinTrackSize.y = altura_minima_ventana;
+            RECT rc = { 0, 0, anchura_minima_ventana, altura_minima_ventana };
+            AdjustWindowRectEx(&rc, GetWindowLong(hwnd, GWL_STYLE), FALSE, GetWindowLong(hwnd, GWL_EXSTYLE));
+        
+            pMinMax->ptMinTrackSize.x = rc.right - rc.left;
+            pMinMax->ptMinTrackSize.y = rc.bottom - rc.top;
             
         }
         break;
@@ -108,21 +111,42 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 float factor_resized = 1.0f;
                 
                 // Decidir qué factor de escala utilizar según las dimensiones de la ventana
+                /*
                 if (width < ratio_escena_x && height < ratio_escena_y) {
                     // Elige el menor de los dos factores de escala para evitar que se corte la escena
                     factor_resized = factor_resized_X < factor_resized_Y ? factor_resized_X : factor_resized_Y;
                 } else if (width < ratio_escena_x) {
                     factor_resized = factor_resized_X;
+                    ratio_escena_x = width / factor_resized; 
                 } else if (height < ratio_escena_y) {
                     factor_resized = factor_resized_Y;
+                    ratio_escena_y = height / factor_resized; 
+                } else if(width > ratio_escena_x && width > tamano_pantalla_X && ratio_escena_y < height){
+                    printf("width > ratio_x\n");
+                    factor_resized = factor_resized_X;
                 }
-        
+                */
+
+                if (width < ratio_escena_x) {
+                    factor_resized = factor_resized_X;
+                    //ratio_escena_x = width / factor_resized; 
+                } else if (height < ratio_escena_y) {
+                    factor_resized = factor_resized_Y;
+                    //ratio_escena_y = height / factor_resized; 
+                } else if(width > ratio_escena_x && width > tamano_pantalla_X && ratio_escena_y < height){
+                    factor_resized = factor_resized_X;
+                }
+                else if(height > ratio_escena_y && height > tamano_pantalla_Y && ratio_escena_x < width){
+                    factor_resized = factor_resized_Y;
+                }
+
                 // Solo aplicar el escalado si el factor ha cambiado
                 if (factor_resized != 1.0f) {
                     // Escalar la escena según el factor de escala determinado
                     escalar_escena(factor_resized, factor_resized);
-                    ratio_escena_x *= factor_resized;
-                    ratio_escena_y *= factor_resized;
+                    ratio_escena_x = ratio_escena_x * factor_resized;
+                    ratio_escena_y =  ratio_escena_y * factor_resized;
+                    printf("ratio_x = %d, width = %d, tam_pantalla_x = %d\n", ratio_escena_x, width, tamano_pantalla_X);
                 }
             }
             tamano_pantalla_X = width;
