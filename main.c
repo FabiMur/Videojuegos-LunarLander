@@ -102,37 +102,21 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             // Cambio de tamaño de la pantalla
             int width = LOWORD(lParam);  // Nuevo ancho de la ventana
             int height = HIWORD(lParam); // Nueva altura de la ventana
-            if ((wParam == SIZE_MAXIMIZED) || (wParam == SIZE_RESTORED)) {
+            if (wParam == SIZE_RESTORED /*|| wParam == SIZE_MAXIMIZED*/) {
                 // Calcular los factores de escala para X e Y
                 float factor_resized_X = (float)width / tamano_pantalla_X;
                 float factor_resized_Y = (float)height / tamano_pantalla_Y;
-        
+    
                 // Mantener la proporción correcta de la escena
                 float factor_resized = 1.0f;
                 
                 // Decidir qué factor de escala utilizar según las dimensiones de la ventana
-                /*
-                if (width < ratio_escena_x && height < ratio_escena_y) {
-                    // Elige el menor de los dos factores de escala para evitar que se corte la escena
-                    factor_resized = factor_resized_X < factor_resized_Y ? factor_resized_X : factor_resized_Y;
-                } else if (width < ratio_escena_x) {
-                    factor_resized = factor_resized_X;
-                    ratio_escena_x = width / factor_resized; 
-                } else if (height < ratio_escena_y) {
-                    factor_resized = factor_resized_Y;
-                    ratio_escena_y = height / factor_resized; 
-                } else if(width > ratio_escena_x && width > tamano_pantalla_X && ratio_escena_y < height){
-                    printf("width > ratio_x\n");
-                    factor_resized = factor_resized_X;
-                }
-                */
-
                 if (width < ratio_escena_x) {
                     factor_resized = factor_resized_X;
-                    //ratio_escena_x = width / factor_resized; 
                 } else if (height < ratio_escena_y) {
                     factor_resized = factor_resized_Y;
-                    //ratio_escena_y = height / factor_resized; 
+                } else if(width > ratio_escena_x && width > tamano_pantalla_X && ratio_escena_y < height && height > tamano_pantalla_Y){
+                    factor_resized = factor_resized_X < factor_resized_Y ? factor_resized_X : factor_resized_Y;
                 } else if(width > ratio_escena_x && width > tamano_pantalla_X && ratio_escena_y < height){
                     factor_resized = factor_resized_X;
                 }
@@ -143,11 +127,18 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 // Solo aplicar el escalado si el factor ha cambiado
                 if (factor_resized != 1.0f) {
                     // Escalar la escena según el factor de escala determinado
+                    printf("ratio_x = %d, width = %d, tam_pantalla_x = %d\n", ratio_escena_x, width, tamano_pantalla_X);
                     escalar_escena(factor_resized, factor_resized);
                     ratio_escena_x = ratio_escena_x * factor_resized;
                     ratio_escena_y =  ratio_escena_y * factor_resized;
-                    printf("ratio_x = %d, width = %d, tam_pantalla_x = %d\n", ratio_escena_x, width, tamano_pantalla_X);
+                    printf("ratio_x = %d, width = %d, tam_pantalla_x = %d\n\n", ratio_escena_x, width, tamano_pantalla_X);
                 }
+            } else if(wParam == SIZE_MAXIMIZED){
+                float max_resized_x = width / tamano_pantalla_X;
+                float max_resized_y = height / tamano_pantalla_Y;
+                float factor_resized = max_resized_x < max_resized_y ? max_resized_x : max_resized_y;
+                escalar_escena(factor_resized, factor_resized);
+                
             }
             tamano_pantalla_X = width;
             tamano_pantalla_Y = height;
