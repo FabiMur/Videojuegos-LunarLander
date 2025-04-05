@@ -13,11 +13,11 @@ void destruirObjetoFisico(struct objetoFisico* objeto){
 }
 
 void calcularFisicas(struct objetoFisico* elemento){
-	if(orden_girar_izquierda && !orden_girar_derecha){
+	if(orden_girar_izquierda && !orden_girar_derecha && (elemento -> rotacion <= 90 || elemento -> rotacion >= 270 + ANGULO_ROTACION)){
 		elemento -> rotacion = (elemento -> rotacion - ANGULO_ROTACION + 360) % 360;
 		rotar_nave(0);
 	}
-	else if (!orden_girar_izquierda && orden_girar_derecha){
+	else if (!orden_girar_izquierda && orden_girar_derecha && (elemento -> rotacion <= 90 - ANGULO_ROTACION || elemento -> rotacion >= 270)){
 		elemento -> rotacion = (elemento -> rotacion + ANGULO_ROTACION) % 360;
 		rotar_nave(1);
 	}
