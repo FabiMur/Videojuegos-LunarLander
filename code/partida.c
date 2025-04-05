@@ -103,7 +103,7 @@ void se_ha_aterrizado(){
 }
 
 void gestionar_colisiones() {
-	struct Arista arista_colision = (struct Arista){};
+	struct Arista arista_colision = (struct Arista){0};
 	uint8_t bonificador = 1;
 	uint8_t es_arista_aterrizable = 0;
 	uint8_t se_produce_colision = 0;
@@ -111,7 +111,6 @@ void gestionar_colisiones() {
 	// Comprobar colision con el terreno
 	if(hay_colision(nave->objeto, terreno, &arista_colision)){
 		se_produce_colision = 1;
-        printf("arista_colision: %f, %f", arista_colision.origen->y, arista_colision.destino->y);
 		es_arista_aterrizable = es_horizontal(arista_colision);
 		if(es_arista_aterrizable == 1){
 

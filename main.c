@@ -19,22 +19,16 @@ float factor_escalado = 1.0f;
 // 1 si la ventana esta en fullcreen, 0 si no (sin bordes ni cabecera)
 uint8_t fullscreen = 0;
 uint8_t esc_presionado = 0;
-
 // Rectangulo que contiene la ventana anterior al resize de pantalla completa
 RECT rectVentanaAnterior;
 
-struct tamano_escena{
-    int ancho;
-    int alto;
-};
-
-// Anchura y altura de la escena 
-struct tamano_escena tam_escena = {1024, 768};
-
+// Moneda presionada
+uint8_t moneda_presionada = 0;
 
 float minimo(float a, float b) {
     return (a < b) ? a : b;
 }
+
 
 void AttachConsoleToStdout() {
     AllocConsole();
@@ -48,40 +42,24 @@ void AttachConsoleToStdout() {
  * @param hdc
  */
 void pruebasDibujables(HDC hdc){
-    struct Dibujable* dibu = crearDibujable(&Letra_A_Base);
-    colocar_dibujable(dibu, (struct Punto){0, 384});
-    dibujarDibujable(hdc, dibu);
 }
 
 
-void get_tamano_ventana(HWND hwnd, int* ancho, int* alto) {
-    RECT rect;
-    GetWindowRect(hwnd, &rect);
-    *ancho = rect.right - rect.left;
-    *alto = rect.bottom - rect.top;
-}
-
-void get_tamano_area_cliente(HWND hwnd, int* ancho, int* alto){
+/**
+ * @brief Escala la escena al tamaño de la ventana
+ * 
+ * @param hwnd Ventana a escalar
+ */
+void escalar(HWND hwnd) {
     RECT rect;
     GetClientRect(hwnd, &rect);
-    *ancho = rect.right - rect.left;
-    *alto = rect.bottom - rect.top;
-}
-
-
-// Se llamará a esta funcion cuando la ventana pase de fullscreen a restaurada
-void calcular_escalado_restore(HWND hwnd) {
-    int ancho_cliente = 0;
-    int alto_cliente = 0;
-    get_tamano_area_cliente(hwnd, &ancho_cliente, &alto_cliente);
+    int ancho_cliente = rect.right - rect.left;
+    int alto_cliente = rect.bottom - rect.top;
     float factor_resized_x = (float)ancho_cliente / tamano_inicial_pantalla_X;
     float factor_resized_y = (float)alto_cliente / tamano_inicial_pantalla_Y;
 
+    escalar_escena(1/factor_escalado, 1/factor_escalado);
     factor_escalado = minimo(factor_resized_x, factor_resized_y);
-
-    // Como no se ha actualizado el tamano escena, su valor es el de la fullscreen
-    tam_escena.ancho = (int)(tamano_inicial_pantalla_X * factor_escalado);
-    tam_escena.alto = (int)(tamano_inicial_pantalla_Y * factor_escalado);
 
     escalar_escena(factor_escalado, factor_escalado);
 }
@@ -95,71 +73,38 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         break;
 
         case WM_SYSCOMMAND: {
-            // Una ventana recibe este mensaje cuando el usuario elige un comando
-            // en el menú Ventana (anteriormente conocido como el menú del sistema
-            // o control) o cuando el usuario elige el botón maximizar, minimizar
-            // el botón, restaurar botón o cerrar.
-            // printf("El usuario ha elegido un comando del menu ventana\n");
-            switch(wParam & 0xFFF0) {
-                case SC_SIZE: {
-                    // printf("WS_COMMAND - size\n");
-                }
-                break;
-                case SC_RESTORE: {
-                    // printf("WS_COMMAND - restore\n");
-                    printf("WS_COMMAND - RESTORE: fullscreen = %d, esc_pres = %d\n", fullscreen, esc_presionado);
-                    if(fullscreen == 1 && esc_presionado == 1) {
-                        // Si se ha pulsado ESC y se estaba en fullscreen -> se restaura la ventana
-                        fullscreen = 0;
-                        // Restaurar estilo de ventana
-                        SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-
-                        // Aplicar nuevo tamaño y posición (rectVentanaAnterior)
-                        SetWindowPos(
-                            hwnd, NULL,
-                            rectVentanaAnterior.left,
-                            rectVentanaAnterior.top,
-                            rectVentanaAnterior.right - rectVentanaAnterior.left,
-                            rectVentanaAnterior.bottom - rectVentanaAnterior.top,
-                            SWP_NOZORDER | SWP_FRAMECHANGED // Necesario para aplicar los bordes
-                        );
-
-                    } else if (esc_presionado == 1){
-                        // Si se ha pulsado ESC pero no se estaba en fullscreen -> no se propaga el restore
-                        esc_presionado = 0;
-                        return 0;
-                    }
+            if((wParam & 0xFFF0) == SC_RESTORE){
+                if(fullscreen == 1 && esc_presionado == 1) {
+                    // Si se ha pulsado ESC y se estaba en fullscreen -> se restaura la ventana
+                    fullscreen = 0;
+                    // Restaurar estilo de ventana
+                    SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+                    SetWindowPos(
+                        hwnd, NULL,
+                        rectVentanaAnterior.left,
+                        rectVentanaAnterior.top,
+                        rectVentanaAnterior.right - rectVentanaAnterior.left,
+                        rectVentanaAnterior.bottom - rectVentanaAnterior.top,
+                        SWP_NOZORDER | SWP_FRAMECHANGED // Necesario para aplicar los bordes
+                    );
+                } else if (esc_presionado == 1){
+                    // Si se ha pulsado ESC pero no se estaba en fullscreen -> no se propaga el restore
                     esc_presionado = 0;
+                    return 0;
                 }
-                break;
-                case SC_MOVE: {
-                    // printf("WS_COMMAND - move\n");
-                }
-                break;
-                case SC_MINIMIZE: {
-                    // printf("WS_COMMAND - minimize\n");
-                }
-                break;
-                case SC_MAXIMIZE: {
-                    printf("WS_COMMAND - maximize\n");
-                    fullscreen = 1;
-                    GetWindowRect(hwnd, &rectVentanaAnterior);
-                    // Escalar y quitar bordes y cabecera
-                    SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-                }
-                break;
-                case SC_CLOSE: {
-                    // printf("WS_COMMAND - close\n");
-                }
-                break;
+                esc_presionado = 0;
+            } else if ((wParam & 0xFFF0) == SC_MAXIMIZE) {
+                fullscreen = 1;
+                GetWindowRect(hwnd, &rectVentanaAnterior);
+                // Escalar y quitar bordes y cabecera
+                SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+                escalar(hwnd);
             }
         }
         break;
-        case WM_GETMINMAXINFO: {
-            // El tamaño o la posicion de la ventana estan a punto de cambiar
-            // printf("El tamano o la posicion de la ventana estan a punto de cambiar\n");
 
-            // TAMAÑO VENTANA MINIMO -------------------------------------------
+        case WM_GETMINMAXINFO: {
+            // Establecer tamaño minimo del area del cliente
             MINMAXINFO* mmi = (MINMAXINFO*)lParam;
             RECT rc = {0, 0, anchura_minima_ventana, altura_minima_ventana};
             AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
@@ -167,15 +112,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             mmi->ptMinTrackSize.y = rc.bottom - rc.top;
         }
         break;
-        case WM_SIZING: {
-            // El usuario esta redimensionando la ventana
-            // printf("El usuario esta redimensionando la ventana\n");
-        }
-        break;
 
         case WM_SIZE: {
             // La ventana ha cambiado de tamaño
-            // printf("Modificado el tamano de la ventana\n");
+            escalar(hwnd);
         }
         break;
 
