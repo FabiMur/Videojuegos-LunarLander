@@ -25,10 +25,14 @@ RECT rectVentanaAnterior;
 // Moneda presionada
 uint8_t moneda_presionada = 0;
 
+struct Punto* p1 = NULL;
+struct Punto* p2 = NULL;
+struct Punto* p3 = NULL;
+struct Punto* p4 = NULL;
+
 float minimo(float a, float b) {
     return (a < b) ? a : b;
 }
-
 
 void AttachConsoleToStdout() {
     AllocConsole();
@@ -42,6 +46,43 @@ void AttachConsoleToStdout() {
  * @param hdc
  */
 void pruebasDibujables(HDC hdc){
+}
+
+
+void inicializar_puntos() {
+    // Usar malloc para asignar memoria dinámica para las estructuras
+    p1 = (struct Punto*)malloc(sizeof(struct Punto));
+    p2 = (struct Punto*)malloc(sizeof(struct Punto));
+    p3 = (struct Punto*)malloc(sizeof(struct Punto));
+    p4 = (struct Punto*)malloc(sizeof(struct Punto));
+}
+
+
+// Algoritmo de Bresenham para rasterizar una línea
+void dibujar_linea(HDC hdc, int x1, int y1, int x2, int y2, COLORREF color) {
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+    int err = dx - dy;
+
+    while (1) {
+        SetPixel(hdc, x1, y1, color); // Dibuja el pixel actual
+
+        if (x1 == x2 && y1 == y2) break; // Si llegamos al final, salimos
+
+        int e2 = 2 * err;
+        if (e2 > -dy) { err -= dy; x1 += sx; }
+        if (e2 < dx) { err += dx; y1 += sy; }
+    }
+}
+
+void dibujar_bordes(HDC hdc) {
+    if(p1 == NULL || p2 == NULL || p3 == NULL || p4 == NULL) {
+        return;
+    }
+    dibujar_linea(hdc, p1->x, p1->y, p2->x, p2->y, RGB(255, 255, 255));
+    dibujar_linea(hdc, p3->x, p3->y, p4->x, p4->y, RGB(255, 255, 255));
 }
 
 
@@ -62,6 +103,22 @@ void escalar(HWND hwnd) {
     factor_escalado = minimo(factor_resized_x, factor_resized_y);
 
     escalar_escena(factor_escalado, factor_escalado);
+
+    int tam_escena_x = (int)(tamano_inicial_pantalla_X * factor_escalado);
+    int tam_escena_y = (int)(tamano_inicial_pantalla_Y * factor_escalado);
+
+
+    if (!p1 || !p2 || !p3 || !p4) {
+        // Manejo de errores si malloc falla
+        printf("Error al asignar memoria.\n");
+        return; // Salir o manejar el error
+    }
+
+    // Inicializar los puntos
+    *p1 = (struct Punto){0, tam_escena_y + 1};
+    *p2 = (struct Punto){tam_escena_x + 1, tam_escena_y + 1};
+    *p3 = (struct Punto){tam_escena_x + 1, 0};
+    *p4 = (struct Punto){tam_escena_x + 1, tam_escena_y + 1};
 }
 
 // Función de ventana
@@ -136,15 +193,16 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			HDC hdcMem = CreateCompatibleDC(hdc);
 			RECT rect;
 			GetClientRect(hwnd, &rect);
+			HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0));
 			HBITMAP hbmMem = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
 			HGDIOBJ hOld = SelectObject(hdcMem, hbmMem);
 		
 			// Limpiar el buffer (pintarlo de negro)
-			HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0));
 			FillRect(hdcMem, &rect, brush);
 			DeleteObject(brush);
 		
 			// Dibujar en el buffer en memoria
+            dibujar_bordes(hdc);
 			pruebasDibujables(hdcMem);
 			pintar_pantalla(hdcMem);
 		
@@ -211,8 +269,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                             WS_OVERLAPPEDWINDOW, 0, 0,
                             (rc.right - rc.left), (rc.bottom - rc.top), NULL,
                             NULL, hInstance, NULL);
-
-
+    inicializar_puntos();
     inicializar_aleatoriedad(); // Inicializar rand
 
     if (!hwnd) return 0;
