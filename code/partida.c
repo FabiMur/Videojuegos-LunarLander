@@ -1,6 +1,7 @@
 #include "partida.h"
 #include "../resources/nave.h"
 #include "../resources/superficie_lunar.h"
+#include "../resources/asteroides.h"
 #include "gestor_plataformas.h"
 #include "variables_globales.h"
 #include "gestor_colisiones.h"
@@ -31,8 +32,10 @@ struct Dibujable* motor_debil = NULL;
 struct Dibujable* motor_medio = NULL;
 struct Dibujable* motor_fuerte = NULL;
 struct Dibujable* terreno = NULL;
+struct Asteroide* asteroides = NULL;
 struct Plataforma* plataformas_partida = NULL;
 uint8_t numero_plataformas = 0;
+uint8_t numero_asteroides = 0;
 
 int combustible = 0;
 uint16_t puntuacion_partida = 0;
@@ -134,13 +137,35 @@ void gestionar_colisiones() {
 	}
 }
 
+void gestionar_colisiones_asteroides() {
+	struct Arista arista_colision = (struct Arista){0};
+	uint8_t se_produce_colision = 0;
+
+	// Comprobar colision con el terreno
+	for(uint8_t i = 0; i < numero_asteroides; i++){
+		if(hay_colision(nave->objeto, asteroides[i].objeto, &arista_colision)){
+			se_produce_colision = 1;
+			break;
+		}
+	}
+	if(se_produce_colision == 1){
+		printf("Has colisionado con un asteoride\n");
+		se_ha_aterrizado();	
+	}
+}
 
 void dibujar_escena(HDC hdc){
     dibujarDibujable(hdc, nave -> objeto);
 	dibujarDibujable(hdc, terreno);
+
+	for(uint8_t i = 0; i < numero_asteroides; i++){
+		dibujarAsteroide(hdc, &asteroides[i]);
+	}
+
 	for(uint8_t i = 0; i < numero_plataformas; i++){
 		dibujar_plataforma(hdc, plataformas_partida[i]);
 	}
+
 	switch(obtener_propulsor()){
 		case 1:
 			colocar_dibujable(motor_debil, nave -> objeto -> origen);
@@ -170,6 +195,7 @@ void rotar_nave(uint8_t direccion){
 void manejar_instante_partida(){
     if(fisicas == ACTIVADAS) {
 		calcularFisicas(nave);
+		gestionar_colisiones_asteroides();
 		gestionar_colisiones();
 	}
 }
@@ -179,6 +205,8 @@ void inicializarPartida(){
 	terreno = crearDibujable(&Terreno);
 	plataformas_partida = generar_plataformas(&Terreno, &numero_plataformas);
 	trasladar_superficie_lunar(terreno, plataformas_partida, numero_plataformas, (struct Punto){0, 350});
+
+	asteroides = generarAsteroides(terreno, &numero_asteroides);
 }
 
 void anyadirMoneda(){

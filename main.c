@@ -3,6 +3,7 @@
 #include "resources/superficie_lunar.h"
 #include "code/gestor_plataformas.h"
 #include "code/variables_globales.h"
+#include "resources/asteroides.h"
 
 #include <stdio.h>
 #include <windows.h>
@@ -30,6 +31,7 @@ struct Punto* p2 = NULL;
 struct Punto* p3 = NULL;
 struct Punto* p4 = NULL;
 
+
 float minimo(float a, float b) {
     return (a < b) ? a : b;
 }
@@ -46,6 +48,7 @@ void AttachConsoleToStdout() {
  * @param hdc
  */
 void pruebasDibujables(HDC hdc){
+
 }
 
 
