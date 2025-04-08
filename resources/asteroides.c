@@ -106,21 +106,10 @@ struct Asteroide* generarAsteroides(const struct Dibujable* terreno, uint8_t* nu
                 break;
         }
         colocar_dibujable(tmp->objeto, *punto_random);
-	    struct Arista arista_colision = (struct Arista){0};
-
-        if(!hay_colision(tmp->objeto, terreno, &arista_colision)){
-            uint8_t hay_colision_con_asteroide = 0;
-            for (uint8_t j = 0; j < *numAsteroides; j++){
-                if(hay_colision(tmp->objeto, asteroides[j].objeto, &arista_colision)){
-                    hay_colision_con_asteroide = 1;
-                    break;
-                }
-            }
-
-            if(!hay_colision_con_asteroide){
-                asteroides[*numAsteroides] = *tmp;
+        
+        if(esPosicionCorrecta(terreno, tmp, asteroides, numAsteroides)){
+            asteroides[*numAsteroides] = *tmp;
                 (*numAsteroides)++;
-            }
         }
         
       
@@ -137,6 +126,16 @@ struct Punto* randomPoint(uint32_t min_x, uint32_t max_x, uint32_t min_y, uint32
     return point;
 }
 
-boolean es_posicion_correcta(){
+boolean esPosicionCorrecta(const struct Dibujable* terreno, struct Asteroide* asteroide, struct Asteroide* asteroides, uint8_t* numAsteroides){
+    struct Arista arista_colision = (struct Arista){0};
 
+    if(!hay_colision(asteroide->objeto, terreno, &arista_colision)){
+        for (uint8_t j = 0; j < *numAsteroides; j++){
+            if(hay_colision(asteroide->objeto, asteroides[j].objeto, &arista_colision)){
+                return 0;
+            }
+        }
+        return 1;
+    }
+    return 0;
 }
