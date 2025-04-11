@@ -12,7 +12,7 @@ void destruirObjetoFisico(struct objetoFisico* objeto){
     free(objeto);
 }
 
-void calcularFisicas(struct objetoFisico* elemento){
+struct Punto calcularFisicas(struct objetoFisico* elemento){
 	if(orden_girar_izquierda && !orden_girar_derecha){
 		elemento -> rotacion = (elemento -> rotacion - ANGULO_ROTACION + 360) % 360;
 		rotar_nave(0);
@@ -37,14 +37,38 @@ void calcularFisicas(struct objetoFisico* elemento){
     elemento -> velocidad[0] += elemento -> aceleracion[0] * intervalo_fisicas_ms;
     elemento -> velocidad[1] += elemento -> aceleracion[1] * intervalo_fisicas_ms;
 
-    // Calculo de la nueva posicion dadas las velocidades
-    struct Punto nueva_posicion = {
-        elemento -> velocidad[0] * intervalo_fisicas_ms / pixels_por_metro,
-        -(elemento -> velocidad[1] * intervalo_fisicas_ms / pixels_por_metro)
+    // Calculo del desplazamiento dadas las velocidades
+	float desp_x = elemento -> velocidad[0] * intervalo_fisicas_ms / pixels_por_metro;
+	float desp_y = -(elemento -> velocidad[1] * intervalo_fisicas_ms / pixels_por_metro);
+	float pos_x = elemento -> objeto -> origen.x;
+	float pos_y = elemento -> objeto -> origen.y;
+	float desp_terreno_x = 0;
+	float desp_terreno_y = 0;
+
+	// Límite de posición de la nave, no desplazar nave en x y desplazar terreno
+	if (pos_x + desp_x > 920) {
+		desp_terreno_x = pos_x + desp_x - 920;
+		desp_x -= desp_terreno_x;
+	} else if (pos_x + desp_x < 106) {
+		desp_terreno_x = pos_x - desp_x - 106;
+		desp_x -= desp_terreno_x;
+	}
+
+	if (pos_y + desp_y < 168) {
+		desp_terreno_y = -pos_y - desp_y + 168;
+		desp_y += desp_terreno_y;
+	} else if (pos_y + desp_y > 550) {
+		desp_terreno_y = -pos_y + desp_y + 550;
+		desp_y += desp_terreno_y;
+	}
+
+
+    struct Punto desplazamiento = {
+        desp_x, desp_y
     };
 
     // Trasladar el objeto
-    trasladarDibujable(elemento -> objeto, nueva_posicion);
+    trasladarDibujable(elemento -> objeto, desplazamiento);
 
 	elemento -> aceleracion[0] = 0;
 	elemento -> aceleracion[1] = 0;
@@ -58,6 +82,7 @@ void calcularFisicas(struct objetoFisico* elemento){
 				break;
 		}
 	}
+	return (struct Punto) {desp_terreno_x, desp_terreno_y};
 }
 
 void propulsar(){

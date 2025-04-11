@@ -39,6 +39,7 @@ struct Arista* obtener_aristas_posibles(const struct DibujableConstante* terreno
                 // Si tiene el tamaño minimo necesario
                 aristas_posibles[*num_aristas].origen = &terreno->puntos[i - 1];
                 aristas_posibles[*num_aristas].destino = &terreno->puntos[i];
+                aristas_posibles[*num_aristas].activa = 1;
                 (*num_aristas)++;
             }
         }

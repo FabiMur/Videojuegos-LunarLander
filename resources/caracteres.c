@@ -314,7 +314,7 @@ const struct DibujableConstante Letra_X_Base = {
         {ANCHURA_CARACTER_MAX, ALTURA_CARACTER_MAX},
     },
     (struct UnionAristas[]){
-        {0, 3}, {1, 2}
+        {0, 3}, {2, 1}
     },
     4,
     2
@@ -385,7 +385,7 @@ const struct DibujableConstante Numero_2_Base = {
         {ANCHURA_CARACTER_MAX, ALTURA_CARACTER_MAX}
     },
     (struct UnionAristas[]){
-        {0, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5},
+        {0, 1}, {1, 2}, {3, 2}, {3, 4}, {4, 5}
     },
     6,
     5
@@ -399,7 +399,7 @@ const struct DibujableConstante Numero_3_Base = {
         {ANCHURA_CARACTER_MAX, ALTURA_CARACTER_MAX}
     },
     (struct UnionAristas[]){
-        {0, 1}, {1, 2}, {2, 3}, {4, 5}, {2, 5}
+        {0, 1}, {1, 2}, {3, 2}, {4, 5}, {2, 5}
     },
     6,
     5
@@ -427,7 +427,7 @@ const struct DibujableConstante Numero_5_Base = {
         {ANCHURA_CARACTER_MAX, ALTURA_CARACTER_MAX}, {0, ALTURA_CARACTER_MAX}
     },
     (struct UnionAristas[]){
-        {0, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5},
+        {1, 0}, {1, 2}, {2, 3}, {3, 4}, {5, 4},
     },
     6,
     5

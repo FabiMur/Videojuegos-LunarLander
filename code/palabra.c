@@ -55,3 +55,9 @@ void destruir_palabra(struct Palabra* palabra) {
     }
     free(palabra);
 }
+
+void desplazar_palabra(struct Palabra* palabra, int dx, int dy) {
+    for(uint8_t i = 0; i < palabra->num_letras; i++){
+        desplazarDibujableLoop(&(palabra->letras[i]), dx, dy);
+    }
+}

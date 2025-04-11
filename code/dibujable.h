@@ -40,10 +40,12 @@ struct UnionAristas{
  * 
  * @param origen Punto de origen de la arista
  * @param destino Punto de destino de la arista
+ * @param activa
  */
 struct Arista{
     struct Punto* origen;
     struct Punto* destino;
+    uint8_t activa;
 };
 
 /**
@@ -59,6 +61,10 @@ struct Dibujable {
     struct Arista* aristas; // Arreglo dinamico de aristas
     uint8_t num_puntos;
     uint8_t num_aristas;
+    uint8_t num_puntos_originales;
+    uint8_t num_aristas_originales;
+    uint8_t capacidad_puntos;
+    uint8_t capacidad_aristas;
 };
 
 /**
@@ -104,6 +110,14 @@ void destruirArista(struct Arista* arista);
  */
 void dibujarDibujable(HDC hdc, const struct Dibujable* dibujable);
 
+
+/**
+ * @brief Desplaza el dubujable con modo loop
+ * 
+ * @param dx Nº de pixels a desplazar en el eje x
+ * @param dy Nº de pixels a desplazar en el eje y
+ */
+void desplazarDibujableLoop(struct Dibujable* dibujable, int dx, int dy);
 
 uint8_t es_horizontal(struct Arista arista_colision);
 

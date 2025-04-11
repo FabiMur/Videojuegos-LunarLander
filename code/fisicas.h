@@ -25,7 +25,7 @@ struct objetoFisico {
 
 void destruirObjetoFisico(struct objetoFisico* objeto);
 
-void calcularFisicas(struct objetoFisico* objeto);
+struct Punto calcularFisicas(struct objetoFisico* objeto);
 
 void propulsar();
 

@@ -47,4 +47,13 @@ void dibujar_palabra(struct Palabra* palabra, HDC hdc);
  */
 void destruir_palabra(struct Palabra* palabra);
 
+
+/**
+ * @brief Desplaza la palabra con modo loop
+ * 
+ * @param dx Nº de pixels a desplazar en el eje x
+ * @param dy Nº de pixels a desplazar en el eje y
+ */
+void desplazar_palabra(struct Palabra* palabra, int dx, int dy);
+
 #endif // PALABRA_H

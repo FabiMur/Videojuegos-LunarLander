@@ -170,8 +170,13 @@ void rotar_nave(uint8_t direccion){
 
 void manejar_instante_partida(){
     if(fisicas == ACTIVADAS) {
-		calcularFisicas(nave);
+		struct Punto desp_terreno = calcularFisicas(nave);
 		gestionar_colisiones();
+		desplazarDibujableLoop(terreno, -desp_terreno.x, desp_terreno.y);
+		for (uint8_t i = 0; i < numero_plataformas; i++) {
+			desplazarDibujableLoop(plataformas_partida[i].linea, -desp_terreno.x, desp_terreno.y);
+			desplazar_palabra(plataformas_partida[i].palabra, -desp_terreno.x, desp_terreno.y);
+		}
 	}
 }
 
@@ -195,7 +200,7 @@ void comenzarPartida(){
     nave -> aceleracion[1] = 0;
     nave -> masa = masa_nave;
 	nave -> rotacion = 0;
-    trasladarDibujable(nave -> objeto, (struct Punto){50, 50});
+    trasladarDibujable(nave -> objeto, (struct Punto){200, 200});
 
 	motor_debil = crearDibujable(&Nave_Propulsion_Minima);
 	motor_medio = crearDibujable(&Nave_Propulsion_Media);
