@@ -92,7 +92,15 @@ struct Asteroide* generarAsteroides(const struct Dibujable* terreno, uint8_t* nu
     *numAsteroides = 0;
     for(uint8_t i = 0; i < MAX_ASTEROIDES; i++){
         struct Asteroide* tmp = malloc(sizeof(struct Asteroide));
-        struct Punto* punto_random = randomPoint(0, ANCHURA_TERRENO, 0, ALTURA_TERRENO);
+        struct Punto* punto_random = malloc(sizeof(struct Punto));
+        if(i < MAX_ASTEROIDES/2){
+            punto_random->y = ALTURA_CINTURON_ASTEROIDES_1;
+            punto_random->x = i * (ANCHURA_TERRENO / (MAX_ASTEROIDES/2));
+        } else {
+            punto_random->y = ALTURA_CINTURON_ASTEROIDES_2;
+            punto_random->x = (i - MAX_ASTEROIDES/2) * (ANCHURA_TERRENO / (MAX_ASTEROIDES/2));
+        }
+   
         tmp->tipo = randomAsteroideType();
         switch(tmp->tipo){
             case ASTEROIDE_PEQUENO:
@@ -106,12 +114,11 @@ struct Asteroide* generarAsteroides(const struct Dibujable* terreno, uint8_t* nu
                 break;
         }
         colocar_dibujable(tmp->objeto, *punto_random);
-        
+        tmp->velocidad = VELOCIDAD_ASTEROIDES;
         if(esPosicionCorrecta(terreno, tmp, asteroides, numAsteroides)){
             asteroides[*numAsteroides] = *tmp;
                 (*numAsteroides)++;
         }
-        
       
         free(tmp); 
         free(punto_random);

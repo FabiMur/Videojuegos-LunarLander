@@ -1,5 +1,4 @@
 #include "fisicas.h"
-
 #include "partida.h"
 
 static uint8_t propulsor_activado = 0;
@@ -60,6 +59,20 @@ void calcularFisicas(struct objetoFisico* elemento){
 	}
 }
 
+void calcualarFisicasAsteroides(struct Asteroide* asteroides, uint8_t numAsteroides){
+	for(uint8_t i = 0; i < numAsteroides; i++){
+		struct Punto nueva_posicion = {0,0};
+		
+		if(asteroides[i].objeto->origen.y == ALTURA_CINTURON_ASTEROIDES_1){
+			nueva_posicion.x = asteroides[i].velocidad * intervalo_fisicas_ms / pixels_por_metro;
+		} else if(asteroides[i].objeto->origen.y == ALTURA_CINTURON_ASTEROIDES_2){
+			nueva_posicion.x = -(asteroides[i].velocidad * intervalo_fisicas_ms / pixels_por_metro);
+		}
+		nueva_posicion.y = asteroides[i].objeto->origen.y;
+		trasladarDibujable(asteroides[i].objeto, nueva_posicion);
+	}
+}
+
 void propulsar(){
 	switch(propulsor){
 		case 3:
@@ -90,3 +103,4 @@ void girar_derecha(){
 uint8_t obtener_propulsor(){
 	return propulsor;
 }
+

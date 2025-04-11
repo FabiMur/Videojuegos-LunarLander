@@ -195,6 +195,7 @@ void rotar_nave(uint8_t direccion){
 void manejar_instante_partida(){
     if(fisicas == ACTIVADAS) {
 		calcularFisicas(nave);
+		calcualarFisicasAsteroides(asteroides, numero_asteroides);
 		gestionar_colisiones_asteroides();
 		gestionar_colisiones();
 	}

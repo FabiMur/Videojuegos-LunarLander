@@ -15,6 +15,11 @@
 #define ANCHURA_ASTEROIDE_PEQUENO 18
 #define ALTURA_ASTEROIDE_PEQUENO 18
 
+#define ALTURA_CINTURON_ASTEROIDES_1 100
+#define ALTURA_CINTURON_ASTEROIDES_2 200
+
+#define VELOCIDAD_ASTEROIDES 0.000002
+
 #define MAX_ASTEROIDES 10
 
 /**
@@ -42,6 +47,7 @@ enum TipoAsteroide {
 struct Asteroide {
     struct Dibujable* objeto;
     enum TipoAsteroide tipo;
+    float velocidad;
 };
 
 /**
