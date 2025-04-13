@@ -118,57 +118,11 @@ struct Texto* crearTextoDesdeCadena(const char* cadena, struct Punto origen) {
             case '9': agregar_caracter(txt, &Numero_9_Base); break;
             case ' ': agregar_caracter(txt, &Simbolo_Espacio_Base); break;
             case ':': agregar_caracter(txt, &Simbolo_DosPuntos_Base); break;
-            case '>': agregar_caracter(txt, &Simbolo_Seleccion_Base); break;
+            case '>': agregar_caracter(txt, &Simbolo_Derecha_Base); break;
+            case '<': agregar_caracter(txt, &Simbolo_Izquierda_Base); break;
             // Agnadir mas simbolos
             default: break;
         }
     }
     return txt;
-}
-
-struct Texto* copiar_texto(const struct Texto* original) {
-    struct Texto* copia = crear_texto(original->origen);
-    copia->num_caracteres = original->num_caracteres;
-    // Asumiendo que se crea un arreglo de punteros, se puede duplicar el arreglo de punteros
-    if (original->num_caracteres > 0) {
-        copia->caracteres = malloc(original->num_caracteres * sizeof(struct Dibujable*));
-        for (uint8_t i = 0; i < original->num_caracteres; i++) {
-            // Para una copia profunda, se debe copiar cada objeto dibujable;
-            // si ya tienes una función para ello, úsala. De lo contrario, si es suficiente copiar el puntero, haz:
-            copia->caracteres[i] = original->caracteres[i];
-        }
-    }
-    copia->factor_escalado_x = original->factor_escalado_x;
-    copia->factor_escalado_y = original->factor_escalado_y;
-    return copia;
-}
-
-void prepend_caracter_texto(struct Texto* texto, const struct DibujableConstante* caracter) {
-    // Nuevo número de caracteres es uno más
-    uint8_t nuevo_n = texto->num_caracteres + 1;
-    struct Dibujable** nuevo_arr = malloc(nuevo_n * sizeof(struct Dibujable*));
-    if (!nuevo_arr) {
-        fprintf(stderr, "Error al asignar memoria en prepend_caracter_texto.\n");
-        exit(EXIT_FAILURE);
-    }
-    
-    // Crear el dibujable para la flecha y colocarlo en la posición 0
-    struct Dibujable* flecha = crearDibujable(caracter);
-    if (!flecha) {
-        fprintf(stderr, "Error al crear el dibujable para la flecha.\n");
-        exit(EXIT_FAILURE);
-    }
-    // Colocar la flecha en el mismo origen del texto actual
-    colocar_dibujable(flecha, texto->origen);
-    nuevo_arr[0] = flecha;
-    
-    // Copiar los punteros originales al final del nuevo arreglo
-    for (uint8_t i = 0; i < texto->num_caracteres; i++) {
-        nuevo_arr[i+1] = texto->caracteres[i];
-    }
-    
-    // Liberar el arreglo anterior, y actualizar el objeto Texto
-    free(texto->caracteres);
-    texto->caracteres = nuevo_arr;
-    texto->num_caracteres = nuevo_n;
 }

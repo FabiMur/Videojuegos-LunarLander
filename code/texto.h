@@ -17,7 +17,5 @@ int16_t calcular_centro_x_texto(struct Texto* texto);
 void dibujar_texto(struct Texto* texto, HDC hdc);
 void destruir_texto(struct Texto* texto);
 struct Texto* crearTextoDesdeCadena(const char* cadena, struct Punto origen);
-struct Texto* copiar_texto(const struct Texto* original);
-void prepend_caracter_texto(struct Texto* texto, const struct DibujableConstante* caracter);
 
 #endif // TEXTO_H

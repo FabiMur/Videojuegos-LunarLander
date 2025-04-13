@@ -54,8 +54,8 @@ void pruebasDibujables(HDC hdcMem) {
     
     destruir_texto(textoTest);
 
-    const char* numeros = "0123456789 :>";
-    
+    const char* numeros = "0123456789 :><";
+
     struct Punto origenNumeros = {10, 10 + ALTURA_CARACTER_MAX + 5};
     struct Texto* textoNumeros = crearTextoDesdeCadena(numeros, origenNumeros);
     dibujar_texto(textoNumeros, hdcMem);

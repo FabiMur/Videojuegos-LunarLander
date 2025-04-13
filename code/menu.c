@@ -93,11 +93,11 @@ static void actualizarPosicionesMenu(HWND hwnd) {
 void dibujarMenuEnBuffer(HDC hdc, HWND hwndReal) {
     actualizarPosicionesMenu(hwndReal);
     
-    // Para centrar con el tamagno de ventana
+    // Obtener el rectángulo del área del cliente
     RECT rect;
     GetClientRect(hwndReal, &rect);
     
-    // Centrado del titulo
+    // Calcular la posición del título
     int marginTitulo = 70;
     int numCaracteresTitulo = 12;
     int anchoTitulo = numCaracteresTitulo * (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER);
@@ -112,24 +112,21 @@ void dibujarMenuEnBuffer(HDC hdc, HWND hwndReal) {
     
     // Dibujar cada opción del menú
     for (int i = 0; i < NUM_OPCIONES; i++) {
+        // Si es la opción seleccionada, dibujar el indicador
         if (i == obtenerOpcionSeleccionada()) {
-            int anchoOpcion = opcionesTextuales[i]->num_caracteres * (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER);
-            RECT fondo = {
-                (LONG)opcionesTextuales[i]->origen.x,
-                (LONG)opcionesTextuales[i]->origen.y,
-                (LONG)opcionesTextuales[i]->origen.x + anchoOpcion,
-                (LONG)opcionesTextuales[i]->origen.y + ALTURA_CARACTER_MAX
-            };
-            
-            // Cambiar esto por agnadir una el simbolo de seleccion antes del texto de la opcion
-            // seleccionada
-            HBRUSH brushAmarillo = CreateSolidBrush(RGB(255, 255, 255));
-            FillRect(hdc, &fondo, brushAmarillo);
-            DeleteObject(brushAmarillo);
+            struct Punto indicadorOrigen;
+            // Colocar el indicador a la izquierda de la opcion seleccionada
+            indicadorOrigen.x = opcionesTextuales[i]->origen.x - 2 * ANCHURA_CARACTER_MAX;
+            indicadorOrigen.y = opcionesTextuales[i]->origen.y;
+            struct Texto* indicador = crearTextoDesdeCadena(">", indicadorOrigen);
+            dibujar_texto(indicador, hdc);
+            destruir_texto(indicador);
         }
+        // Dibujar la opción de menú
         dibujar_texto(opcionesTextuales[i], hdc);
     }
 }
+
 
 LRESULT procesarEventoMenu(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if(uMsg == WM_KEYDOWN) {

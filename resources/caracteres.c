@@ -516,10 +516,30 @@ const struct DibujableConstante Simbolo_Espacio_Base  = {
     0
 };
 
-const struct DibujableConstante Simbolo_Seleccion_Base  = {
+const struct DibujableConstante Simbolo_Derecha_Base  = {
     CENTRO_CONST_CARACTER,
-    (struct Punto[]){},
-    (struct UnionAristas[]){},
-    0,
-    0
+    (struct Punto[]){
+        {0, ALTURA_CARACTER_MAX/2 + 5},
+        {0, ALTURA_CARACTER_MAX/2 - 5},
+        {ANCHURA_CARACTER_MAX, ALTURA_CARACTER_MAX/2}
+    },
+    (struct UnionAristas[]){
+        {0,1}, {1,2}, {2,0}
+    },
+    3,
+    3
+};
+
+const struct DibujableConstante Simbolo_Izquierda_Base  = {
+    CENTRO_CONST_CARACTER,
+    (struct Punto[]){
+        {ANCHURA_CARACTER_MAX, ALTURA_CARACTER_MAX/2 + 5},
+        {ANCHURA_CARACTER_MAX, ALTURA_CARACTER_MAX/2 - 5},
+        {0, ALTURA_CARACTER_MAX/2}
+    },
+    (struct UnionAristas[]){
+        {0,1}, {1,2}, {2,0}
+    },
+    3,
+    3
 };
