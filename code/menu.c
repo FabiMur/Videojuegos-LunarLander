@@ -141,25 +141,6 @@ LRESULT procesarEventoMenu(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
                     opcionSeleccionada++;
                 InvalidateRect(hwnd, NULL, TRUE); // repintado
                 break;
-            case VK_RETURN:
-                // Si se pulsa Enter, se ejecuta la acción correspondiente
-                if(opcionSeleccionada == OPCION_PLAY) {
-                    printf("Play seleccionado\n");
-                    // Gestionado en main
-                }
-                else if(opcionSeleccionada == OPCION_TEST_DIBUJABLES) {
-                    printf("Test dibujables seleccionado\n");
-                    // Gestionado en main
-                }
-                else if(opcionSeleccionada == OPCION_OPTIONS) {
-                    printf("Options seleccionado\n");
-                    // Gestionado en main
-                }
-                else if(opcionSeleccionada == OPCION_EXIT) {
-                    printf("Exit seleccionado\n");
-                    PostQuitMessage(0); // Terminar el proceso
-                }
-                break;
             default:
                 break;
         }

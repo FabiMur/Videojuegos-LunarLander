@@ -201,7 +201,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             dibujarMenuEnBuffer(hdcMem, hwnd);
         } else if (estadoActual == ESTADO_JUEGO) {
             dibujar_bordes(hdcMem);
-            pruebasDibujables(hdcMem);
             pintar_pantalla(hdcMem);
         } else if (estadoActual == ESTADO_TEST_DIBUJABLES) {
             pruebasDibujables(hdcMem);
@@ -216,22 +215,26 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     }
     
     case WM_KEYDOWN: {
-        if (estadoActual == ESTADO_MENU) {
+        if(estadoActual == ESTADO_MENU) {
             procesarEventoMenu(hwnd, uMsg, wParam, lParam);
-            if (wParam == VK_RETURN) {
+            if(wParam == VK_RETURN) {
                 OpcionMenu op = obtenerOpcionSeleccionada();
-                if (op == OPCION_PLAY) {
+                if(op == OPCION_PLAY) {
                     printf("Play seleccionado\n");
                     estadoActual = ESTADO_JUEGO;
-                } else if (op == OPCION_TEST_DIBUJABLES) {
+                    comenzarPartida();
+                }
+                else if(op == OPCION_TEST_DIBUJABLES) {
                     printf("Test dibujables seleccionado\n");
                     estadoActual = ESTADO_TEST_DIBUJABLES;
-                } else if (op == OPCION_OPTIONS) {
+                }
+                else if(op == OPCION_OPTIONS) {
                     printf("Options seleccionado\n");
-                    // Agrega lo que necesites para options
-                } else if (op == OPCION_EXIT) {
+                    // Configura la acción para Options
+                }
+                else if(op == OPCION_EXIT) {
                     printf("Exit seleccionado\n");
-                    PostQuitMessage(0);
+                    PostQuitMessage(0); // Terminar el proceso
                 }
             }
         } else if (estadoActual == ESTADO_JUEGO) {
