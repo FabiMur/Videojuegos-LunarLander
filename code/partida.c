@@ -4,6 +4,10 @@
 #include "gestor_plataformas.h"
 #include "variables_globales.h"
 #include "gestor_colisiones.h"
+#include "fisicas.h"
+#include <math.h>
+#include <time.h>
+#include <float.h>
 
 #define fuel_por_moneda 500
 #define masa_nave 1000
@@ -36,22 +40,47 @@ uint8_t numero_plataformas = 0;
 
 int combustible = 0;
 uint16_t puntuacion_partida = 0;
+static uint8_t zoom_escalado_aplicado = 0;
+int es_dibujando_nave = 0; 
+float pos_x_deseada_pantalla = 1024 / 2;
+float pos_y_deseada_pantalla = 768 * 0.25;
+
 static uint8_t fisicas = DESACTIVADAS;
 
 
 void escalar_escena_partida(float factor_x, float factor_y){
 	if(inicio == 1) {
-		escalar_dibujable_en_escena_dados_ejes(terreno, factor_x, factor_y);
-		escalar_dibujable_en_escena_dados_ejes(motor_fuerte, factor_x, factor_y);
-		escalar_dibujable_en_escena_dados_ejes(motor_medio, factor_x, factor_y);
-		escalar_dibujable_en_escena_dados_ejes(motor_debil, factor_x, factor_y);
-		escalar_dibujable_en_escena_dados_ejes(nave->objeto, factor_x, factor_y);
+		escalar_dibujable_en_escena_dados_ejes(terreno, factor_x, factor_x);
+		escalar_dibujable_en_escena_dados_ejes(motor_fuerte, factor_y, factor_y);
+		escalar_dibujable_en_escena_dados_ejes(motor_medio, factor_y, factor_y);
+		escalar_dibujable_en_escena_dados_ejes(motor_debil, factor_y, factor_y);
+		escalar_dibujable_en_escena_dados_ejes(nave->objeto, factor_y, factor_y);
 		for(uint8_t i = 0; i < numero_plataformas; i++) {
-			escalar_dibujable_en_escena_dados_ejes(plataformas_partida[i].linea, factor_x, factor_y);
+			escalar_dibujable_en_escena_dados_ejes(plataformas_partida[i].linea, factor_x, factor_x);
 			for(uint8_t j = 0; j < plataformas_partida[i].palabra->num_letras; j++){
-				escalar_dibujable_en_escena_dados_ejes(&plataformas_partida[i].palabra->letras[j], factor_x, factor_y);
+				escalar_dibujable_en_escena_dados_ejes(&plataformas_partida[i].palabra->letras[j], factor_x, factor_x);
 			}
 		}
+		/*struct Punto nave_despues = nave->objeto->origen;
+
+		float destino_x = 1024 / 2.0;
+		float destino_y = 768 * 0.2;
+
+		float dx = destino_x - nave_despues.x;
+		float dy = destino_y - nave_despues.y;
+
+		trasladarDibujable(terreno, (struct Punto){dx, dy});
+		trasladarDibujable(motor_fuerte, (struct Punto){dx, dy});
+		trasladarDibujable(motor_medio, (struct Punto){dx, dy});
+		trasladarDibujable(motor_debil, (struct Punto){dx, dy});
+		trasladarDibujable(nave->objeto, (struct Punto){dx, dy});
+
+		for (uint8_t i = 0; i < numero_plataformas; i++) {
+			trasladarDibujable(plataformas_partida[i].linea, (struct Punto){dx, dy});
+			for (uint8_t j = 0; j < plataformas_partida[i].palabra->num_letras; j++) {
+				trasladarDibujable(&plataformas_partida[i].palabra->letras[j], (struct Punto){dx, dy});
+			}
+		}*/
 	}
 }
 
@@ -136,11 +165,13 @@ void gestionar_colisiones() {
 
 
 void dibujar_escena(HDC hdc){
-    dibujarDibujable(hdc, nave -> objeto);
+	es_dibujando_nave = 0;
 	dibujarDibujable(hdc, terreno);
 	for(uint8_t i = 0; i < numero_plataformas; i++){
-		dibujar_plataforma(hdc, plataformas_partida[i]);
+        dibujar_plataforma(hdc, plataformas_partida[i]);
 	}
+	es_dibujando_nave = 1;
+    dibujarDibujable(hdc, nave->objeto);
 	switch(obtener_propulsor()){
 		case 1:
 			colocar_dibujable(motor_debil, nave -> objeto -> origen);
@@ -157,7 +188,67 @@ void dibujar_escena(HDC hdc){
 		default:
 			break;
 	}
-	
+	es_dibujando_nave =0;
+}
+
+
+void actualizar_camara() {
+
+    const float UMBRAL_DISTANCIA = 200.0f;
+    const float MARGEN_HISTERESIS = 400.0f;
+
+    float x_nave = nave->objeto->origen.x;
+    float y_nave = nave->objeto->origen.y;
+    float altura_terreno = obtener_altura_terreno_cercano(x_nave);
+    float distancia_al_terreno = altura_terreno - y_nave;
+
+    if (distancia_al_terreno < UMBRAL_DISTANCIA && !zoom_activado) {
+        // Activar zoom
+        zoom_activado = 1;
+        camara_zoom = FACTOR_ZOOM;
+
+        if (!zoom_escalado_aplicado) {
+            zoom_escalado_aplicado = 1;
+            escalar_escena_partida(FACTOR_ZOOM, ESCALA_NAVE_ZOOM);
+        }
+
+    } else if (distancia_al_terreno > (UMBRAL_DISTANCIA + MARGEN_HISTERESIS) && zoom_activado) {
+        // Desactivar zoom
+        camara_zoom = 1.0f;
+        zoom_activado = 0;
+        if (zoom_escalado_aplicado) {
+            zoom_escalado_aplicado = 0;
+            escalar_escena_partida(1.0f / FACTOR_ZOOM, 1.0f / ESCALA_NAVE_ZOOM);
+        }
+    }
+}
+
+// Función para obtener la altura del terreno más cercano debajo de la nave
+float obtener_altura_terreno_cercano(float x_nave) {
+    float altura_max = 0.0f; // Buscamos el punto más "bajo" (Y mayor) debajo de la nave
+    
+    if(!terreno || !terreno->aristas) return 764.0f; // Si no hay terreno, devolver fondo de pantalla
+
+    for(uint16_t i = 0; i < terreno->num_aristas; i++) {
+        struct Punto p1 = *terreno->aristas[i].origen;
+        struct Punto p2 = *terreno->aristas[i].destino;
+        
+        // Considerar cualquier arista (no solo horizontales)
+        float x_min = fmin(p1.x, p2.x);
+        float x_max = fmax(p1.x, p2.x);
+        
+        if(x_nave >= x_min && x_nave <= x_max) {
+            // Calcular Y en este punto X (interpolación lineal)
+            float pendiente = (p2.y - p1.y) / (p2.x - p1.x);
+            float y = p1.y + pendiente * (x_nave - p1.x);
+            
+            if(y > altura_max) {
+                altura_max = y;
+            }
+        }
+    }
+    
+    return altura_max;
 }
 
 void rotar_nave(uint8_t direccion){
@@ -170,12 +261,14 @@ void rotar_nave(uint8_t direccion){
 void manejar_instante_partida(){
     if(fisicas == ACTIVADAS) {
 		calcularFisicas(nave);
+		actualizar_camara();
 		gestionar_colisiones();
 	}
 }
 
 void inicializarPartida(){
     combustible = 0;
+    camara_zoom = 1.0f;
 	terreno = crearDibujable(&Terreno);
 	plataformas_partida = generar_plataformas(&Terreno, &numero_plataformas);
 	trasladar_superficie_lunar(terreno, plataformas_partida, numero_plataformas, (struct Punto){0, 350});

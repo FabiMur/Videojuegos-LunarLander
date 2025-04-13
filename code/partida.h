@@ -16,6 +16,8 @@ extern int combustible;
 
 void dibujar_escena(HDC hdc);
 
+float obtener_altura_terreno_cercano(float x_nave);
+
 void rotar_nave(uint8_t direccion);
 
 void manejar_instante_partida();
