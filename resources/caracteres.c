@@ -408,12 +408,12 @@ const struct DibujableConstante Numero_3_Base = {
 const struct DibujableConstante Numero_4_Base = {
     CENTRO_CONST_CARACTER,
     (struct Punto[]){
-        {0, 0}, {ANCHURA_CARACTER_MAX-1, 0}, 
-        {0, ALTURA_CARACTER_MAX-1/2}, {ANCHURA_CARACTER_MAX-1, ALTURA_CARACTER_MAX-1/2},
-        {ANCHURA_CARACTER_MAX-1, ALTURA_CARACTER_MAX-1}
+        {0, 0}, {ANCHURA_CARACTER_MAX, 0}, 
+        {0, ALTURA_CARACTER_MAX/2}, {ANCHURA_CARACTER_MAX, ALTURA_CARACTER_MAX/2},
+        {ANCHURA_CARACTER_MAX, ALTURA_CARACTER_MAX}
     },
     (struct UnionAristas[]){
-        {0, 2}, {1, 3}, {2, 3}, {3, 4}
+        {0, 2}, {1, 3}, {2, 3}, {1, 4}
     },
     5,
     4
