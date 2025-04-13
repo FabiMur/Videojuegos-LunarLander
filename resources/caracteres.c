@@ -408,9 +408,9 @@ const struct DibujableConstante Numero_3_Base = {
 const struct DibujableConstante Numero_4_Base = {
     CENTRO_CONST_CARACTER,
     (struct Punto[]){
-        {0, 0}, {ANCHURA_CARACTER_MAX, 0}, 
-        {0, ALTURA_CARACTER_MAX/2}, {ANCHURA_CARACTER_MAX, ALTURA_CARACTER_MAX/2},
-        {ANCHURA_CARACTER_MAX, ALTURA_CARACTER_MAX}
+        {0, 0}, {ANCHURA_CARACTER_MAX-1, 0}, 
+        {0, ALTURA_CARACTER_MAX-1/2}, {ANCHURA_CARACTER_MAX-1, ALTURA_CARACTER_MAX-1/2},
+        {ANCHURA_CARACTER_MAX-1, ALTURA_CARACTER_MAX-1}
     },
     (struct UnionAristas[]){
         {0, 2}, {1, 3}, {2, 3}, {3, 4}
@@ -484,4 +484,42 @@ const struct DibujableConstante Numero_9_Base = {
     },
     6,
     4
+};
+
+// Simbolos
+const struct DibujableConstante Simbolo_DosPuntos_Base  = {
+    CENTRO_CONST_CARACTER,
+    (struct Punto[]){
+        {ANCHURA_CARACTER_MAX/2, ALTURA_CARACTER_MAX/2 - 3},
+        {ANCHURA_CARACTER_MAX/2, ALTURA_CARACTER_MAX/2 - 4},
+        {ANCHURA_CARACTER_MAX/2 + 1, ALTURA_CARACTER_MAX/2 - 3},
+        {ANCHURA_CARACTER_MAX/2 + 1, ALTURA_CARACTER_MAX/2 - 4}, 
+
+        {ANCHURA_CARACTER_MAX/2, ALTURA_CARACTER_MAX/2 + 4},
+        {ANCHURA_CARACTER_MAX/2, ALTURA_CARACTER_MAX/2 + 3},
+        {ANCHURA_CARACTER_MAX/2 + 1, ALTURA_CARACTER_MAX/2 + 4},
+        {ANCHURA_CARACTER_MAX/2 + 1, ALTURA_CARACTER_MAX/2 + 3}
+    },
+    (struct UnionAristas[]){
+        {0,1}, {1,2}, {2,3}, {3,0},
+        {4,5}, {5,6}, {6,7}, {7,4}	
+    },
+    8,
+    8
+};
+
+const struct DibujableConstante Simbolo_Espacio_Base  = {
+    CENTRO_CONST_CARACTER,
+    (struct Punto[]){},
+    (struct UnionAristas[]){},
+    0,
+    0
+};
+
+const struct DibujableConstante Simbolo_Seleccion_Base  = {
+    CENTRO_CONST_CARACTER,
+    (struct Punto[]){},
+    (struct UnionAristas[]){},
+    0,
+    0
 };

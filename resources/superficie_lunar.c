@@ -1,5 +1,5 @@
 #include "superficie_lunar.h"
-#include "../code/palabra.h"
+#include "../code/texto.h"
 #include "caracteres.h"
 
 
