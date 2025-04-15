@@ -62,14 +62,20 @@ void calcularFisicas(struct objetoFisico* elemento){
 void calcualarFisicasAsteroides(struct Asteroide* asteroides, uint8_t numAsteroides){
 	for(uint8_t i = 0; i < numAsteroides; i++){
 		struct Punto nueva_posicion = {0,0};
-		
+		float newX = asteroides[i].velocidad * intervalo_fisicas_ms / pixels_por_metro;
+
 		if(asteroides[i].objeto->origen.y == ALTURA_CINTURON_ASTEROIDES_1){
-			nueva_posicion.x = asteroides[i].velocidad * intervalo_fisicas_ms / pixels_por_metro;
+			nueva_posicion.x = (int)newX % ANCHURA_TERRENO;
 		} else if(asteroides[i].objeto->origen.y == ALTURA_CINTURON_ASTEROIDES_2){
-			nueva_posicion.x = -(asteroides[i].velocidad * intervalo_fisicas_ms / pixels_por_metro);
+			nueva_posicion.x = (int)(-newX) % ANCHURA_TERRENO;
 		}
-		nueva_posicion.y = asteroides[i].objeto->origen.y;
 		trasladarDibujable(asteroides[i].objeto, nueva_posicion);
+
+		if(asteroides[i].objeto->origen.x < 0){
+			trasladarDibujable(asteroides[i].objeto, (struct Punto){ANCHURA_TERRENO, 0});
+		} else if(asteroides[i].objeto->origen.x > ANCHURA_TERRENO){
+			trasladarDibujable(asteroides[i].objeto, (struct Punto){-ANCHURA_TERRENO, 0});
+		}
 	}
 }
 
