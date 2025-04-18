@@ -25,6 +25,7 @@ void manejar_teclas(){
             if(estado_teclas[MONEDA]){
                 printf("Moneda insertada\n");
                 anyadirMoneda();
+                estado_teclas[MONEDA] = 0;
                 estado = MENU;
             }
             break;
@@ -32,6 +33,7 @@ void manejar_teclas(){
         case MENU:
             if(estado_teclas[MONEDA]){
                 printf("Moneda insertada\n");
+                estado_teclas[MONEDA] = 0;
                 anyadirMoneda();
             }
             else if(estado_teclas[ESPACIO]){
