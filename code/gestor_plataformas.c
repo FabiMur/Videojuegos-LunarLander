@@ -6,7 +6,7 @@
 
 #include "../resources/caracteres.h"
 #include "transformaciones.h"
-#include "palabra.h"
+#include "texto.h"
 
 void inicializar_aleatoriedad() {
     srand(time(NULL));
@@ -140,7 +140,7 @@ void generar_aleatorios(uint8_t* resultado, uint8_t num_valores, uint8_t max_val
 /**
  * 
  */
-struct Palabra* generar_palabra_plataforma(struct Arista arista, uint8_t* bonificador) {
+struct Texto* generar_texto_plataforma(struct Arista arista, uint8_t* bonificador) {
     const struct DibujableConstante* caracter_bonificador;
     *bonificador = calcular_bonificador(arista, &caracter_bonificador);
     
@@ -150,12 +150,12 @@ struct Palabra* generar_palabra_plataforma(struct Arista arista, uint8_t* bonifi
     int16_t y = arista.destino->y + 12;
     int8_t tam_media_palabra = (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER) / 2;
 
-    struct Palabra* palabra = crear_palabra((struct Punto){media_arista_x - tam_media_palabra, y});
-    agregar_letra(palabra, &Letra_X_Base);
-    agregar_letra(palabra, caracter_bonificador);
-    escalar_palabra_centrada(palabra, 0.6);
+    struct Texto* texto = crear_texto((struct Punto){media_arista_x - tam_media_palabra, y});
+    agregar_caracter(texto, &Letra_X_Base);
+    agregar_caracter(texto, caracter_bonificador);
+    escalar_texto_centrado(texto, 0.6);
 
-    return palabra;
+    return texto;
 }
 
 /**
@@ -225,12 +225,12 @@ struct Plataforma* generar_plataforma_dada_arista(struct Arista arista, struct P
     
     // Calculo del bonificador y generacion de la palabra
     uint8_t bonificador;
-    struct Palabra* palabra = generar_palabra_plataforma(arista, &bonificador);
+    struct Texto* texto = generar_texto_plataforma(arista, &bonificador);
     struct Dibujable* linea_dibujable = crearDibujable(linea);
     // Creacion de la estrcutura plataforma
     plataforma->linea = linea_dibujable;
     plataforma->bonificador = bonificador;
-    plataforma->palabra = palabra;
+    plataforma->texto = texto;
 
     return plataforma;
 }
@@ -286,6 +286,6 @@ struct Plataforma* generar_plataformas(const struct DibujableConstante* terreno,
 
 
 void dibujar_plataforma(HDC hdc, struct Plataforma plataforma){
-    dibujar_palabra(plataforma.palabra, hdc);
+    dibujar_texto(plataforma.texto, hdc);
     dibujarDibujable(hdc, plataforma.linea);
 }

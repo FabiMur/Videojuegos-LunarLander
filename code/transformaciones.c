@@ -28,21 +28,28 @@ void colocar_dibujable(struct Dibujable* dibujable, struct Punto destino){
     trasladarDibujable(dibujable, traslacion);
 }
 
-void colocar_palabra(struct Palabra* palabra, struct Punto destino){
-    if(!palabra || !palabra->letras) return;
-    palabra->origen.x = destino.x;
-    palabra->origen.y = destino.y;
+void colocar_texto(struct Texto* texto, struct Punto destino) {
+    if (!texto || !texto->caracteres) return;
 
-    float separacion_centros = (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER) * palabra->factor_escalado_x;
-    if(separacion_centros < 1) {
+    // Define el nuevo origen "base" para el Texto
+    texto->origen = destino;
+    
+    // La separación entre centros, usando la escala actual
+    float separacion_centros = (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER) * texto->factor_escalado_x;
+    if (separacion_centros < 1)
         separacion_centros = 1;
+    
+    // Para cada letra, calcular la posición absoluta deseada
+    for (uint8_t i = 0; i < texto->num_caracteres; i++) {
+        struct Punto posicionAbsoluta = {
+            destino.x + separacion_centros * i,
+            destino.y
+        };
+        // Coloca la letra en la posición absoluta calculada
+        colocar_dibujable(texto->caracteres[i], posicionAbsoluta);
     }
-
-    for(uint8_t i = 0; i < palabra -> num_letras; i++) {
-        float nuevo_x = destino.x + separacion_centros * i;
-        colocar_dibujable(&palabra->letras[i], (struct Punto){nuevo_x, destino.y});
-    } 
 }
+
 
 void colocarDibujable(struct Dibujable* dibujable, struct Punto destino){
 	struct Punto traslacion = (struct Punto){
@@ -105,10 +112,10 @@ void escalar_dibujable_en_escena_dados_ejes(struct Dibujable* dibujable, float f
     }
 }
 
-void escalar_palabra_en_escena_dados_ejes(struct Palabra* palabra, float factorX, float factorY) {
-    if (!palabra->letras) return;
-    for(uint8_t i = 0; i < palabra->num_letras; i++){
-        escalar_dibujable_en_escena_dados_ejes(&palabra->letras[i], factorX, factorY);
+void escalar_texto_en_escena_dados_ejes(struct Texto* texto, float factorX, float factorY) {
+    if (!texto->caracteres) return;
+    for(uint8_t i = 0; i < texto->num_caracteres; i++){
+        escalar_dibujable_en_escena_dados_ejes(texto->caracteres[i], factorX, factorY);
     }
 
 }
@@ -122,8 +129,8 @@ void escalarDibujableDadosEjes(struct Dibujable* dibujable, float factorX, float
     }
 }
         
-void escalar_palabra_centrada(struct Palabra* palabra, float factor){
-    escalar_palabra_centrada_dados_ejes(palabra, factor, factor);
+void escalar_texto_centrado(struct Texto* texto, float factor){
+    escalar_texto_centrado_dados_ejes(texto, factor, factor);
 }
 
 
@@ -134,55 +141,55 @@ void escalar_palabra_centrada(struct Palabra* palabra, float factor){
  * @param factorX factor de escalado en el eje X
  * @param factorY factor de escalado en el eje Y
  */
-void escalar_palabra(struct Palabra* palabra, float factorX, float factorY) {
-    for(uint8_t i = 0; i < palabra -> num_letras; i++){
-        if(!palabra->letras[i].puntos) return;
-        for(uint8_t j = 0; j < palabra->letras[i].num_puntos; j++){
-            escalarXPuntoDadoCentro(&palabra->letras[i].puntos[j], palabra->letras[i].origen, factorX);
-            escalarYPuntoDadoCentro(&palabra->letras[i].puntos[j], palabra->letras[i].origen, factorY);
+void escalar_texto(struct Texto* texto, float factorX, float factorY) {
+    for(uint8_t i = 0; i < texto->num_caracteres; i++){
+        if(!texto->caracteres[i]->puntos) return;
+        for(uint8_t j = 0; j < texto->caracteres[i]->num_puntos; j++){
+            escalarXPuntoDadoCentro(&texto->caracteres[i]->puntos[j], texto->caracteres[i]->origen, factorX);
+            escalarYPuntoDadoCentro(&texto->caracteres[i]->puntos[j], texto->caracteres[i]->origen, factorY);
         }
     }
 }
 
 
-void escalar_palabra_centrada_dados_ejes(struct Palabra* palabra, float factorX, float factorY){
-    if(!palabra->letras) return;
+void escalar_texto_centrado_dados_ejes(struct Texto* texto, float factorX, float factorY){
+    if(!texto->caracteres) return;
 
     // Establecer los factores de escalado
-    palabra->factor_escalado_x = factorX;
-    palabra->factor_escalado_y = factorY;
+    texto->factor_escalado_x = factorX;
+    texto->factor_escalado_y = factorY;
 
-    float distancia_origen_a_centro = ((palabra->num_letras * ANCHURA_CARACTER_MAX) + ((palabra->num_letras-1)* SEPARACION_CARACTER) - ANCHURA_CARACTER_MAX) / 2;
-    float nuevo_origen_palabra_x = (palabra->origen.x + distancia_origen_a_centro) - (distancia_origen_a_centro * factorX);
+    float distancia_origen_a_centro = ((texto->num_caracteres * ANCHURA_CARACTER_MAX) + ((texto->num_caracteres-1)* SEPARACION_CARACTER) - ANCHURA_CARACTER_MAX) / 2;
+    float nuevo_origen_texto_x = (texto->origen.x + distancia_origen_a_centro) - (distancia_origen_a_centro * factorX);
     
-    // Generar el escalado de los caracteres de la palabra
-    escalar_palabra(palabra, factorX, factorY);
+    // Generar el escalado de los caracteres de la texto
+    escalar_texto(texto, factorX, factorY);
 
     // Establecer las posiciones de los caracteres dado el nuevo origen
-    colocar_palabra(palabra, (struct Punto){nuevo_origen_palabra_x, palabra->letras[0].origen.y});
+    colocar_texto(texto, (struct Punto){nuevo_origen_texto_x, texto->caracteres[0]->origen.y});
 }
 
 
 void escalar_plataforma_dados_ejes(struct Plataforma* plataforma, float factorX, float factorY){
     if(!plataforma->linea) return;
     escalarDibujableDadosEjes(plataforma->linea, factorX, factorY);
-    escalar_palabra_centrada_dados_ejes(plataforma->palabra, factorX, factorY);
+    escalar_texto_centrado_dados_ejes(plataforma->texto, factorX, factorY);
 }
 
 
 
-void trasladar_palabra(struct Palabra* palabra, struct Punto traslacion){
-    if(!palabra || !palabra->letras) return;
-    trasladarPunto(&palabra->origen, traslacion);
-    for(uint8_t i = 0; i < palabra->num_letras; i++) {
-        trasladarDibujable(&palabra->letras[i], traslacion);
-    }
+void trasladar_texto(struct Texto* texto, struct Punto traslacion){
+    if(!texto || !texto->caracteres) return;
+    trasladarPunto(&texto->origen, traslacion);
+    for(uint8_t i = 0; i < texto->num_caracteres; i++) {
+        trasladarDibujable(texto->caracteres[i], traslacion);
+    }    
 }
 
 void trasladar_superficie_lunar(struct Dibujable* terreno, struct Plataforma* plataformas, uint8_t num_plataformas, struct Punto traslacion) {
     trasladarDibujable(terreno, traslacion);
     for(uint8_t i = 0; i < num_plataformas; i++) {
         trasladarDibujable(plataformas[i].linea, traslacion);
-        trasladar_palabra(plataformas[i].palabra, traslacion);
+        trasladar_texto(plataformas[i].texto, traslacion);
     }
 }

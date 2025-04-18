@@ -20,7 +20,7 @@ struct Palabra;
 struct Plataforma {
     struct Dibujable* linea;
     uint8_t bonificador;
-    struct Palabra* palabra;
+    struct Texto* texto;
 };
 
 extern const struct DibujableConstante Terreno;

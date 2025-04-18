@@ -8,7 +8,7 @@ CFLAGS = -Wall -Wextra -Wpedantic -g -mwindows
 SRC_DIR = code
 RES_DIR = resources
 
-# Archivos fuente (todos los .c en code/ y resources/)
+# Archivos fuente (todos los .c en code/ y resources/ + main.c)
 SRCS = $(wildcard $(SRC_DIR)/*.c $(RES_DIR)/*.c) main.c
 
 # Archivos objeto (se reemplaza .c por .o)
@@ -30,10 +30,8 @@ $(TARGET): $(OBJS)
 
 # Limpiar archivos compilados
 clean:
-	del /Q $(SRC_DIR)\*.o $(RES_DIR)\*.o main.o 2>nul
+	rm -f $(SRC_DIR)/*.o $(RES_DIR)/*.o main.o $(TARGET)
 
 # Recompilar todo y ejecutar
-run:
-	mingw32-make -f MakeFile clean
-	mingw32-make -f MakeFile
-	./lunar_lander.exe
+run: clean all
+	./$(TARGET)
