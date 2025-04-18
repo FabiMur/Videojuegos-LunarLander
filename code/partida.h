@@ -29,6 +29,8 @@ extern uint8_t fisicas;
 
 void dibujar_escena(HDC hdc);
 
+void dibujarHUD(HDC hdc);
+
 void rotar_nave(uint8_t direccion);
 
 void manejar_instante_partida();

@@ -4,6 +4,8 @@
 #include "gestor_plataformas.h"
 #include "variables_globales.h"
 #include "gestor_colisiones.h"
+#include "config.h"
+#include "math.h"
 
 #define fuel_por_moneda 500
 #define masa_nave 1000
@@ -147,6 +149,57 @@ void dibujar_escena(HDC hdc){
 			break;
 	}
 	
+}
+
+void dibujarHUD(HDC hdc) {
+    char buf[64];
+    struct Punto origen;
+    struct Texto* txt;
+    int salto = ALTURA_CARACTER_MAX + 5;
+
+    // SCORE
+    sprintf(buf, "SCORE %04d", puntuacion_partida);
+    origen = (struct Punto){ 10, 10 };
+    txt = crearTextoDesdeCadena(buf, origen);
+    dibujar_texto(txt, hdc);
+    destruir_texto(txt);
+
+    // TIME
+    extern int tiempo;  
+    sprintf(buf, "TIME  %02d:%02d", tiempo/60, tiempo%60);
+    origen = (struct Punto){ 10, 10 + salto * 1 };
+    txt = crearTextoDesdeCadena(buf, origen);
+    dibujar_texto(txt, hdc);
+    destruir_texto(txt);
+
+    // FUEL
+    sprintf(buf, "FUEL  %04d", combustible);
+    origen = (struct Punto){ 10, 10 + salto * 2 };
+    txt = crearTextoDesdeCadena(buf, origen);
+    dibujar_texto(txt, hdc);
+    destruir_texto(txt);
+
+    // ALTITUDE
+    int alt = (int)(tamano_inicial_pantalla_Y - nave->objeto->origen.y);
+    sprintf(buf, "ALTITUDE           %4d", alt);
+    origen = (struct Punto){ 300, 10 };
+    txt = crearTextoDesdeCadena(buf, origen);
+    dibujar_texto(txt, hdc);
+    destruir_texto(txt);
+
+    // HORIZONTAL SPEED
+    sprintf(buf, "HORIZONTAL SPEEED  %4d>", (int)roundf(nave->velocidad[0]));
+    origen = (struct Punto){ 300, 10 + salto * 1 };
+    txt = crearTextoDesdeCadena(buf, origen);
+    dibujar_texto(txt, hdc);
+    destruir_texto(txt);
+
+    // VERTICAL SPEED
+    sprintf(buf, "VERTICAL SPEED     %4d<", (int)roundf(-nave->velocidad[1]));
+    origen = (struct Punto){ 300, 10 + salto * 2 };
+    txt = crearTextoDesdeCadena(buf, origen);
+    dibujar_texto(txt, hdc);
+    destruir_texto(txt);
 }
 
 void rotar_nave(uint8_t direccion){

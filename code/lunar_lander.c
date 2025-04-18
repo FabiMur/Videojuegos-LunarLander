@@ -73,12 +73,6 @@ void manejar_instante(){
     }
 }
 
-void pintar_pantalla(HDC hdc){
-    if(estado == JUGANDO){
-        dibujar_escena(hdc);
-    }
-}
-
 void cambiar_estado(int nuevo_estado){
     estado = nuevo_estado;
 }

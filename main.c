@@ -4,19 +4,15 @@
 #include "code/gestor_plataformas.h"
 #include "code/variables_globales.h"
 #include "code/menu.h"
-
+#include "code/config.h"
 #include <stdio.h>
 #include <windows.h>
 #include <stdlib.h>
 
-#define timer 1
-#define tamano_inicial_pantalla_X 1024
-#define tamano_inicial_pantalla_Y 768
-#define anchura_minima_ventana 512
-#define altura_minima_ventana 384
-
 // Factor por el que escalar la escena
 float factor_escalado = 1.0f; 
+
+extern int tiempo = 0;
 
 // 1 si la ventana esta en fullcreen, 0 si no (sin bordes ni cabecera)
 uint8_t fullscreen = 0;
@@ -206,6 +202,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         } else if (estadoActual == ESTADO_JUEGO) {
             dibujar_bordes(hdcMem);
             dibujar_escena(hdcMem);
+            dibujarHUD(hdcMem);
         } else if (estadoActual == ESTADO_TEST_DIBUJABLES) {
             pruebasDibujables(hdcMem);
         }
