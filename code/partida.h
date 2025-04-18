@@ -12,7 +12,20 @@
 #include "../resources/nave.h"
 #include "../resources/caracteres.h"
 
+/**
+ * @brief Enumeración para el estado de las fisicas
+ * 
+ * DESACTIVADAS: 0
+ * ACTIVADAS: 1
+ */
+typedef enum {
+    DESACTIVADAS,
+    ACTIVADAS
+} EstadoFisicas;
+
 extern int combustible;
+
+extern uint8_t fisicas;
 
 void dibujar_escena(HDC hdc);
 

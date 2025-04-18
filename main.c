@@ -138,6 +138,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_CREATE: {
         SetTimer(hwnd, timer, intervalo_fisicas_ms, NULL);
         inicializarMenu();
+
+        inicializarPartida();
+        comenzarPartida();
+        fisicas = DESACTIVADAS;
         break;
     }
     case WM_SYSCOMMAND: {
@@ -201,7 +205,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             dibujarMenuEnBuffer(hdcMem, hwnd);
         } else if (estadoActual == ESTADO_JUEGO) {
             dibujar_bordes(hdcMem);
-            pintar_pantalla(hdcMem);
+            dibujar_escena(hdcMem);
         } else if (estadoActual == ESTADO_TEST_DIBUJABLES) {
             pruebasDibujables(hdcMem);
         }

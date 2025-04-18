@@ -15,17 +15,6 @@
 
 int inicio = 0;
 
-/**
- * @brief Enumeración para el estado de las fisicas
- * 
- * DESACTIVADAS: 0
- * ACTIVADAS: 1
- */
-enum fisicas {
-    DESACTIVADAS,
-    ACTIVADAS
-};
-
 struct objetoFisico* nave = NULL;
 struct Dibujable* motor_debil = NULL;
 struct Dibujable* motor_medio = NULL;
@@ -36,7 +25,7 @@ uint8_t numero_plataformas = 0;
 
 int combustible = 0;
 uint16_t puntuacion_partida = 0;
-static uint8_t fisicas = DESACTIVADAS;
+uint8_t fisicas = DESACTIVADAS;
 
 
 void escalar_escena_partida(float factor_x, float factor_y){

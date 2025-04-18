@@ -24,7 +24,6 @@ void manejar_teclas(){
         case PEDIR:
             if(estado_teclas[MONEDA]){
                 printf("Moneda insertada\n");
-                inicializarPartida();
                 anyadirMoneda();
                 estado = MENU;
             }
