@@ -23,6 +23,9 @@ typedef enum {
     ACTIVADAS
 } EstadoFisicas;
 
+// Extern para poder acceder en otros sitios a las coordenadas de la nave
+extern struct objetoFisico* nave;
+
 extern int combustible;
 
 extern uint8_t fisicas;

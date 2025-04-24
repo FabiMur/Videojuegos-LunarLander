@@ -200,8 +200,22 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             // Pasa el hwnd real a la función
             dibujarMenuEnBuffer(hdcMem, hwnd);
         } else if (estadoActual == ESTADO_JUEGO) {
-            dibujar_bordes(hdcMem);
+
+            // Centrar camara en la nave
+            RECT rect;
+            GetClientRect(hwnd, &rect);
+            int w = rect.right - rect.left;
+            int h = rect.bottom - rect.top;
+            float cx = w/2.0f, cy = h/2.0f;
+            float camX = cx - nave->objeto->origen.x;
+            float camY = cy - nave->objeto->origen.y;
+            SetViewportOrgEx(hdcMem, (int)camX, (int)camY, NULL);
+
+            //dibujar_bordes(hdcMem);
             dibujar_escena(hdcMem);
+
+            SetViewportOrgEx(hdcMem, 0, 0, NULL);
+
             dibujarHUD(hdcMem);
         } else if (estadoActual == ESTADO_TEST_DIBUJABLES) {
             pruebasDibujables(hdcMem);
