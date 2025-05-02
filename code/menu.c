@@ -111,7 +111,7 @@ void dibujarMenuEnBuffer(HDC hdc, HWND hwndReal) {
     destruir_texto(titulo);
     
     // Dibujar cada opción del menú
-    for (int i = 0; i < NUM_OPCIONES; i++) {
+    for (OpcionMenu i = 0; i < NUM_OPCIONES; i++) {
         // Si es la opción seleccionada, dibujar el indicador
         if (i == obtenerOpcionSeleccionada()) {
             struct Punto indicadorOrigen;
@@ -129,6 +129,7 @@ void dibujarMenuEnBuffer(HDC hdc, HWND hwndReal) {
 
 
 LRESULT procesarEventoMenu(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    (void)lParam;
     if(uMsg == WM_KEYDOWN) {
         switch(wParam) {
             case VK_UP:

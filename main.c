@@ -12,7 +12,7 @@
 // Factor por el que escalar la escena
 float factor_escalado = 1.0f; 
 
-extern int tiempo = 0;
+int tiempo = 0;
 
 // 1 si la ventana esta en fullcreen, 0 si no (sin bordes ni cabecera)
 uint8_t fullscreen = 0;
@@ -293,6 +293,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    (void)lpCmdLine;
+    (void)hPrevInstance;
     AttachConsoleToStdout();
     WNDCLASS wc = {0};
     wc.lpfnWndProc = WindowProc;
