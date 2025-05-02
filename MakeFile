@@ -1,3 +1,18 @@
+# Detectar el sistema operativo
+ifeq ($(OS),Windows_NT)
+    RM = del /Q
+    TARGET = lunar_lander.exe
+    EXEC = .\$(TARGET)
+    CLEAN_NULL = 2>nul
+	MAKE = mingw32-make -f MakeFile
+else
+    RM = rm -f
+    TARGET = lunar_lander
+    EXEC = ./$(TARGET)
+    CLEAN_NULL =
+	MAKE = make
+endif
+
 # Compilador
 CC = gcc
 
@@ -14,9 +29,6 @@ SRCS = $(wildcard $(SRC_DIR)/*.c $(RES_DIR)/*.c) main.c
 # Archivos objeto (se reemplaza .c por .o)
 OBJS = $(SRCS:.c=.o)
 
-# Ejecutable final
-TARGET = lunar_lander.exe
-
 # Regla principal
 all: $(TARGET)
 
@@ -30,8 +42,10 @@ $(TARGET): $(OBJS)
 
 # Limpiar archivos compilados
 clean:
-	rm -f $(SRC_DIR)/*.o $(RES_DIR)/*.o main.o $(TARGET)
-
+	-$(RM) $(SRC_DIR)\*.o $(RES_DIR)\*.o main.o $(TARGET) $(CLEAN_NULL)
 # Recompilar todo y ejecutar
-run: clean all
-	./$(TARGET)
+run: 
+	$(MAKE) clean
+	$(MAKE)
+	$(EXEC)
+
