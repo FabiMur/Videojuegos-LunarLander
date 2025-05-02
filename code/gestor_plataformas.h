@@ -33,7 +33,7 @@ void inicializar_aleatoriedad();
  *          previamente asignado y retorna `NULL`.
  */
 struct Plataforma* generar_plataformas(const struct DibujableConstante* terreno,
-    uint8_t* num_plataformas);
+    uint16_t* num_plataformas);
 
 /**
  * @brief Dibuja la plataforma pasada como parametro

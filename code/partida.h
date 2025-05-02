@@ -28,13 +28,13 @@ extern struct objetoFisico* nave;
 
 extern int combustible;
 
-extern uint8_t fisicas;
+extern uint16_t fisicas;
 
 void dibujar_escena(HDC hdc);
 
 void dibujarHUD(HDC hdc);
 
-void rotar_nave(uint8_t direccion);
+void rotar_nave(uint16_t direccion);
 
 void manejar_instante_partida();
 

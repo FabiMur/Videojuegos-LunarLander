@@ -19,7 +19,7 @@ struct Palabra;
 // Definición de la estructura Plataforma
 struct Plataforma {
     struct Dibujable* linea;
-    uint8_t bonificador;
+    uint16_t bonificador;
     struct Texto* texto;
 };
 

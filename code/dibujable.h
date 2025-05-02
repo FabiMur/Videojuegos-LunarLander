@@ -31,8 +31,8 @@ struct Punto{
  * @param destino Indice del punto de destino
  */
 struct UnionAristas{
-    uint8_t origen;
-    uint8_t destino;
+    uint16_t origen;
+    uint16_t destino;
 };
 
 /**
@@ -57,8 +57,8 @@ struct Dibujable {
     struct Punto origen;
     struct Punto* puntos; // Arreglo dinamico de puntos
     struct Arista* aristas; // Arreglo dinamico de aristas
-    uint8_t num_puntos;
-    uint8_t num_aristas;
+    uint16_t num_puntos;
+    uint16_t num_aristas;
 };
 
 /**
@@ -74,8 +74,8 @@ struct DibujableConstante {
     struct Punto origen;
     struct Punto* puntos; 
     struct UnionAristas* unionAristas;
-    uint8_t num_puntos;
-    uint8_t num_aristas;
+    uint16_t num_puntos;
+    uint16_t num_aristas;
 };
 
 /**
@@ -105,6 +105,6 @@ void destruirArista(struct Arista* arista);
 void dibujarDibujable(HDC hdc, const struct Dibujable* dibujable);
 
 
-uint8_t es_horizontal(struct Arista arista_colision);
+uint16_t es_horizontal(struct Arista arista_colision);
 
 #endif // DIBUJABLE_H

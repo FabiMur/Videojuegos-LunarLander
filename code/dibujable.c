@@ -26,7 +26,7 @@ struct Dibujable* crearDibujable(const struct DibujableConstante* constante) {
         free(dibujable);
         return NULL;
     }
-    for (uint8_t i = 0; i < constante->num_aristas; i++) {
+    for (uint16_t i = 0; i < constante->num_aristas; i++) {
         dibujable->aristas[i].origen = &dibujable->puntos[constante->unionAristas[i].origen];
         dibujable->aristas[i].destino = &dibujable->puntos[constante->unionAristas[i].destino];
     }
@@ -76,7 +76,7 @@ void DrawLine(HDC hdc, int x1, int y1, int x2, int y2, COLORREF color) {
 }
 
 
-uint8_t es_horizontal(struct Arista arista_colision){
+uint16_t es_horizontal(struct Arista arista_colision){
     if(arista_colision.origen->y == arista_colision.destino->y) {
         return 1;
     }
@@ -84,7 +84,7 @@ uint8_t es_horizontal(struct Arista arista_colision){
 }
 
 void dibujarDibujable(HDC hdc, const struct Dibujable* dibujable){
-    for(uint8_t i = 0; i < dibujable->num_aristas; i++) {
+    for(uint16_t i = 0; i < dibujable->num_aristas; i++) {
         DrawLine(hdc, dibujable->aristas[i].origen->x,
             dibujable->aristas[i].origen->y,
             dibujable->aristas[i].destino->x,

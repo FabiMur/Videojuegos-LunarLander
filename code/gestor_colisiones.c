@@ -11,7 +11,7 @@
  * 
  * @return 1 si esta en el segmento, 0 si no lo esta
  */
-uint8_t punto_en_segmento(struct Punto p, struct Punto q, struct Punto r) { 
+uint16_t punto_en_segmento(struct Punto p, struct Punto q, struct Punto r) { 
     if (q.x <= max(p.x, r.x) && q.x >= min(p.x, r.x) && 
         q.y <= max(p.y, r.y) && q.y >= min(p.y, r.y)) 
        return 1; 
@@ -46,7 +46,7 @@ int orientacion(struct Punto p, struct Punto q, struct Punto r) {
  * 
  * @return 1 si hay interseccion, 0 si no la hay
  */
-uint8_t hay_interseccion(struct Punto p1, struct Punto q1, struct Punto p2, struct Punto q2) { 
+uint16_t hay_interseccion(struct Punto p1, struct Punto q1, struct Punto p2, struct Punto q2) { 
     // Encontrar orientaciones de los segmentos
     int o1 = orientacion(p1, q1, p2); 
     int o2 = orientacion(p1, q1, q2); 
@@ -73,7 +73,7 @@ uint8_t hay_interseccion(struct Punto p1, struct Punto q1, struct Punto p2, stru
     return 0; // No hay interseccion
 } 
 
-uint8_t hay_colision(struct Dibujable* objeto1, struct Dibujable* objeto2, struct Arista* arista_colision) {
+uint16_t hay_colision(struct Dibujable* objeto1, struct Dibujable* objeto2, struct Arista* arista_colision) {
     if(!objeto1->puntos || !objeto2->puntos) return 0;
     if(!objeto1->aristas || !objeto2->aristas) return 0;
     

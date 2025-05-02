@@ -22,7 +22,7 @@ void inicializar_aleatoriedad() {
  * 
  * @return todas las aristas que se corresponden a plataformas potenciales
  */
-struct Arista* obtener_aristas_posibles(const struct DibujableConstante* terreno, uint8_t* num_aristas) {
+struct Arista* obtener_aristas_posibles(const struct DibujableConstante* terreno, uint16_t* num_aristas) {
     if (!terreno->puntos) return NULL;
 
     // Reservar espacio para un número máximo de aristas posibles
@@ -32,7 +32,7 @@ struct Arista* obtener_aristas_posibles(const struct DibujableConstante* terreno
     struct Punto puntoAnterior = terreno->puntos[0];
 
     *num_aristas = 0;
-    for (uint8_t i = 1; i < terreno->num_puntos; i++) {
+    for (uint16_t i = 1; i < terreno->num_puntos; i++) {
         if (puntoAnterior.y == terreno->puntos[i].y) {
             // Si la altura de dos puntos consecutivos es igual -> posible plataforma
             if((terreno->puntos[i].x - puntoAnterior.x) <= PLATAFORMA_X2) {
@@ -60,7 +60,7 @@ struct Arista* obtener_aristas_posibles(const struct DibujableConstante* terreno
  * 
  * @return valor de la bonificacion dada a la plataforma
  */
-uint8_t calcular_bonificador(struct Arista arista, const struct DibujableConstante** b){
+uint16_t calcular_bonificador(struct Arista arista, const struct DibujableConstante** b){
     uint16_t diferencia = arista.destino->x - arista.origen->x;
     if(diferencia <= PLATAFORMA_X5) {
         *b = &Numero_5_Base;
@@ -91,11 +91,11 @@ uint8_t calcular_bonificador(struct Arista arista, const struct DibujableConstan
  * @note Se asume que la semilla del generador de números aleatorios (rand) 
  *       ha sido inicializada previamente con srand().
  */
-void barajar(uint8_t* arr, uint8_t n) {
-    for (uint8_t i = n - 1; i > 0; i--) {
-        uint8_t j = rand() % (i + 1);
+void barajar(uint16_t* arr, uint16_t n) {
+    for (uint16_t i = n - 1; i > 0; i--) {
+        uint16_t j = rand() % (i + 1);
         // Intercambiar arr[i] y arr[j]
-        uint8_t temp = arr[i];
+        uint16_t temp = arr[i];
         arr[i] = arr[j];
         arr[j] = temp;
     }
@@ -115,12 +115,12 @@ void barajar(uint8_t* arr, uint8_t n) {
  * @warning Si `num_valores` es mayor que `max_valor`, la función no generará
  * valores y retornará sin hacer nada.
  */
-void generar_aleatorios(uint8_t* resultado, uint8_t num_valores, uint8_t max_valor) {
+void generar_aleatorios(uint16_t* resultado, uint16_t num_valores, uint16_t max_valor) {
     if (num_valores > max_valor) return;
 
     // Inicializar el arreglo con los números del 0 al MAX-1
-    uint8_t* numeros = malloc(max_valor * sizeof(uint8_t));
-    for (uint8_t i = 0; i < max_valor; i++) {
+    uint16_t* numeros = malloc(max_valor * sizeof(uint16_t));
+    for (uint16_t i = 0; i < max_valor; i++) {
         numeros[i] = i; // numeros = {0,1,2,3,...,max_Valor}
     }
 
@@ -128,7 +128,7 @@ void generar_aleatorios(uint8_t* resultado, uint8_t num_valores, uint8_t max_val
     barajar(numeros, max_valor);
 
     // Copiar los primeros X números en el resultado
-    for (uint8_t i = 0; i < num_valores; i++) {
+    for (uint16_t i = 0; i < num_valores; i++) {
         resultado[i] = numeros[i];
     }
 
@@ -140,7 +140,7 @@ void generar_aleatorios(uint8_t* resultado, uint8_t num_valores, uint8_t max_val
 /**
  * 
  */
-struct Texto* generar_texto_plataforma(struct Arista arista, uint8_t* bonificador) {
+struct Texto* generar_texto_plataforma(struct Arista arista, uint16_t* bonificador) {
     const struct DibujableConstante* caracter_bonificador;
     *bonificador = calcular_bonificador(arista, &caracter_bonificador);
     
@@ -224,7 +224,7 @@ struct Plataforma* generar_plataforma_dada_arista(struct Arista arista, struct P
     }
     
     // Calculo del bonificador y generacion de la palabra
-    uint8_t bonificador;
+    uint16_t bonificador;
     struct Texto* texto = generar_texto_plataforma(arista, &bonificador);
     struct Dibujable* linea_dibujable = crearDibujable(linea);
     // Creacion de la estrcutura plataforma
@@ -235,8 +235,8 @@ struct Plataforma* generar_plataforma_dada_arista(struct Arista arista, struct P
     return plataforma;
 }
 
-struct Plataforma* generar_plataformas(const struct DibujableConstante* terreno, uint8_t* num_plataformas){
-    uint8_t num_aristas_posibles = 0;
+struct Plataforma* generar_plataformas(const struct DibujableConstante* terreno, uint16_t* num_plataformas){
+    uint16_t num_aristas_posibles = 0;
     
     // Obtener las aristas correspondientes a plataformas potenciales
     struct Arista* aristas_posibles = obtener_aristas_posibles(terreno, &num_aristas_posibles);
@@ -250,7 +250,7 @@ struct Plataforma* generar_plataformas(const struct DibujableConstante* terreno,
     *num_plataformas = (MAX_PLATAFORMAS > num_aristas_posibles) ? num_aristas_posibles : MAX_PLATAFORMAS;
     
     // Obtener los indices aleatorios de las plataformas
-    uint8_t* indices_plataformas = malloc(num_aristas_posibles * sizeof(uint8_t));
+    uint16_t* indices_plataformas = malloc(num_aristas_posibles * sizeof(uint16_t));
     if (indices_plataformas == NULL) {
         free(aristas_posibles);  // Liberamos las aristas en caso de error
         return NULL;
@@ -266,7 +266,7 @@ struct Plataforma* generar_plataformas(const struct DibujableConstante* terreno,
     }
 
     // Meter en plataformas las plataformas seleccionadas por los indices
-    for(uint8_t i = 0; i < *num_plataformas; i++){
+    for(uint16_t i = 0; i < *num_plataformas; i++){
         struct Arista arista = aristas_posibles[indices_plataformas[i]];
         struct Plataforma* plataforma = generar_plataforma_dada_arista(arista, terreno->origen);
         if(plataforma == NULL) {

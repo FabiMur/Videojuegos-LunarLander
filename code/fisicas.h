@@ -37,6 +37,6 @@ void girar_izquierda();
 
 void girar_derecha();
 
-uint8_t obtener_propulsor();
+uint16_t obtener_propulsor();
 
 #endif // FISICAS_H

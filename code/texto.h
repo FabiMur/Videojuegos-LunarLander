@@ -5,7 +5,7 @@
 
 struct Texto {
     struct Dibujable** caracteres;  // Ahora es un arreglo de punteros
-    uint8_t num_caracteres;
+    uint16_t num_caracteres;
     struct Punto origen; // Origen de la primera letra
     float factor_escalado_x;
     float factor_escalado_y;

@@ -15,7 +15,7 @@
  * 
  * @return 1 si hay colision, 0 si no la hay
  */
-uint8_t hay_colision(struct Dibujable* objeto1, struct Dibujable* objeto2, struct Arista* arista_colision);
+uint16_t hay_colision(struct Dibujable* objeto1, struct Dibujable* objeto2, struct Arista* arista_colision);
 
 
 #endif // GESTOR_COLISIONES_H

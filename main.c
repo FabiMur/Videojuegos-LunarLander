@@ -15,13 +15,13 @@ float factor_escalado = 1.0f;
 int tiempo = 0;
 
 // 1 si la ventana esta en fullcreen, 0 si no (sin bordes ni cabecera)
-uint8_t fullscreen = 0;
-uint8_t esc_presionado = 0;
+uint16_t fullscreen = 0;
+uint16_t esc_presionado = 0;
 // Rectangulo que contiene la ventana anterior al resize de pantalla completa
 RECT rectVentanaAnterior;
 
 // Moneda presionada
-uint8_t moneda_presionada = 0;
+uint16_t moneda_presionada = 0;
 
 struct Punto* p1 = NULL;
 struct Punto* p2 = NULL;

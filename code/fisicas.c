@@ -2,10 +2,10 @@
 
 #include "partida.h"
 
-static uint8_t propulsor_activado = 0;
-static uint8_t propulsor = 0;
-static uint8_t orden_girar_izquierda = 0;
-static uint8_t orden_girar_derecha = 0;
+static uint16_t propulsor_activado = 0;
+static uint16_t propulsor = 0;
+static uint16_t orden_girar_izquierda = 0;
+static uint16_t orden_girar_derecha = 0;
 
 void destruirObjetoFisico(struct objetoFisico* objeto){
     destruirDibujable(objeto -> objeto);
@@ -87,6 +87,6 @@ void girar_derecha(){
 	orden_girar_derecha = 1;
 }
 
-uint8_t obtener_propulsor(){
+uint16_t obtener_propulsor(){
 	return propulsor;
 }

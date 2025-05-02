@@ -52,14 +52,14 @@ void agregar_caracter(struct Texto* texto, const struct DibujableConstante* cara
 
 int16_t calcular_centro_x_texto(struct Texto* texto) {
     if (!texto || !texto->caracteres) return -1;
-    uint8_t media_texto = ((texto->num_caracteres * ANCHURA_CARACTER_MAX +
+    uint16_t media_texto = ((texto->num_caracteres * ANCHURA_CARACTER_MAX +
                             (texto->num_caracteres - 1) * SEPARACION_CARACTER) / 2);
     return (texto->origen.x - (ANCHURA_CARACTER_MAX / 2) + media_texto);
 }
 
 void dibujar_texto(struct Texto* texto, HDC hdc) {
     if (texto == NULL || texto->num_caracteres == 0) return;
-    for (uint8_t i = 0; i < texto->num_caracteres; i++) {
+    for (uint16_t i = 0; i < texto->num_caracteres; i++) {
         dibujarDibujable(hdc, texto->caracteres[i]);
     }
 }
@@ -67,7 +67,7 @@ void dibujar_texto(struct Texto* texto, HDC hdc) {
 void destruir_texto(struct Texto* texto) {
     if (texto == NULL) return;
     if (texto->caracteres != NULL) {
-        for (uint8_t i = 0; i < texto->num_caracteres; i++) {
+        for (uint16_t i = 0; i < texto->num_caracteres; i++) {
             destruirDibujable(texto->caracteres[i]);
         }
         free(texto->caracteres);
