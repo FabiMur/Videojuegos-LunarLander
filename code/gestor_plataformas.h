@@ -4,7 +4,7 @@
 #include "../resources/superficie_lunar.h"
 
 // Numero maximo de plataformas por terreno
-#define MAX_PLATAFORMAS 4
+#define MAX_PLATAFORMAS 25
 
 
 /**
