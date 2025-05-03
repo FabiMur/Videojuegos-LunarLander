@@ -22,17 +22,25 @@ struct Dibujable* motor_debil = NULL;
 struct Dibujable* motor_medio = NULL;
 struct Dibujable* motor_fuerte = NULL;
 struct Dibujable* terreno = NULL;
+struct Dibujable* terrenoIzquierda = NULL;
+struct Dibujable* terrenoDerecha = NULL;
 struct Plataforma* plataformas_partida = NULL;
+struct Plataforma* plataformas_derecha = NULL;
+struct Plataforma* plataformas_izquierda = NULL;
 uint8_t numero_plataformas = 0;
 
 int combustible = 0;
 uint16_t puntuacion_partida = 0;
 uint8_t fisicas = DESACTIVADAS;
 
+int32_t offsetTerrenoDerecha = ANCHURA_TERRENO;
+int32_t offsetTerrenoIzquerda = 0;
 
 void escalar_escena_partida(float factor_x, float factor_y){
 	if(inicio == 1) {
 		escalar_dibujable_en_escena_dados_ejes(terreno, factor_x, factor_y);
+		escalar_dibujable_en_escena_dados_ejes(terrenoIzquierda, factor_x, factor_y);
+		escalar_dibujable_en_escena_dados_ejes(terrenoDerecha, factor_x, factor_y);
 		escalar_dibujable_en_escena_dados_ejes(motor_fuerte, factor_x, factor_y);
 		escalar_dibujable_en_escena_dados_ejes(motor_medio, factor_x, factor_y);
 		escalar_dibujable_en_escena_dados_ejes(motor_debil, factor_x, factor_y);
@@ -100,7 +108,9 @@ void gestionar_colisiones() {
 	uint8_t se_produce_colision = 0;
 
 	// Comprobar colision con el terreno
-	if(hay_colision(nave->objeto, terreno, &arista_colision)){
+	if(hay_colision(nave->objeto, terreno, &arista_colision) || 
+		hay_colision(nave->objeto, terrenoIzquierda, &arista_colision) ||
+		hay_colision(nave->objeto, terrenoDerecha, &arista_colision)) {
 		se_produce_colision = 1;
 		es_arista_aterrizable = es_horizontal(arista_colision);
 		if(es_arista_aterrizable == 1){
@@ -121,7 +131,7 @@ void gestionar_colisiones() {
 		puntuacion_partida += puntos_conseguidos;
 		printf("Has conseguido %d puntos en este aterrizaje\n", puntos_conseguidos);
 		se_ha_aterrizado();
-			
+		finalizarPartida();		
 	}
 }
 
@@ -129,6 +139,8 @@ void gestionar_colisiones() {
 void dibujar_escena(HDC hdc){
     dibujarDibujable(hdc, nave -> objeto);
 	dibujarDibujable(hdc, terreno);
+	dibujarDibujable(hdc, terrenoIzquierda);
+	dibujarDibujable(hdc, terrenoDerecha);
 	for(uint8_t i = 0; i < numero_plataformas; i++){
 		dibujar_plataforma(hdc, plataformas_partida[i]);
 	}
@@ -212,6 +224,20 @@ void rotar_nave(uint8_t direccion){
 void manejar_instante_partida(){
     if(fisicas == ACTIVADAS) {
 		calcularFisicas(nave);
+		if(nave->objeto->origen.x > offsetTerrenoDerecha) {
+			trasladar_superficie_lunar(terrenoDerecha, plataformas_derecha, numero_plataformas, (struct Punto){ANCHURA_TERRENO,0});
+			trasladar_superficie_lunar(terrenoIzquierda, plataformas_izquierda, numero_plataformas, (struct Punto){ANCHURA_TERRENO,0});
+			trasladar_superficie_lunar(terreno, plataformas_partida, numero_plataformas, (struct Punto){ANCHURA_TERRENO,0});
+			offsetTerrenoDerecha += ANCHURA_TERRENO;
+			offsetTerrenoIzquerda += ANCHURA_TERRENO;
+		}
+		else if(nave->objeto->origen.x < offsetTerrenoIzquerda) {
+			trasladar_superficie_lunar(terrenoIzquierda, plataformas_izquierda, numero_plataformas, (struct Punto){-ANCHURA_TERRENO,0});
+			trasladar_superficie_lunar(terrenoDerecha, plataformas_derecha, numero_plataformas, (struct Punto){-ANCHURA_TERRENO,0});
+			trasladar_superficie_lunar(terreno, plataformas_partida, numero_plataformas, (struct Punto){-ANCHURA_TERRENO,0});
+			offsetTerrenoDerecha -= ANCHURA_TERRENO;
+			offsetTerrenoIzquerda -= ANCHURA_TERRENO;
+		}
 		gestionar_colisiones();
 	}
 }
@@ -219,7 +245,22 @@ void manejar_instante_partida(){
 void inicializarPartida(){
     combustible = 0;
 	terreno = crearDibujable(&Terreno);
+	terrenoIzquierda = crearDibujable(&Terreno);
+	terrenoDerecha = crearDibujable(&Terreno);
+
 	plataformas_partida = generar_plataformas(&Terreno, &numero_plataformas);
+	plataformas_derecha = (struct Plataforma*)malloc(numero_plataformas * sizeof(struct Plataforma));
+	plataformas_izquierda = (struct Plataforma*)malloc(numero_plataformas * sizeof(struct Plataforma));
+	for(uint8_t i = 0; i < numero_plataformas; i++){
+		copiar_plataforma(&plataformas_derecha[i], &plataformas_partida[i]);
+		copiar_plataforma(&plataformas_izquierda[i], &plataformas_partida[i]);
+	}
+
+	offsetTerrenoDerecha = ANCHURA_TERRENO;
+	offsetTerrenoIzquerda = 0;
+	
+	trasladar_superficie_lunar(terrenoIzquierda, plataformas_izquierda, numero_plataformas, (struct Punto){-ANCHURA_TERRENO, 350});
+	trasladar_superficie_lunar(terrenoDerecha, plataformas_derecha, numero_plataformas, (struct Punto){ANCHURA_TERRENO, 350});
 	trasladar_superficie_lunar(terreno, plataformas_partida, numero_plataformas, (struct Punto){0, 350});
 }
 
@@ -248,9 +289,9 @@ void comenzarPartida(){
 }
 
 void finalizarPartida(){
-    destruirObjetoFisico(nave);
-    nave -> objeto = NULL;
+    //destruirObjetoFisico(nave);
     fisicas = DESACTIVADAS;
+	cambiar_estado(PEDIR);
 }
 
 void findeJuego(){

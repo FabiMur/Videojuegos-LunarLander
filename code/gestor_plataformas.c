@@ -289,3 +289,55 @@ void dibujar_plataforma(HDC hdc, struct Plataforma plataforma){
     dibujar_texto(plataforma.texto, hdc);
     dibujarDibujable(hdc, plataforma.linea);
 }
+
+void copiar_plataforma(struct Plataforma* dst, struct Plataforma* src){
+  
+    dst->bonificador = src->bonificador;
+
+    // Allocate memory for dst->linea and dst->texto
+    dst->linea = (struct Dibujable *)malloc(sizeof(struct Dibujable));
+    dst->texto = (struct Texto *)malloc(sizeof(struct Texto));
+
+    dst->linea->origen = src->linea->origen;
+    dst->linea->num_puntos = src->linea->num_puntos;
+    dst->linea->num_aristas = src->linea->num_aristas;
+    dst->linea->puntos = (struct Punto *)malloc(dst->linea->num_puntos * sizeof(struct Punto));
+    dst->linea->aristas = (struct Arista *)malloc(dst->linea->num_aristas * sizeof(struct Arista));
+    for(int i = 0; i < src->linea->num_aristas; i++){
+        dst->linea->aristas[i].origen = (struct Punto *)malloc(sizeof(struct Punto));
+        dst->linea->aristas[i].destino = (struct Punto *)malloc(sizeof(struct Punto));
+        memcpy(dst->linea->aristas[i].origen, src->linea->aristas[i].origen, sizeof(struct Punto));
+        memcpy(dst->linea->aristas[i].destino, src->linea->aristas[i].destino, sizeof(struct Punto));
+    }
+    for(int i = 0; i < src->linea->num_puntos; i++){
+        dst->linea->puntos[i].x = src->linea->puntos[i].x;
+        dst->linea->puntos[i].y = src->linea->puntos[i].y;
+    }
+    
+    dst->texto->num_caracteres = src->texto->num_caracteres;
+    dst->texto->caracteres = (struct Dibujable **)malloc(dst->texto->num_caracteres * sizeof(struct Dibujable*));
+    dst->texto->origen.x = src->texto->origen.x;
+    dst->texto->origen.y = src->texto->origen.y;
+    dst->texto->factor_escalado_x = src->texto->factor_escalado_x;
+    dst->texto->factor_escalado_y = src->texto->factor_escalado_y;
+
+    for(int i = 0; i < src->texto->num_caracteres; i++){
+        dst->texto->caracteres[i] = (struct Dibujable *)malloc(sizeof(struct Dibujable));
+    
+        dst->texto->caracteres[i]->origen.y = src->texto->caracteres[i]->origen.y;
+        dst->texto->caracteres[i]->num_puntos = src->texto->caracteres[i]->num_puntos;
+        dst->texto->caracteres[i]->num_aristas = src->texto->caracteres[i]->num_aristas;
+        dst->texto->caracteres[i]->puntos = (struct Punto *)malloc(dst->texto->caracteres[i]->num_puntos * sizeof(struct Punto));
+        dst->texto->caracteres[i]->aristas = (struct Arista *)malloc(dst->texto->caracteres[i]->num_aristas * sizeof(struct Arista));
+        for(int j = 0; j < src->texto->caracteres[i]->num_aristas; j++){
+            dst->texto->caracteres[i]->aristas[j].origen = (struct Punto *)malloc(sizeof(struct Punto));
+            dst->texto->caracteres[i]->aristas[j].destino = (struct Punto *)malloc(sizeof(struct Punto));
+            memcpy(dst->texto->caracteres[i]->aristas[j].origen, src->texto->caracteres[i]->aristas[j].origen, sizeof(struct Punto));
+            memcpy(dst->texto->caracteres[i]->aristas[j].destino, src->texto->caracteres[i]->aristas[j].destino, sizeof(struct Punto));
+        }
+        for(int j = 0; j < src->texto->caracteres[i]->num_puntos; j++){
+            dst->texto->caracteres[i]->puntos[j].x = src->texto->caracteres[i]->puntos[j].x;
+            dst->texto->caracteres[i]->puntos[j].y = src->texto->caracteres[i]->puntos[j].y;
+        }
+    }
+}

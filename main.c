@@ -134,9 +134,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_CREATE: {
         SetTimer(hwnd, timer, intervalo_fisicas_ms, NULL);
         inicializarMenu();
-
         inicializarPartida();
-        comenzarPartida();
         fisicas = DESACTIVADAS;
         break;
     }
