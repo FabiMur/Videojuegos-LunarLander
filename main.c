@@ -5,6 +5,7 @@
 #include "code/variables_globales.h"
 #include "code/menu.h"
 #include "code/config.h"
+#include "code/sonidos.h"
 #include <stdio.h>
 #include <windows.h>
 #include <stdlib.h>
@@ -231,8 +232,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     
     case WM_KEYDOWN: {
         if(estadoActual == ESTADO_MENU) {
+            if(wParam == VK_UP || wParam == VK_DOWN) {
+                // Cambia la opción seleccionada
+                Sound_Play(SONIDO_CAMBIAR_OPCION_MENU);
+            }
             procesarEventoMenu(hwnd, uMsg, wParam, lParam);
             if(wParam == VK_RETURN) {
+                Sound_Play(SONIDO_SELECCIONAR_OPCION_MENU);
                 OpcionMenu op = obtenerOpcionSeleccionada();
                 if(op == OPCION_PLAY) {
                     printf("Play seleccionado\n");

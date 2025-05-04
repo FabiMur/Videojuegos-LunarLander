@@ -2,6 +2,7 @@
 #include "texto.h"
 #include "../resources/caracteres.h"
 #include "../code/transformaciones.h"
+#include "../code/sonidos.h"
 #include <stdio.h>
 #include <windows.h>
 
@@ -57,10 +58,10 @@ static void actualizarPosicionesMenu(HWND hwnd) {
     GetClientRect(hwnd, &rect);
     int anchoCliente = rect.right - rect.left;
     int altoCliente = rect.bottom - rect.top;
-    printf("HWND = %p\n", (void*)hwnd);
-    printf("rect.left   = %ld, rect.top    = %ld\n", rect.left,  rect.top);
-    printf("rect.right  = %ld, rect.bottom = %ld\n", rect.right, rect.bottom);
-    printf("anchoCliente = %d, altoCliente = %d\n", anchoCliente, altoCliente);
+    //printf("HWND = %p\n", (void*)hwnd);
+    //printf("rect.left   = %ld, rect.top    = %ld\n", rect.left,  rect.top);
+    //printf("rect.right  = %ld, rect.bottom = %ld\n", rect.right, rect.bottom);
+    //printf("anchoCliente = %d, altoCliente = %d\n", anchoCliente, altoCliente);
     
     // Calcular el ancho máximo de las opciones del menú
     int anchoTotalMenu = 0, anchoOpcion;
@@ -84,7 +85,7 @@ static void actualizarPosicionesMenu(HWND hwnd) {
         opcionesTextuales[i]->origen = nuevoOrigen;
         colocar_texto(opcionesTextuales[i], nuevoOrigen);
     }
-    fprintf(stderr, "Posiciones de menú actualizadas: X=%d, Y=%d\n", menuPosX, menuPosY_inicial);
+    //fprintf(stderr, "Posiciones de menú actualizadas: X=%d, Y=%d\n", menuPosX, menuPosY_inicial);
     
     ReleaseDC(hwnd, hdc);
 }
@@ -133,13 +134,15 @@ LRESULT procesarEventoMenu(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if(uMsg == WM_KEYDOWN) {
         switch(wParam) {
             case VK_UP:
-                if(opcionSeleccionada > OPCION_PLAY)
+                if(opcionSeleccionada > OPCION_PLAY){
                     opcionSeleccionada--;
+                }
                 InvalidateRect(hwnd, NULL, TRUE);  // repintado
                 break;
             case VK_DOWN:
-                if(opcionSeleccionada < NUM_OPCIONES - 1)
+                if(opcionSeleccionada < NUM_OPCIONES - 1){
                     opcionSeleccionada++;
+                }
                 InvalidateRect(hwnd, NULL, TRUE); // repintado
                 break;
             default:
