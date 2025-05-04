@@ -27,6 +27,7 @@ struct Dibujable* terrenoDerecha = NULL;
 struct Plataforma* plataformas_partida = NULL;
 struct Plataforma* plataformas_derecha = NULL;
 struct Plataforma* plataformas_izquierda = NULL;
+
 uint8_t numero_plataformas = 0;
 
 int combustible = 0;
@@ -46,9 +47,13 @@ void escalar_escena_partida(float factor_x, float factor_y){
 		escalar_dibujable_en_escena_dados_ejes(motor_debil, factor_x, factor_y);
 		escalar_dibujable_en_escena_dados_ejes(nave->objeto, factor_x, factor_y);
 		for(uint8_t i = 0; i < numero_plataformas; i++) {
+			escalar_dibujable_en_escena_dados_ejes(plataformas_derecha[i].linea, factor_x, factor_y);
+			escalar_dibujable_en_escena_dados_ejes(plataformas_izquierda[i].linea, factor_x, factor_y);
 			escalar_dibujable_en_escena_dados_ejes(plataformas_partida[i].linea, factor_x, factor_y);
 			for(uint8_t j = 0; j < plataformas_partida[i].texto->num_caracteres; j++){
 				escalar_dibujable_en_escena_dados_ejes(plataformas_partida[i].texto->caracteres[j], factor_x, factor_y);
+				escalar_dibujable_en_escena_dados_ejes(plataformas_izquierda[i].texto->caracteres[j], factor_x, factor_y);
+				escalar_dibujable_en_escena_dados_ejes(plataformas_derecha[i].texto->caracteres[j], factor_x, factor_y);
 			}
 		}
 	}
@@ -143,6 +148,8 @@ void dibujar_escena(HDC hdc){
 	dibujarDibujable(hdc, terrenoDerecha);
 	for(uint8_t i = 0; i < numero_plataformas; i++){
 		dibujar_plataforma(hdc, plataformas_partida[i]);
+		dibujar_plataforma(hdc, plataformas_derecha[i]);
+		dibujar_plataforma(hdc, plataformas_izquierda[i]);
 	}
 	switch(obtener_propulsor()){
 		case 1:
@@ -251,9 +258,18 @@ void inicializarPartida(){
 	plataformas_partida = generar_plataformas(&Terreno, &numero_plataformas);
 	plataformas_derecha = (struct Plataforma*)malloc(numero_plataformas * sizeof(struct Plataforma));
 	plataformas_izquierda = (struct Plataforma*)malloc(numero_plataformas * sizeof(struct Plataforma));
+	
 	for(uint8_t i = 0; i < numero_plataformas; i++){
-		copiar_plataforma(&plataformas_derecha[i], &plataformas_partida[i]);
-		copiar_plataforma(&plataformas_izquierda[i], &plataformas_partida[i]);
+		copiar_plataforma(&(plataformas_derecha[i]), &(plataformas_partida[i]));
+		//trasladarDibujable(plataformas_derecha[i].linea, (struct Punto){ANCHURA_TERRENO, 0});
+		//for(uint8_t j = 0; j < plataformas_derecha[i].texto->num_caracteres; j++){
+		//	trasladarDibujable(plataformas_derecha[i].texto->caracteres[j], (struct Punto){ANCHURA_TERRENO, 0});
+		//}
+		copiar_plataforma(&(plataformas_izquierda[i]), &(plataformas_partida[i]));
+		//trasladarDibujable(plataformas_izquierda[i].linea, (struct Punto){-ANCHURA_TERRENO, 0});
+		//for(uint8_t j = 0; j < plataformas_izquierda[i].texto->num_caracteres; j++){
+		//	trasladarDibujable(plataformas_izquierda[i].texto->caracteres[j], (struct Punto){-ANCHURA_TERRENO, 0});
+		//}
 	}
 
 	offsetTerrenoDerecha = ANCHURA_TERRENO;
