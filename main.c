@@ -9,270 +9,218 @@
 #include <windows.h>
 #include <stdlib.h>
 
-// Factor por el que escalar la escena
-float factor_escalado = 1.0f; 
+#define TIMER_ID 1
 
+// Esquinas de la letterbox
+static struct Punto borde_puntos[4] = {
+    {0.0f,        1.0f},
+    {BASE_W-1.0f, 1.0f},
+    {BASE_W-1.0f, BASE_H-1.0f},
+    {0.0f,        BASE_H-1.0f}
+};
+
+// Aristas de la letterbox
+static struct UnionAristas borde_aristas[4] = {{0,1},{1,2},{2,3},{3,0}};
+
+// Constante para el borde de la letterbox
+static const struct DibujableConstante borde_const = {{0,0}, borde_puntos, borde_aristas, 4, 4};
+
+// Borde de la letterbox
+static struct Dibujable* dib_borde = NULL;
+
+// Constantes de la letterbox
+typedef struct { int internalW, internalH, offsetX, offsetY; } Letterbox;
+static Letterbox lb = { BASE_W, BASE_H, 0, 0 };
+
+// Constantes de la aplicación
+typedef enum { ESTADO_MENU, ESTADO_JUEGO, ESTADO_TEST_DIBUJABLES } EstadoAplicacion;
+static EstadoAplicacion estadoActual = ESTADO_MENU;
+
+// Variables globales
 int tiempo = 0;
-
-// 1 si la ventana esta en fullcreen, 0 si no (sin bordes ni cabecera)
-uint16_t fullscreen = 0;
-uint16_t esc_presionado = 0;
-// Rectangulo que contiene la ventana anterior al resize de pantalla completa
+uint16_t fullscreen = 0, esc_presionado = 0;
 RECT rectVentanaAnterior;
 
-// Moneda presionada
-uint16_t moneda_presionada = 0;
-
-struct Punto* p1 = NULL;
-struct Punto* p2 = NULL;
-struct Punto* p3 = NULL;
-struct Punto* p4 = NULL;
-
-float minimo(float a, float b) {
-    return (a < b) ? a : b;
-}
-
+// Inicializa la consola para imprimir mensajes de depuración
 void AttachConsoleToStdout() {
     AllocConsole();
-    freopen("CONOUT$", "w", stdout);
-    freopen("CONOUT$", "w", stderr);
+    freopen("CONOUT$","w",stdout);
+    freopen("CONOUT$","w",stderr);
 }
 
-// Funcion utilizada en la opcion de test de dibujables
-void pruebasDibujables(HDC hdcMem) {
-    const char* alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    
-    struct Punto origenTest = {10, 10};
-
-    struct Texto* textoTest = crearTextoDesdeCadena(alfabeto, origenTest);
-    
-    dibujar_texto(textoTest, hdcMem);
-    
-    destruir_texto(textoTest);
-
-    const char* numeros = "0123456789 :><";
-
-    struct Punto origenNumeros = {10, 10 + ALTURA_CARACTER_MAX + 5};
-    struct Texto* textoNumeros = crearTextoDesdeCadena(numeros, origenNumeros);
-    dibujar_texto(textoNumeros, hdcMem);
-    destruir_texto(textoNumeros);
+// Fucnion para probar dibujables
+void pruebasDibujables(HDC hdc) {
+    const char* abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    struct Punto o1 = {10,10};
+    struct Texto* t1 = crearTextoDesdeCadena(abc,o1);
+    dibujar_texto(t1,hdc); destruir_texto(t1);
+    const char* nums = "0123456789 :><";
+    struct Punto o2 = {10, 10 + ALTURA_CARACTER_MAX + 5};
+    struct Texto* t2 = crearTextoDesdeCadena(nums,o2);
+    dibujar_texto(t2,hdc); destruir_texto(t2);
 }
 
-void inicializar_puntos() {
-    p1 = malloc(sizeof(struct Punto));
-    p2 = malloc(sizeof(struct Punto));
-    p3 = malloc(sizeof(struct Punto));
-    p4 = malloc(sizeof(struct Punto));
+// Función para calcular el tamaño y la posición de la letterbox
+// en función del tamaño de la ventana y la resolución base
+void calcular_letterbox(HWND hwnd) {
+    RECT rc; GetClientRect(hwnd,&rc);
+    int w = rc.right-rc.left, h = rc.bottom-rc.top;
+    float fx = (float)w/BASE_W, fy = (float)h/BASE_H;
+    float f = fx<fy?fx:fy;
+    lb.internalW = (int)(BASE_W*f);
+    lb.internalH = (int)(BASE_H*f);
+    lb.offsetX   = (w - lb.internalW)/2;
+    lb.offsetY   = (h - lb.internalH)/2;
 }
 
+// Función para dibujar el frame completo
+static void DibujaFrame(HWND hwnd) {
+    PAINTSTRUCT ps;
+    HDC hdcWin = BeginPaint(hwnd,&ps);
 
-// Algoritmo de Bresenham para rasterizar una línea
-void dibujar_linea(HDC hdc, int x1, int y1, int x2, int y2, COLORREF color) {
-    int dx = abs(x2 - x1);
-    int dy = abs(y2 - y1);
-    int sx = (x1 < x2) ? 1 : -1;
-    int sy = (y1 < y2) ? 1 : -1;
-    int err = dx - dy;
+    // Full client buffer
+    RECT rcC; GetClientRect(hwnd,&rcC);
+    int Wc = rcC.right-rcC.left, Hc = rcC.bottom-rcC.top;
+    HDC  hdcAll = CreateCompatibleDC(hdcWin);
+    HBITMAP hbmAll = CreateCompatibleBitmap(hdcWin,Wc,Hc);
+    HGDIOBJ oldAll = SelectObject(hdcAll,hbmAll);
     
-    while (1) {
-        SetPixel(hdc, x1, y1, color);
-        if (x1 == x2 && y1 == y2)
-            break;
-        int e2 = 2 * err;
-        if (e2 > -dy) { err -= dy; x1 += sx; }
-        if (e2 < dx) { err += dx; y1 += sy; }
+    // Clear full buffer
+    HBRUSH brA = CreateSolidBrush(RGB(0,0,0));
+    FillRect(hdcAll,&rcC,brA);
+    DeleteObject(brA);
+
+    // Internal backbuffer BASE_W x BASE_H
+    HDC  hdcBase = CreateCompatibleDC(hdcAll);
+    HBITMAP hbmBase = CreateCompatibleBitmap(hdcAll,BASE_W,BASE_H);
+    HGDIOBJ oldBase = SelectObject(hdcBase,hbmBase);
+    
+    // Clear internal
+    HBRUSH brB = CreateSolidBrush(RGB(0,0,0));
+    RECT rB = {0,0,BASE_W,BASE_H};
+    FillRect(hdcBase,&rB,brB);
+    DeleteObject(brB);
+
+    // Draw scene
+    if (estadoActual == ESTADO_MENU) {
+        dibujarMenuEnBuffer(hdcBase);
+    } else if (estadoActual == ESTADO_JUEGO) {
+        float cx = BASE_W/2.0f, cy = BASE_H/2.0f;
+        float camX = cx - nave->objeto->origen.x;
+        float camY = cy - nave->objeto->origen.y;
+        SetViewportOrgEx(hdcBase,(int)camX,(int)camY,NULL);
+        dibujar_escena(hdcBase);
+        SetViewportOrgEx(hdcBase,0,0,NULL);
+        dibujarHUD(hdcBase);
+    } else {
+        pruebasDibujables(hdcBase);
     }
+
+    // Draw border inside internal
+    if (dib_borde) dibujarDibujable(hdcBase,dib_borde);
+
+    // Blit internal into full with letterbox
+    StretchBlt(hdcAll,
+               lb.offsetX, lb.offsetY,
+               lb.internalW, lb.internalH,
+               hdcBase,0,0,BASE_W,BASE_H,
+               SRCCOPY);
+
+    // Release internal
+    SelectObject(hdcBase,oldBase);
+    DeleteObject(hbmBase);
+    DeleteDC(hdcBase);
+
+    // Single blit to screen
+    BitBlt(hdcWin,0,0,Wc,Hc,hdcAll,0,0,SRCCOPY);
+
+    // Release full
+    SelectObject(hdcAll,oldAll);
+    DeleteObject(hbmAll);
+    DeleteDC(hdcAll);
+
+    EndPaint(hwnd,&ps);
 }
 
-void dibujar_bordes(HDC hdc) {
-    if (!p1 || !p2 || !p3 || !p4)
-        return;
-    dibujar_linea(hdc, p1->x, p1->y, p2->x, p2->y, RGB(255, 255, 255));
-    dibujar_linea(hdc, p3->x, p3->y, p4->x, p4->y, RGB(255, 255, 255));
-}
-
-/**
- * Escala la escena al tamaño de la ventana
- */
-void escalar(HWND hwnd) {
-    RECT rect;
-    GetClientRect(hwnd, &rect);
-    int ancho_cliente = rect.right - rect.left;
-    int alto_cliente = rect.bottom - rect.top;
-    float factor_resized_x = (float)ancho_cliente / tamano_inicial_pantalla_X;
-    float factor_resized_y = (float)alto_cliente / tamano_inicial_pantalla_Y;
-    
-    escalar_escena(1/factor_escalado, 1/factor_escalado);
-    factor_escalado = minimo(factor_resized_x, factor_resized_y);
-    escalar_escena(factor_escalado, factor_escalado);
-    
-    int tam_escena_x = (int)(tamano_inicial_pantalla_X * factor_escalado);
-    int tam_escena_y = (int)(tamano_inicial_pantalla_Y * factor_escalado);
-    
-    if (!p1 || !p2 || !p3 || !p4) {
-        printf("Error al asignar memoria.\n");
-        return;
-    }
-    
-    *p1 = (struct Punto){0, tam_escena_y + 1};
-    *p2 = (struct Punto){tam_escena_x + 1, tam_escena_y + 1};
-    *p3 = (struct Punto){tam_escena_x + 1, 0};
-    *p4 = (struct Punto){tam_escena_x + 1, tam_escena_y + 1};
-}
-
-/* Estado de la aplicación */
-typedef enum {
-    ESTADO_MENU,
-    ESTADO_JUEGO,
-    ESTADO_TEST_DIBUJABLES
-} EstadoAplicacion;
-
-EstadoAplicacion estadoActual = ESTADO_MENU;
-
+// Función de ventana principal
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    switch (uMsg) {
-    case WM_CREATE: {
-        SetTimer(hwnd, timer, intervalo_fisicas_ms, NULL);
-        inicializarMenu();
-
-        inicializarPartida();
-        comenzarPartida();
-        fisicas = DESACTIVADAS;
-        break;
-    }
-    case WM_SYSCOMMAND: {
-        if ((wParam & 0xFFF0) == SC_RESTORE) {
-            if (fullscreen == 1 && esc_presionado == 1) {
-                fullscreen = 0;
-                SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-                SetWindowPos(hwnd, NULL,
-                             rectVentanaAnterior.left,
-                             rectVentanaAnterior.top,
-                             rectVentanaAnterior.right - rectVentanaAnterior.left,
-                             rectVentanaAnterior.bottom - rectVentanaAnterior.top,
-                             SWP_NOZORDER | SWP_FRAMECHANGED);
-            } else if (esc_presionado == 1) {
-                esc_presionado = 0;
-                return 0;
-            }
-            esc_presionado = 0;
-        } else if ((wParam & 0xFFF0) == SC_MAXIMIZE) {
-            fullscreen = 1;
-            GetWindowRect(hwnd, &rectVentanaAnterior);
-            SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-            escalar(hwnd);
-        }
-        break;
-    }
-    case WM_GETMINMAXINFO: {
-        MINMAXINFO* mmi = (MINMAXINFO*)lParam;
-        RECT rc = {0, 0, anchura_minima_ventana, altura_minima_ventana};
-        AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-        mmi->ptMinTrackSize.x = rc.right - rc.left;
-        mmi->ptMinTrackSize.y = rc.bottom - rc.top;
-        break;
-    }
-    case WM_SIZE: {
-        escalar(hwnd);
-        break;
-    }
-    case WM_TIMER: {
-        if (wParam == timer) {
-            manejar_instante();
-            manejar_teclas();
-            InvalidateRect(hwnd, NULL, FALSE);
-        }
-        break;
-    }
-    case WM_PAINT: {
-        PAINTSTRUCT ps;
-        HDC hdc = BeginPaint(hwnd, &ps);
-        HDC hdcMem = CreateCompatibleDC(hdc);
-        RECT rect;
-        GetClientRect(hwnd, &rect);
-        HBITMAP hbmMem = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
-        HGDIOBJ hOld = SelectObject(hdcMem, hbmMem);
-        HBRUSH brush = CreateSolidBrush(RGB(0, 0, 0));
-        FillRect(hdcMem, &rect, brush);
-        DeleteObject(brush);
-        
-        if (estadoActual == ESTADO_MENU) {
-            // Pasa el hwnd real a la función
-            dibujarMenuEnBuffer(hdcMem, hwnd);
-        } else if (estadoActual == ESTADO_JUEGO) {
-
-            // Centrar camara en la nave
-            RECT rect;
-            GetClientRect(hwnd, &rect);
-            int w = rect.right - rect.left;
-            int h = rect.bottom - rect.top;
-            float cx = w/2.0f, cy = h/2.0f;
-            float camX = cx - nave->objeto->origen.x;
-            float camY = cy - nave->objeto->origen.y;
-            SetViewportOrgEx(hdcMem, (int)camX, (int)camY, NULL);
-
-            //dibujar_bordes(hdcMem);
-            dibujar_escena(hdcMem);
-
-            SetViewportOrgEx(hdcMem, 0, 0, NULL);
-
-            dibujarHUD(hdcMem);
-        } else if (estadoActual == ESTADO_TEST_DIBUJABLES) {
-            pruebasDibujables(hdcMem);
-        }
-        
-        BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcMem, 0, 0, SRCCOPY);
-        SelectObject(hdcMem, hOld);
-        DeleteObject(hbmMem);
-        DeleteDC(hdcMem);
-        EndPaint(hwnd, &ps);
-        break;
-    }
+    switch(uMsg) {
     
-    case WM_KEYDOWN: {
-        if(estadoActual == ESTADO_MENU) {
-            procesarEventoMenu(hwnd, uMsg, wParam, lParam);
-            if(wParam == VK_RETURN) {
+    // Evento de creación de la ventana
+    case WM_CREATE:
+        AttachConsoleToStdout();
+        SetTimer(hwnd,TIMER_ID,intervalo_fisicas_ms,NULL);
+        inicializarMenu();
+        inicializar_aleatoriedad();
+        calcular_letterbox(hwnd);
+        dib_borde = crearDibujable(&borde_const);
+        break;
+
+    // Evento de redimensionado de la ventana
+    case WM_SIZE:
+        // En caso de que la ventana cambie de tamaño, recalcular el letterbox
+        calcular_letterbox(hwnd);
+        break;
+
+    // Evento de comando del sistema
+    case WM_SYSCOMMAND:
+        // Si se presiona ESC y la ventana está en modo pantalla completa, volver a modo ventana
+        if ((wParam&0xFFF0)==SC_RESTORE && fullscreen && esc_presionado) {
+            fullscreen=0;
+            SetWindowLong(hwnd,GWL_STYLE,WS_OVERLAPPEDWINDOW);
+            SetWindowPos(hwnd,NULL,
+                         rectVentanaAnterior.left,rectVentanaAnterior.top,
+                         rectVentanaAnterior.right-rectVentanaAnterior.left,
+                         rectVentanaAnterior.bottom-rectVentanaAnterior.top,
+                         SWP_NOZORDER|SWP_FRAMECHANGED);
+            calcular_letterbox(hwnd);
+            InvalidateRect(hwnd,NULL,TRUE);
+            esc_presionado=0;
+
+        // Si se presiona el botón de maximizar, cambiar a modo pantalla completa
+        } else if ((wParam&0xFFF0)==SC_MAXIMIZE) {
+            fullscreen=1;
+            GetWindowRect(hwnd,&rectVentanaAnterior);
+            SetWindowLong(hwnd,GWL_STYLE,WS_POPUP|WS_VISIBLE);
+            SetWindowPos(hwnd,NULL,0,0,
+                         GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN),
+                         SWP_NOZORDER|SWP_FRAMECHANGED);
+            calcular_letterbox(hwnd);
+        }
+        break;
+    
+    // Evento de tecla presionada
+    case WM_KEYDOWN:
+        if (estadoActual==ESTADO_MENU) {
+            procesarEventoMenu(hwnd,uMsg,wParam,lParam);
+            if (wParam==VK_RETURN) {
                 OpcionMenu op = obtenerOpcionSeleccionada();
-                if(op == OPCION_PLAY) {
-                    printf("Play seleccionado\n");
+                if (op==OPCION_PLAY) {
                     estadoActual = ESTADO_JUEGO;
+                    inicializarPartida();
                     comenzarPartida();
-                }
-                else if(op == OPCION_TEST_DIBUJABLES) {
-                    printf("Test dibujables seleccionado\n");
+                } else if (op==OPCION_TEST_DIBUJABLES) {
                     estadoActual = ESTADO_TEST_DIBUJABLES;
-                }
-                else if(op == OPCION_OPTIONS) {
-                    printf("Options seleccionado\n");
-                    // Configura la acción para Options
-                }
-                else if(op == OPCION_EXIT) {
-                    printf("Exit seleccionado\n");
-                    PostQuitMessage(0); // Terminar el proceso
+                } else if (op==OPCION_EXIT) {
+                    PostQuitMessage(0);
                 }
             }
-        } else if (estadoActual == ESTADO_JUEGO) {
-            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
-                esc_presionado = 1;
-                SendMessage(hwnd, WM_SYSCOMMAND, SC_RESTORE, 0);
+        } else if (estadoActual==ESTADO_JUEGO) {
+            if (GetAsyncKeyState(VK_ESCAPE)&0x8000) {
+                esc_presionado=1;
+                SendMessage(hwnd,WM_SYSCOMMAND,SC_RESTORE,0);
             }
             if (GetAsyncKeyState(VK_UP) & 0x8000) pulsar_tecla(ARRIBA);
             if (GetAsyncKeyState(VK_LEFT) & 0x8000) pulsar_tecla(IZQUIERDA);
             if (GetAsyncKeyState(VK_RIGHT) & 0x8000) pulsar_tecla(DERECHA);
             if (GetAsyncKeyState(VK_SPACE) & 0x8000) pulsar_tecla(ESPACIO);
             if (GetAsyncKeyState(0x35) & 0x8000 || GetAsyncKeyState(VK_NUMPAD5) & 0x8000) pulsar_tecla(MONEDA);
-        } else if (estadoActual == ESTADO_TEST_DIBUJABLES) {
-            // Si se pulsa ESC en Test Dibujables, volver al menu
-            if (wParam == VK_ESCAPE) {
-                printf("Volviendo al menú desde Test Dibujables\n");
-                estadoActual = ESTADO_MENU;
-                InvalidateRect(hwnd, NULL, TRUE);
-            }
+        } else if (estadoActual==ESTADO_TEST_DIBUJABLES && wParam==VK_ESCAPE) {
+            estadoActual=ESTADO_MENU;
         }
-
         break;
-    }
+
+    // Evento de tecla levantada
     case WM_KEYUP: {
         if (estadoActual == ESTADO_JUEGO) {
             if (!(GetAsyncKeyState(VK_UP) & 0x8000)) levantar_tecla(ARRIBA);
@@ -283,38 +231,55 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         }
         break;
     }
-    case WM_DESTROY: {
-        KillTimer(hwnd, timer);
+
+    // Evento de temporizador
+    case WM_TIMER:
+        if (wParam==TIMER_ID) {
+            manejar_instante();
+            manejar_teclas();
+            InvalidateRect(hwnd,NULL,FALSE);
+        }
+        break;
+
+    // Evento de repintado
+    case WM_PAINT:
+        DibujaFrame(hwnd);
+        break;
+    
+    // Evento de cierre de ventana
+    case WM_DESTROY:
+        if (dib_borde) destruirDibujable(dib_borde);
+        KillTimer(hwnd,TIMER_ID);
         PostQuitMessage(0);
         return 0;
     }
-    }
+
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
+
+// Función principal de la aplicación
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     (void)lpCmdLine;
     (void)hPrevInstance;
-    AttachConsoleToStdout();
+
     WNDCLASS wc = {0};
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;
     wc.lpszClassName = "RasterWindow";
     wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
     RegisterClass(&wc);
-    
-    RECT rc = {0, 0, tamano_inicial_pantalla_X, tamano_inicial_pantalla_Y};
+
+    RECT rc = {0, 0, BASE_W, BASE_H};
     AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-    HWND hwnd = CreateWindowEx(0, "RasterWindow", "Lunar Lander",
-                               WS_OVERLAPPEDWINDOW, 0, 0,
-                               (rc.right - rc.left), (rc.bottom - rc.top),
-                               NULL, NULL, hInstance, NULL);
-    inicializar_puntos();
-    inicializar_aleatoriedad();
-    
-    if (!hwnd) return 0;
-    ShowWindow(hwnd, nCmdShow);
-    
+    HWND hwnd = CreateWindow("RasterWindow", "Lunar Lander",
+                             WS_OVERLAPPEDWINDOW,
+                             CW_USEDEFAULT, CW_USEDEFAULT,
+                             rc.right - rc.left, rc.bottom - rc.top,
+                             NULL, NULL, hInstance, NULL);
+    if(!hwnd) return 0;
+    ShowWindow(hwnd,nCmdShow);
+
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0)) {
         TranslateMessage(&msg);

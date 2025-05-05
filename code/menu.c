@@ -2,6 +2,7 @@
 #include "texto.h"
 #include "../resources/caracteres.h"
 #include "../code/transformaciones.h"
+#include "../code/config.h"
 #include <stdio.h>
 #include <windows.h>
 
@@ -50,75 +51,67 @@ void destruirMenu(void) {
     }
 }
 
-static void actualizarPosicionesMenu(HWND hwnd) {
-    // Obtener las dimensiones del área del cliente
-    HDC hdc = GetDC(hwnd);
-    RECT rect;
-    GetClientRect(hwnd, &rect);
-    int anchoCliente = rect.right - rect.left;
-    int altoCliente = rect.bottom - rect.top;
-    printf("HWND = %p\n", (void*)hwnd);
-    printf("rect.left   = %ld, rect.top    = %ld\n", rect.left,  rect.top);
-    printf("rect.right  = %ld, rect.bottom = %ld\n", rect.right, rect.bottom);
-    printf("anchoCliente = %d, altoCliente = %d\n", anchoCliente, altoCliente);
-    
-    // Calcular el ancho máximo de las opciones del menú
-    int anchoTotalMenu = 0, anchoOpcion;
+static void actualizarPosicionesMenu(void) {
+    // Se usa siempre la resolucon base
+    const int anchoCliente = BASE_W;
+    const int altoCliente  = BASE_H;
+
+    // Medir ancho maximo de las opciones
+    int anchoTotalMenu = 0;
     for (int i = 0; i < NUM_OPCIONES; i++) {
-        anchoOpcion = opcionesTextuales[i]->num_caracteres * (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER);
+        int anchoOpcion = opcionesTextuales[i]->num_caracteres
+                        * (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER);
         if (anchoOpcion > anchoTotalMenu)
             anchoTotalMenu = anchoOpcion;
     }
-    
-    // Calcular la posición X para centrar el menú horizontalmente
+
+    // Centrado horizontal en BASE_W
     menuPosX = (anchoCliente - anchoTotalMenu) / 2;
-    
-    // Calcular la altura total del menú (cada opción + espacio entre ellas)
-    int altoTotalMenu = NUM_OPCIONES * ALTURA_CARACTER_MAX + (NUM_OPCIONES - 1) * espacioEntreOpciones;
-    // Calcular la posición Y para centrar verticalmente el menú
+
+    // Altura total del bloque de opciones
+    int altoTotalMenu = NUM_OPCIONES * ALTURA_CARACTER_MAX
+                      + (NUM_OPCIONES - 1) * espacioEntreOpciones;
+
+    // Centrado vertical en BASE_H
     menuPosY_inicial = (altoCliente - altoTotalMenu) / 2;
-    
-    // Actualizar la posición de cada opción
+
+    // Actualizar el origen de cada texto de opción
     for (int i = 0; i < NUM_OPCIONES; i++) {
-        struct Punto nuevoOrigen = { (float)menuPosX, (float)(menuPosY_inicial + i * (ALTURA_CARACTER_MAX + espacioEntreOpciones)) };
+        struct Punto nuevoOrigen = {
+            (float)menuPosX,
+            (float)(menuPosY_inicial
+                    + i * (ALTURA_CARACTER_MAX + espacioEntreOpciones))
+        };
         opcionesTextuales[i]->origen = nuevoOrigen;
         colocar_texto(opcionesTextuales[i], nuevoOrigen);
     }
-    fprintf(stderr, "Posiciones de menú actualizadas: X=%d, Y=%d\n", menuPosX, menuPosY_inicial);
-    
-    ReleaseDC(hwnd, hdc);
 }
 
+void dibujarMenuEnBuffer(HDC hdc) {
+    // Recalcula posiciones del menu basandose en BASE_W y BASE_H
+    actualizarPosicionesMenu();
 
-void dibujarMenuEnBuffer(HDC hdc, HWND hwndReal) {
-    actualizarPosicionesMenu(hwndReal);
-    
-    // Obtener el rectángulo del área del cliente
-    RECT rect;
-    GetClientRect(hwndReal, &rect);
-    
-    // Calcular la posición del título
-    int marginTitulo = 70;
-    int numCaracteresTitulo = 12;
+    // Dibujar el titulo
+    const int marginTitulo       = 70;
+    const int numCaracteresTitulo = 12;  // "LUNAR LANDER"
     int anchoTitulo = numCaracteresTitulo * (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER);
-    int xTitulo = (rect.right - rect.left - anchoTitulo) / 2;
-    int yTitulo = menuPosY_inicial - ALTURA_CARACTER_MAX - marginTitulo;
+    int xTitulo     = (BASE_W - anchoTitulo) / 2;
+    int yTitulo     = menuPosY_inicial - ALTURA_CARACTER_MAX - marginTitulo;
     struct Punto origenTitulo = { (float)xTitulo, (float)yTitulo };
-    
-    // Dibujar el título
+
     struct Texto* titulo = crearTextoDesdeCadena("LUNAR LANDER", origenTitulo);
     dibujar_texto(titulo, hdc);
     destruir_texto(titulo);
-    
-    // Dibujar cada opción del menú
+
+    // Dibuja cada opción con el indicador ">" a la izquierda de la opción seleccionada
     for (OpcionMenu i = 0; i < NUM_OPCIONES; i++) {
-        // Si es la opción seleccionada, dibujar el indicador
         if (i == obtenerOpcionSeleccionada()) {
-            struct Punto indicadorOrigen;
-            // Colocar el indicador a la izquierda de la opcion seleccionada
-            indicadorOrigen.x = opcionesTextuales[i]->origen.x - 2 * ANCHURA_CARACTER_MAX;
-            indicadorOrigen.y = opcionesTextuales[i]->origen.y;
-            struct Texto* indicador = crearTextoDesdeCadena(">", indicadorOrigen);
+            // indicador a la izquierda de la opción
+            struct Punto ind = {
+                opcionesTextuales[i]->origen.x - 2 * ANCHURA_CARACTER_MAX,
+                opcionesTextuales[i]->origen.y
+            };
+            struct Texto* indicador = crearTextoDesdeCadena(">", ind);
             dibujar_texto(indicador, hdc);
             destruir_texto(indicador);
         }

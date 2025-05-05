@@ -180,7 +180,7 @@ void dibujarHUD(HDC hdc) {
     destruir_texto(txt);
 
     // ALTITUDE
-    int alt = (int)(tamano_inicial_pantalla_Y - nave->objeto->origen.y);
+    int alt = (int)(BASE_H - nave->objeto->origen.y);
     sprintf(buf, "ALTITUDE           %4d", alt);
     origen = (struct Punto){ 300, 10 };
     txt = crearTextoDesdeCadena(buf, origen);

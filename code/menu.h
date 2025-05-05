@@ -8,12 +8,13 @@ typedef enum {
     OPCION_TEST_DIBUJABLES,
     OPCION_OPTIONS,
     OPCION_EXIT,
-    NUM_OPCIONES  // Nos sirve para saber el total de opciones.
+    NUM_OPCIONES 
 } OpcionMenu;
 
 void inicializarMenu(void);
 
-void dibujarMenuEnBuffer(HDC hdc, HWND hwndReal);
+// Dibuja el menu en el buffer de la ventana.
+void dibujarMenuEnBuffer(HDC hdc);
 
 
 LRESULT procesarEventoMenu(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
