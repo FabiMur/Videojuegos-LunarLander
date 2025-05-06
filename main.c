@@ -5,6 +5,7 @@
 #include "code/variables_globales.h"
 #include "code/menu.h"
 #include "code/config.h"
+#include "resources/asteroides.h"
 #include <stdio.h>
 #include <windows.h>
 #include <stdlib.h>
@@ -41,12 +42,14 @@ int tiempo = 0;
 uint16_t fullscreen = 0, esc_presionado = 0;
 RECT rectVentanaAnterior;
 
+
 // Inicializa la consola para imprimir mensajes de depuración
 void AttachConsoleToStdout() {
     AllocConsole();
     freopen("CONOUT$","w",stdout);
     freopen("CONOUT$","w",stderr);
 }
+
 
 // Fucnion para probar dibujables
 void pruebasDibujables(HDC hdc) {

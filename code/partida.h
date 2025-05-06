@@ -50,4 +50,9 @@ void findeJuego();
 
 void escalar_escena_partida(float factor_x, float factor_y);
 
+void gestionar_colisiones();
+
+void gestionar_colisiones_asteroides();
+
+
 #endif // PARTIDA_H
