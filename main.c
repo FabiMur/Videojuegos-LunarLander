@@ -144,8 +144,8 @@ static void DibujaFrame(HWND hwnd) {
 
 // Función de ventana principal
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+
     switch(uMsg) {
-    
     // Evento de creación de la ventana
     case WM_CREATE:
         AttachConsoleToStdout();

@@ -43,4 +43,5 @@ struct Plataforma* generar_plataformas(const struct DibujableConstante* terreno,
  */
 void dibujar_plataforma(HDC hdc, struct Plataforma plataforma);
 
+
 #endif // GESTOR_PLATAFORMAS_H

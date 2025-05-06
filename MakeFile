@@ -1,37 +1,40 @@
-# Compilador
-CC = gcc
+# Makefile Windows (Git Bash / MinGW)
 
-# Flags de compilación
-CFLAGS = -Wall -Wextra -Wpedantic -g -mwindows
+# Compilador y flags de compilación
+CC      = gcc
+CFLAGS  = -Wall -Wextra -Wpedantic -g
 
-# Directorios de código fuente
+# Flags para el linker
+LDFLAGS = -mwindows
+LDLIBS  = -lgdi32
+
+# Nombre del ejecutable
+TARGET  = lunar_lander.exe
+EXEC    = ./$(TARGET)
+
+# Directorios de código
 SRC_DIR = code
 RES_DIR = resources
 
-# Archivos fuente (todos los .c en code/ y resources/ + main.c)
-SRCS = $(wildcard $(SRC_DIR)/*.c $(RES_DIR)/*.c) main.c
+# Listado de fuentes y objetos
+SRCS    = $(wildcard $(SRC_DIR)/*.c $(RES_DIR)/*.c) main.c
+OBJS    = $(SRCS:.c=.o)
 
-# Archivos objeto (se reemplaza .c por .o)
-OBJS = $(SRCS:.c=.o)
-
-# Ejecutable final
-TARGET = lunar_lander.exe
-
-# Regla principal
+# Target por defecto
 all: $(TARGET)
 
-# Compilar el ejecutable
+# Regla de link (fusión de objetos + bibliotecas)
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
-# Compilar cada archivo fuente en un objeto
+# Regla genérica para compilar .c → .o
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Limpiar archivos compilados
+# Limpieza de binarios y objetos
 clean:
 	rm -f $(SRC_DIR)/*.o $(RES_DIR)/*.o main.o $(TARGET)
 
-# Recompilar todo y ejecutar
+# Ejecutar tras recompilar
 run: clean all
-	./$(TARGET)
+	$(EXEC)
