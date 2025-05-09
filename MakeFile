@@ -1,4 +1,17 @@
-# Makefile Windows (Git Bash / MinGW)
+# Detectar el sistema operativo
+ifeq ($(OS),Windows_NT)
+    RM = del /Q
+    TARGET = lunar_lander.exe
+    EXEC = .\$(TARGET)
+    CLEAN_NULL = 2>nul
+	MAKE = mingw32-make -f MakeFile
+else
+    RM = rm -f
+    TARGET = lunar_lander
+    EXEC = ./$(TARGET)
+    CLEAN_NULL =
+	MAKE = make
+endif
 
 # Compilador y flags de compilación
 CC      = gcc
@@ -6,7 +19,7 @@ CFLAGS  = -Wall -Wextra -Wpedantic -g
 
 # Flags para el linker
 LDFLAGS = -mwindows
-LDLIBS  = -lgdi32
+LDLIBS  = -lgdi32 -lwinmm
 
 # Nombre del ejecutable
 TARGET  = lunar_lander.exe
@@ -29,12 +42,14 @@ $(TARGET): $(OBJS)
 
 # Regla genérica para compilar .c → .o
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) -c $< -o $@ $(LDLIBS)
 
 # Limpieza de binarios y objetos
 clean:
-	rm -f $(SRC_DIR)/*.o $(RES_DIR)/*.o main.o $(TARGET)
+	-$(RM) $(SRC_DIR)\*.o $(RES_DIR)\*.o main.o $(TARGET) $(CLEAN_NULL)
 
 # Ejecutar tras recompilar
-run: clean all
+run: 
+	$(MAKE) clean
+	$(MAKE)
 	$(EXEC)
