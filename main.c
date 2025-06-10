@@ -4,6 +4,7 @@
 #include "code/gestor_plataformas.h"
 #include "code/variables_globales.h"
 #include "code/menu.h"
+#include "code/opciones.h"
 #include "code/config.h"
 #include "resources/asteroides.h"
 #include <stdio.h>
@@ -34,7 +35,7 @@ typedef struct { int internalW, internalH, offsetX, offsetY; } Letterbox;
 static Letterbox lb = { BASE_W, BASE_H, 0, 0 };
 
 // Constantes de la aplicación
-typedef enum { ESTADO_MENU, ESTADO_JUEGO, ESTADO_TEST_DIBUJABLES } EstadoAplicacion;
+typedef enum { ESTADO_MENU, ESTADO_JUEGO, ESTADO_TEST_DIBUJABLES, ESTADO_OPTIONS } EstadoAplicacion;
 static EstadoAplicacion estadoActual = ESTADO_MENU;
 
 // Variables globales
@@ -115,6 +116,8 @@ static void DibujaFrame(HWND hwnd) {
         dibujar_escena(hdcBase);
         SetViewportOrgEx(hdcBase,0,0,NULL);
         dibujarHUD(hdcBase);
+    } else if (estadoActual == ESTADO_OPTIONS) {
+        dibujarOpcionesEnBuffer(hdcBase);
     } else {
         pruebasDibujables(hdcBase);
     }
@@ -154,6 +157,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         AttachConsoleToStdout();
         SetTimer(hwnd,TIMER_ID,intervalo_fisicas_ms,NULL);
         inicializarMenu();
+        inicializarOpciones();
         inicializar_aleatoriedad();
         calcular_letterbox(hwnd);
         dib_borde = crearDibujable(&borde_const);
@@ -204,6 +208,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                     comenzarPartida();
                 } else if (op==OPCION_TEST_DIBUJABLES) {
                     estadoActual = ESTADO_TEST_DIBUJABLES;
+                } else if (op==OPCION_OPTIONS) {
+                    estadoActual = ESTADO_OPTIONS;
                 } else if (op==OPCION_EXIT) {
                     PostQuitMessage(0);
                 }
@@ -218,6 +224,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             if (GetAsyncKeyState(VK_RIGHT) & 0x8000) pulsar_tecla(DERECHA);
             if (GetAsyncKeyState(VK_SPACE) & 0x8000) pulsar_tecla(ESPACIO);
             if (GetAsyncKeyState(0x35) & 0x8000 || GetAsyncKeyState(VK_NUMPAD5) & 0x8000) pulsar_tecla(MONEDA);
+        } else if (estadoActual==ESTADO_OPTIONS) {
+            procesarEventoOpciones(hwnd,uMsg,wParam,lParam);
+            if(wParam==VK_ESCAPE) estadoActual = ESTADO_MENU;
         } else if (estadoActual==ESTADO_TEST_DIBUJABLES && wParam==VK_ESCAPE) {
             estadoActual=ESTADO_MENU;
         }
@@ -252,6 +261,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     // Evento de cierre de ventana
     case WM_DESTROY:
         if (dib_borde) destruirDibujable(dib_borde);
+        destruirOpciones();
         KillTimer(hwnd,TIMER_ID);
         PostQuitMessage(0);
         return 0;
