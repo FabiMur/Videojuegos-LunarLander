@@ -5,8 +5,9 @@
 
 // Enumeracion de flags configurables
 typedef enum {
-    FLAG_MUSICA,
-    FLAG_FPS,
+    FLAG_SOUND,
+    FLAG_ASTEROIDS,
+    FLAG_AI,
     NUM_FLAGS
 } OpcionFlag;
 

@@ -25,7 +25,7 @@ struct Dibujable* motor_fuerte = NULL;
 struct Dibujable* terreno = NULL;
 struct Asteroide* asteroides = NULL;
 struct Plataforma* plataformas_partida = NULL;
-uint8_t numero_plataformas = 0;
+uint16_t numero_plataformas = 0;
 uint8_t numero_asteroides = 0;
 
 

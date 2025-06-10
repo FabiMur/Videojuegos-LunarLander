@@ -12,10 +12,15 @@ static int opcionSeleccionadaOpc = 0;
 static int opcionesPosX = 0;
 static int opcionesPosY_inicial = 0;
 static const int espacioEntreOpciones = 30;
+// Separación entre el texto de la opción y el valor <SI>/<NO>
+static const int paddingValor = 100;
+// Ancho total de cada fila (texto + padding + valor)
+static int anchoFilaOpciones = 0;
 
 static const char* cadenasOpcionesFlags[NUM_FLAGS] = {
-    "MUSICA",
-    "FPS"
+    "SOUND",
+    "ASTEROIDS",
+    "AI"
 };
 
 void inicializarOpciones(void) {
@@ -37,12 +42,19 @@ void destruirOpciones(void) {
 static void actualizarPosicionesOpciones(void) {
     const int anchoCliente = BASE_W;
     const int altoCliente  = BASE_H;
-    int anchoTotal = 0;
+
+    int anchoTextoMax = 0;
+
     for(int i=0;i<NUM_FLAGS;i++) {
         int anchoOpcion = opcionesTextuales[i]->num_caracteres * (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER);
-        if(anchoOpcion>anchoTotal) anchoTotal = anchoOpcion;
+        if(anchoOpcion > anchoTextoMax) anchoTextoMax = anchoOpcion;
     }
-    opcionesPosX = (anchoCliente - anchoTotal) / 2;
+
+    int anchoValor = 4 * (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER);
+    anchoFilaOpciones = anchoTextoMax + paddingValor + anchoValor;
+
+    opcionesPosX = (anchoCliente - anchoFilaOpciones) / 2;
+    
     int altoTotal = NUM_FLAGS * ALTURA_CARACTER_MAX + (NUM_FLAGS - 1)*espacioEntreOpciones;
     opcionesPosY_inicial = (altoCliente - altoTotal) / 2;
 
@@ -78,10 +90,11 @@ void dibujarOpcionesEnBuffer(HDC hdc) {
         dibujar_texto(opcionesTextuales[i], hdc);
 
         char valor[8];
-        const char* txt = flags[i] ? "SI" : "NO";
+        const char* txt = flags[i] ? "ON " : "OFF";
         snprintf(valor, sizeof(valor), "<%s>", txt);
-        int anchoOpcion = opcionesTextuales[i]->num_caracteres * (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER);
-        struct Punto o = { opcionesTextuales[i]->origen.x + anchoOpcion + 20, opcionesTextuales[i]->origen.y };
+        int anchoValor = 4 * (ANCHURA_CARACTER_MAX + SEPARACION_CARACTER);
+        int xValor = opcionesPosX + anchoFilaOpciones - anchoValor;
+        struct Punto o = { (float)xValor, opcionesTextuales[i]->origen.y };
         struct Texto* valorTxt = crearTextoDesdeCadena(valor, o);
         dibujar_texto(valorTxt, hdc);
         destruir_texto(valorTxt);
