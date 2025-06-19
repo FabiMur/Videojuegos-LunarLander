@@ -36,6 +36,22 @@ uint16_t fisicas = DESACTIVADAS;
 int32_t offsetTerrenoDerecha = ANCHURA_TERRENO;
 int32_t offsetTerrenoIzquerda = 0;
 
+// Calcula la coordenada Y del terreno para una posicion X determinada
+static float obtener_y_terreno(float x) {
+    if(!terreno || !terreno->puntos) return (float)BASE_H;
+
+    for(uint16_t i = 0; i < terreno->num_puntos - 1; i++) {
+        float x1 = terreno->puntos[i].x;
+        float x2 = terreno->puntos[i+1].x;
+        if((x >= x1 && x <= x2) || (x >= x2 && x <= x1)) {
+            float t = (x2 - x1) != 0 ? (x - x1) / (x2 - x1) : 0;
+            return terreno->puntos[i].y + t * (terreno->puntos[i+1].y - terreno->puntos[i].y);
+        }
+    }
+
+    return (float)BASE_H;
+}
+
 void escalar_escena_partida(float factor_x, float factor_y){
 	if(inicio == 1) {
 		escalar_dibujable_en_escena_dados_ejes(terreno, factor_x, factor_y);
@@ -228,7 +244,8 @@ void dibujarHUD(HDC hdc) {
     destruir_texto(txt);
 
     // ALTITUDE
-    int alt = (int)(BASE_H - nave->objeto->origen.y);
+    float alt_f = obtener_y_terreno(nave->objeto->origen.x) - nave->objeto->origen.y;
+    int alt = (int)roundf(alt_f);
     sprintf(buf, "ALTITUDE           %4d", alt);
     origen = (struct Punto){ 300, 10 };
     txt = crearTextoDesdeCadena(buf, origen);
@@ -236,7 +253,7 @@ void dibujarHUD(HDC hdc) {
     destruir_texto(txt);
 
     // HORIZONTAL SPEED
-    sprintf(buf, "HORIZONTAL SPEEED  %4d>", (int)roundf(nave->velocidad[0]));
+    sprintf(buf, "HORIZONTAL SPEED  %4d>", (int)roundf(nave->velocidad[0]));
     origen = (struct Punto){ 300, 10 + salto * 1 };
     txt = crearTextoDesdeCadena(buf, origen);
     dibujar_texto(txt, hdc);
