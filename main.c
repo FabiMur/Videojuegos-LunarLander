@@ -30,6 +30,12 @@ static const struct DibujableConstante borde_const = {{0,0}, borde_puntos, borde
 // Borde de la letterbox
 static struct Dibujable* dib_borde = NULL;
 
+// Margen de la camara para el seguimiento horizontal
+#define CAMARA_MARGEN 200
+
+// Desplazamiento actual de la camara en el eje X
+static float camaraX = 0.0f;
+
 // Constantes de la letterbox
 typedef struct { int internalW, internalH, offsetX, offsetY; } Letterbox;
 static Letterbox lb = { BASE_W, BASE_H, 0, 0 };
@@ -111,8 +117,13 @@ static void DibujaFrame(HWND hwnd) {
     } else if (estadoActual == ESTADO_JUEGO) {
         float cx = BASE_W/2.0f, cy = BASE_H/2.0f;
         float camX = cx - nave->objeto->origen.x;
+        float naveX_en_pantalla = nave->objeto->origen.x + camaraX;
+        if(naveX_en_pantalla < CAMARA_MARGEN)
+            camaraX = CAMARA_MARGEN - nave->objeto->origen.x;
+        else if(naveX_en_pantalla > BASE_W - CAMARA_MARGEN)
+            camaraX = BASE_W - CAMARA_MARGEN - nave->objeto->origen.x;
         float camY = cy - nave->objeto->origen.y;
-        SetViewportOrgEx(hdcBase,(int)camX,(int)camY,NULL);
+        SetViewportOrgEx(hdcBase,(int)camaraX,(int)camY,NULL);
         dibujar_escena(hdcBase);
         SetViewportOrgEx(hdcBase,0,0,NULL);
         dibujarHUD(hdcBase);
