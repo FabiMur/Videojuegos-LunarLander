@@ -1,16 +1,24 @@
 # Detectar el sistema operativo
 ifeq ($(OS),Windows_NT)
-    RM = del /Q
-    TARGET = lunar_lander.exe
-    EXEC = .\$(TARGET)
-    CLEAN_NULL = 2>nul
-	MAKE = mingw32-make -f MakeFile
+    ifeq ($(shell uname),) # CMD
+        RM = del /Q
+        TARGET = lunar_lander.exe
+        EXEC = .\$(TARGET)
+        CLEAN_NULL = 2>nul
+        MAKE = mingw32-make -f MakeFile
+    else # Git Bash
+        RM = rm -f
+        TARGET = lunar_lander.exe
+        EXEC = ./$(TARGET)
+        CLEAN_NULL =
+        MAKE = make
+    endif
 else
     RM = rm -f
     TARGET = lunar_lander
     EXEC = ./$(TARGET)
     CLEAN_NULL =
-	MAKE = make
+    MAKE = make
 endif
 
 # Compilador y flags de compilación
@@ -20,10 +28,6 @@ CFLAGS  = -Wall -Wextra -Wpedantic -g
 # Flags para el linker
 LDFLAGS = -mwindows
 LDLIBS  = -lgdi32 -lwinmm
-
-# Nombre del ejecutable
-TARGET  = lunar_lander.exe
-EXEC    = ./$(TARGET)
 
 # Directorios de código
 SRC_DIR = code
@@ -36,7 +40,7 @@ OBJS    = $(SRCS:.c=.o)
 # Target por defecto
 all: $(TARGET)
 
-# Regla de link (fusión de objetos + bibliotecas)
+# Regla de link
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
@@ -44,12 +48,12 @@ $(TARGET): $(OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -c $< -o $@ $(LDLIBS)
 
-# Limpieza de binarios y objetos
+# Limpieza
 clean:
-	-$(RM) $(SRC_DIR)\*.o $(RES_DIR)\*.o main.o $(TARGET) $(CLEAN_NULL)
+	-$(RM) $(SRC_DIR)/*.o $(RES_DIR)/*.o main.o $(TARGET) $(CLEAN_NULL)
 
 # Ejecutar tras recompilar
-run: 
+run:
 	$(MAKE) clean
 	$(MAKE)
 	$(EXEC)
