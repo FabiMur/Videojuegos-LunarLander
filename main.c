@@ -7,6 +7,7 @@
 #include "code/opciones.h"
 #include "code/config.h"
 #include "resources/asteroides.h"
+#include "code/partida.h"
 #include <stdio.h>
 #include <windows.h>
 #include <stdlib.h>
@@ -43,6 +44,22 @@ static Letterbox lb = { BASE_W, BASE_H, 0, 0 };
 // Constantes de la aplicación
 typedef enum { ESTADO_MENU, ESTADO_JUEGO, ESTADO_TEST_DIBUJABLES, ESTADO_OPTIONS } EstadoAplicacion;
 static EstadoAplicacion estadoActual = ESTADO_MENU;
+
+// Calcula la coordenada Y del terreno para una posición X concreta
+static float obtener_y_terreno(float x) {
+    if(!terreno || !terreno->puntos) return (float)BASE_H;
+
+    for(uint16_t i = 0; i < terreno->num_puntos - 1; i++) {
+        float x1 = terreno->puntos[i].x;
+        float x2 = terreno->puntos[i+1].x;
+        if((x >= x1 && x <= x2) || (x >= x2 && x <= x1)) {
+            float t = (x2 - x1) != 0 ? (x - x1) / (x2 - x1) : 0;
+            return terreno->puntos[i].y + t * (terreno->puntos[i+1].y - terreno->puntos[i].y);
+        }
+    }
+
+    return (float)BASE_H;
+}
 
 // Variables globales
 int tiempo = 0;
@@ -116,16 +133,39 @@ static void DibujaFrame(HWND hwnd) {
         dibujarMenuEnBuffer(hdcBase);
     } else if (estadoActual == ESTADO_JUEGO) {
         float cx = BASE_W/2.0f, cy = BASE_H/2.0f;
-        float camX = cx - nave->objeto->origen.x;
         float naveX_en_pantalla = nave->objeto->origen.x + camaraX;
         if(naveX_en_pantalla < CAMARA_MARGEN)
             camaraX = CAMARA_MARGEN - nave->objeto->origen.x;
         else if(naveX_en_pantalla > BASE_W - CAMARA_MARGEN)
             camaraX = BASE_W - CAMARA_MARGEN - nave->objeto->origen.x;
-        float camY = cy - nave->objeto->origen.y;
-        SetViewportOrgEx(hdcBase,(int)camaraX,(int)camY,NULL);
+
+        float alt = obtener_y_terreno(nave->objeto->origen.x) - nave->objeto->origen.y;
+        const float ALT_ZOOM_INI = 200.0f;
+        const float ALT_ZOOM_MIN = 50.0f;
+        float zoom = 1.0f;
+        if (alt < ALT_ZOOM_INI) {
+            float a = alt < ALT_ZOOM_MIN ? ALT_ZOOM_MIN : alt;
+            zoom = 1.0f + (ALT_ZOOM_INI - a) / (ALT_ZOOM_INI - ALT_ZOOM_MIN);
+        }
+
+        XFORM xf = { zoom, 0, 0, zoom, (1.0f - zoom) * cx, (1.0f - zoom) * cy };
+        SetGraphicsMode(hdcBase, GM_ADVANCED);
+        SetWorldTransform(hdcBase, &xf);
+
+        float camX_zoom = camaraX + (1.0f - zoom) * (nave->objeto->origen.x - cx);
+        float camY_zoom = (cy - nave->objeto->origen.y) * zoom;
+        SetViewportOrgEx(hdcBase,(int)camX_zoom,(int)camY_zoom,NULL);
+
         dibujar_escena(hdcBase);
+
         SetViewportOrgEx(hdcBase,0,0,NULL);
+
+        {
+            XFORM id = {1,0,0,1,0,0};
+            SetWorldTransform(hdcBase,&id);
+            SetGraphicsMode(hdcBase, GM_COMPATIBLE);
+        }
+
         dibujarHUD(hdcBase);
     } else if (estadoActual == ESTADO_OPTIONS) {
         dibujarOpcionesEnBuffer(hdcBase);
