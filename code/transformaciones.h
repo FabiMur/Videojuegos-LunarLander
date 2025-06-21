@@ -6,6 +6,7 @@
 #include "texto.h"
 #include "constantes.h"
 #include "../resources/superficie_lunar.h"
+#include "../resources/asteroides.h"
 
 /**
  * @brief Traslada un dibujable en la dirección indicada
@@ -68,5 +69,7 @@ void escalar_texto_centrado_dados_ejes(struct Texto* texto, float factorX, float
 void escalar_plataforma_dados_ejes(struct Plataforma* plataforma, float factorX, float factorY);
 
 void trasladar_superficie_lunar(struct Dibujable* terreno, struct Plataforma* plataformas, uint16_t num_plataformas, struct Punto traslacion);
+
+void trasladar_asteroides(struct Asteroide* asteroides, uint8_t num_asteroides, struct Punto traslacion);
 
 #endif // TRANSFORMACIONES_H

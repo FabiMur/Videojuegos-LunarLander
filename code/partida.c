@@ -167,20 +167,35 @@ void dibujar_terreno(HDC hdc){
 	trasladar_superficie_lunar(terreno, plataformas_partida, numero_plataformas, (struct Punto){-ANCHURA_TERRENO,0});
 }
 
+static void dibujar_copia_asteroides(HDC hdc){
+	for(uint8_t i = 0; i < numero_asteroides; i++){
+			dibujarAsteroide(hdc, &asteroides[i]);
+	}
+	trasladar_asteroides(asteroides, numero_asteroides, (struct Punto){-ANCHURA_TERRENO, 0});
+	for(uint8_t i = 0; i < numero_asteroides; i++){
+			dibujarAsteroide(hdc, &asteroides[i]);
+	}
+	trasladar_asteroides(asteroides, numero_asteroides, (struct Punto){2*ANCHURA_TERRENO, 0});
+	for(uint8_t i = 0; i < numero_asteroides; i++){
+			dibujarAsteroide(hdc, &asteroides[i]);
+	}
+	trasladar_asteroides(asteroides, numero_asteroides, (struct Punto){-ANCHURA_TERRENO, 0});
+}
+
 void gestionar_colisiones_asteroides() {
 	struct Arista arista_colision = (struct Arista){0};
-	uint8_t se_produce_colision = 0;
 
-	// Comprobar colision con el terreno
 	for(uint8_t i = 0; i < numero_asteroides; i++){
-		if(hay_colision(nave->objeto, asteroides[i].objeto, &arista_colision)){
-			se_produce_colision = 1;
-			break;
+		struct Punto despl[3] = { {0,0}, {ANCHURA_TERRENO,0}, {-ANCHURA_TERRENO,0} };
+		for(uint8_t j = 0; j < 3; j++){
+			trasladarDibujable(asteroides[i].objeto, despl[j]);
+			if(hay_colision(nave->objeto, asteroides[i].objeto, &arista_colision)){
+				se_ha_aterrizado();
+				trasladarDibujable(asteroides[i].objeto, (struct Punto){-despl[j].x, -despl[j].y});
+				return;
+			}
+			trasladarDibujable(asteroides[i].objeto, (struct Punto){-despl[j].x, -despl[j].y});
 		}
-	}
-	if(se_produce_colision == 1){
-		printf("Has colisionado con un asteoride\n");
-		se_ha_aterrizado();	
 	}
 }
 
@@ -189,9 +204,7 @@ void dibujar_escena(HDC hdc){
 
 	dibujar_terreno(hdc);
 
-	for(uint8_t i = 0; i < numero_asteroides; i++){
-		dibujarAsteroide(hdc, &asteroides[i]);
-	}
+ 	dibujar_copia_asteroides(hdc);
 
 	for(uint8_t i = 0; i < numero_plataformas; i++){
 		dibujar_plataforma(hdc, plataformas_partida[i]);
@@ -283,25 +296,24 @@ void manejar_instante_partida(){
     if(fisicas == ACTIVADAS) {
 		calcularFisicas(nave);
 		if(nave->objeto->origen.x > offsetTerrenoDerecha) {
-			trasladar_superficie_lunar(terreno, plataformas_partida, numero_plataformas, (struct Punto){ANCHURA_TERRENO,0});
-			offsetTerrenoDerecha += ANCHURA_TERRENO;
-			offsetTerrenoIzquerda += ANCHURA_TERRENO;
+				struct Punto traslacion = {ANCHURA_TERRENO, 0};
+				trasladar_superficie_lunar(terreno, plataformas_partida, numero_plataformas, traslacion);
+				trasladar_asteroides(asteroides, numero_asteroides, traslacion);
+				offsetTerrenoDerecha += ANCHURA_TERRENO;
+				offsetTerrenoIzquerda += ANCHURA_TERRENO;
 		}
 		else if(nave->objeto->origen.x < offsetTerrenoIzquerda) {
-			trasladar_superficie_lunar(terreno, plataformas_partida, numero_plataformas, (struct Punto){-ANCHURA_TERRENO,0});
-			offsetTerrenoDerecha -= ANCHURA_TERRENO;
-			offsetTerrenoIzquerda -= ANCHURA_TERRENO;
+				struct Punto traslacion = {-ANCHURA_TERRENO, 0};
+				trasladar_superficie_lunar(terreno, plataformas_partida, numero_plataformas, traslacion);
+				trasladar_asteroides(asteroides, numero_asteroides, traslacion);
+				offsetTerrenoDerecha -= ANCHURA_TERRENO;
+				offsetTerrenoIzquerda -= ANCHURA_TERRENO;
 		}
-		
-        if(numero_asteroides > 0){
-			calcualarFisicasAsteroides(asteroides, numero_asteroides);
-			gestionar_colisiones_asteroides();
-        }
-
-        gestionar_colisiones();
-    }
+		calcualarFisicasAsteroides(asteroides, numero_asteroides);
+		gestionar_colisiones_asteroides();
+		gestionar_colisiones();
+	}
 }
-
 void inicializarPartida(){
     combustible = 0;
 	terreno = crearDibujable(&Terreno);

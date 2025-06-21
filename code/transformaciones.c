@@ -193,3 +193,9 @@ void trasladar_superficie_lunar(struct Dibujable* terreno, struct Plataforma* pl
         trasladar_texto(plataformas[i].texto, traslacion);
     }
 }
+
+void trasladar_asteroides(struct Asteroide* asteroides, uint8_t num_asteroides, struct Punto traslacion){
+    for(uint8_t i = 0; i < num_asteroides; i++){
+        trasladarDibujable(asteroides[i].objeto, traslacion);
+    }
+}
