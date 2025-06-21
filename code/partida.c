@@ -255,7 +255,7 @@ void dibujarHUD(HDC hdc) {
     // HORIZONTAL SPEED
     int vel_h = (int)roundf(nave->velocidad[0]);
     char flecha_h = vel_h >= 0 ? '>' : '<';
-    sprintf(buf, "HORIZONTAL SPEED  %4d%c", vel_h, flecha_h);
+    sprintf(buf, "HORIZONTAL SPEED  %4d%c", abs(vel_h), flecha_h);
     origen = (struct Punto){ 300, 10 + salto * 1 };
     txt = crearTextoDesdeCadena(buf, origen);
     dibujar_texto(txt, hdc);
@@ -264,7 +264,7 @@ void dibujarHUD(HDC hdc) {
     // VERTICAL SPEED
     int vel_v = (int)roundf(-nave->velocidad[1]);
     char flecha_v = vel_v >= 0 ? 'v' : '^';
-    sprintf(buf, "VERTICAL SPEED     %4d%c", vel_v, flecha_v);
+    sprintf(buf, "VERTICAL SPEED    %4d%c", abs(vel_v), flecha_v);
     origen = (struct Punto){ 300, 10 + salto * 2 };
     txt = crearTextoDesdeCadena(buf, origen);
     dibujar_texto(txt, hdc);
