@@ -95,11 +95,11 @@ struct Asteroide* generarAsteroides(const struct Dibujable* terreno, uint8_t* nu
         struct Punto* punto_random = malloc(sizeof(struct Punto));
         if(i < MAX_ASTEROIDES/2){
             punto_random->y = ALTURA_CINTURON_ASTEROIDES_1;
-            punto_random->x = i * (ANCHURA_TERRENO / (MAX_ASTEROIDES/2));
         } else {
             punto_random->y = ALTURA_CINTURON_ASTEROIDES_2;
-            punto_random->x = (i - MAX_ASTEROIDES/2) * (ANCHURA_TERRENO / (MAX_ASTEROIDES/2));
         }
+
+        punto_random->x = rand() % ANCHURA_TERRENO;
    
         tmp->tipo = randomAsteroideType();
         switch(tmp->tipo){
