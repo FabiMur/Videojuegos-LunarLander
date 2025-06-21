@@ -120,6 +120,8 @@ struct Texto* crearTextoDesdeCadena(const char* cadena, struct Punto origen) {
             case ':': agregar_caracter(txt, &Simbolo_DosPuntos_Base); break;
             case '>': agregar_caracter(txt, &Simbolo_Derecha_Base); break;
             case '<': agregar_caracter(txt, &Simbolo_Izquierda_Base); break;
+            case '^': agregar_caracter(txt, &Simbolo_Arriba_Base); break;
+            case 'v': agregar_caracter(txt, &Simbolo_Abajo_Base); break;
             // Agnadir mas simbolos
             default: break;
         }

@@ -53,5 +53,7 @@ extern const struct DibujableConstante Simbolo_DosPuntos_Base;
 extern const struct DibujableConstante Simbolo_Espacio_Base;
 extern const struct DibujableConstante Simbolo_Derecha_Base;
 extern const struct DibujableConstante Simbolo_Izquierda_Base;
+extern const struct DibujableConstante Simbolo_Arriba_Base;
+extern const struct DibujableConstante Simbolo_Abajo_Base;
 
 #endif // CARACTERES_H

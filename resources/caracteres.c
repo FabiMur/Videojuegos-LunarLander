@@ -543,3 +543,31 @@ const struct DibujableConstante Simbolo_Izquierda_Base  = {
     3,
     3
 };
+
+const struct DibujableConstante Simbolo_Arriba_Base  = {
+    CENTRO_CONST_CARACTER,
+    (struct Punto[]){
+        {ANCHURA_CARACTER_MAX/2 - 5, ALTURA_CARACTER_MAX},
+        {ANCHURA_CARACTER_MAX/2 + 5, ALTURA_CARACTER_MAX},
+        {ANCHURA_CARACTER_MAX/2, 0}
+    },
+    (struct UnionAristas[]){
+        {0,1}, {1,2}, {2,0}
+    },
+    3,
+    3
+};
+
+const struct DibujableConstante Simbolo_Abajo_Base  = {
+    CENTRO_CONST_CARACTER,
+    (struct Punto[]){
+        {ANCHURA_CARACTER_MAX/2 - 5, 0},
+        {ANCHURA_CARACTER_MAX/2 + 5, 0},
+        {ANCHURA_CARACTER_MAX/2, ALTURA_CARACTER_MAX}
+    },
+    (struct UnionAristas[]){
+        {0,1}, {1,2}, {2,0}
+    },
+    3,
+    3
+};
