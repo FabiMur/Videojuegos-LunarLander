@@ -2,6 +2,9 @@
 #include "partida.h"
 #include "fisicas.h"
 
+extern int tiempo;
+extern int tiempo_ms;
+
 static int estado = PEDIR;
 static int estado_teclas[5] = {
     0,
@@ -69,6 +72,11 @@ void manejar_teclas(){
 
 void manejar_instante(){
     if(estado == JUGANDO){
+        tiempo_ms += intervalo_fisicas_ms;
+        if(tiempo_ms >= 1000){
+            tiempo += tiempo_ms / 1000;
+            tiempo_ms %= 1000;
+        }
         manejar_instante_partida();
     }
 }

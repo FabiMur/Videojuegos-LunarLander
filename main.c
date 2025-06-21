@@ -63,6 +63,7 @@ static float obtener_y_terreno(float x) {
 
 // Variables globales
 int tiempo = 0;
+int tiempo_ms = 0;
 uint16_t fullscreen = 0, esc_presionado = 0;
 RECT rectVentanaAnterior;
 

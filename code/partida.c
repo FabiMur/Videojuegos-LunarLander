@@ -297,7 +297,7 @@ void manejar_instante_partida(){
 			calcualarFisicasAsteroides(asteroides, numero_asteroides);
 			gestionar_colisiones_asteroides();
         }
-		
+
         gestionar_colisiones();
     }
 }
@@ -326,6 +326,11 @@ void anyadirMoneda(){
 }
 
 void comenzarPartida(){
+	extern int tiempo;
+    extern int tiempo_ms;
+    tiempo = 0;
+    tiempo_ms = 0;
+
     nave = (struct objetoFisico*)malloc(sizeof(struct objetoFisico));
     nave -> objeto = crearDibujable(&Nave_Base);
     nave -> velocidad[0] = 0;
