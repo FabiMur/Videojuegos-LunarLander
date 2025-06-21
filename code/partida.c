@@ -6,6 +6,7 @@
 #include "variables_globales.h"
 #include "gestor_colisiones.h"
 #include "config.h"
+#include "opciones.h"
 #include "math.h"
 
 #define fuel_por_moneda 500
@@ -291,10 +292,14 @@ void manejar_instante_partida(){
 			offsetTerrenoDerecha -= ANCHURA_TERRENO;
 			offsetTerrenoIzquerda -= ANCHURA_TERRENO;
 		}
-		calcualarFisicasAsteroides(asteroides, numero_asteroides);
-		gestionar_colisiones_asteroides();
-		gestionar_colisiones();
-	}
+		
+        if(numero_asteroides > 0){
+			calcualarFisicasAsteroides(asteroides, numero_asteroides);
+			gestionar_colisiones_asteroides();
+        }
+		
+        gestionar_colisiones();
+    }
 }
 
 void inicializarPartida(){
@@ -308,7 +313,12 @@ void inicializarPartida(){
 
 	trasladar_superficie_lunar(terreno, plataformas_partida, numero_plataformas, (struct Punto){0, 350});
 
-	asteroides = generarAsteroides(terreno, &numero_asteroides);
+	if(obtenerValorFlag(FLAG_ASTEROIDS)){
+        asteroides = generarAsteroides(terreno, &numero_asteroides);
+    } else {
+        asteroides = NULL;
+        numero_asteroides = 0;
+    }
 }
 
 void anyadirMoneda(){

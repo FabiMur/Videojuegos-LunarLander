@@ -18,7 +18,8 @@
         "transformaciones.h": "c",
         "gestor_colisiones.h": "c",
         "variables_globales.h": "c",
-        "menu.h": "c"
+        "menu.h": "c",
+        "opciones.h": "c"
     },
     "C_Cpp.default.compilerPath": "C:/mingw64/bin/gcc.exe",
     "makefile.makePath": "mingw32-make"
