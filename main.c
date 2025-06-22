@@ -8,6 +8,7 @@
 #include "code/config.h"
 #include "resources/asteroides.h"
 #include "code/partida.h"
+#include "code/overlays.h"
 #include <stdio.h>
 #include <windows.h>
 #include <stdlib.h>
@@ -42,7 +43,7 @@ typedef struct { int internalW, internalH, offsetX, offsetY; } Letterbox;
 static Letterbox lb = { BASE_W, BASE_H, 0, 0 };
 
 // Constantes de la aplicación
-typedef enum { ESTADO_MENU, ESTADO_JUEGO, ESTADO_OPTIONS } EstadoAplicacion;
+typedef enum { ESTADO_MENU, ESTADO_JUEGO, ESTADO_OPTIONS, ESTADO_PAUSA, ESTADO_FIN } EstadoAplicacion;
 static EstadoAplicacion estadoActual = ESTADO_MENU;
 
 // Calcula la coordenada Y del terreno para una posición X concreta
@@ -67,6 +68,9 @@ int tiempo_ms = 0;
 uint16_t fullscreen = 0, esc_presionado = 0;
 RECT rectVentanaAnterior;
 
+void informarFinPartida(void) {
+    estadoActual = ESTADO_FIN;
+}
 
 // Inicializa la consola para imprimir mensajes de depuración
 void AttachConsoleToStdout() {
@@ -132,7 +136,7 @@ static void DibujaFrame(HWND hwnd) {
     // Draw scene
     if (estadoActual == ESTADO_MENU) {
         dibujarMenuEnBuffer(hdcBase);
-    } else if (estadoActual == ESTADO_JUEGO) {
+    } else if (estadoActual == ESTADO_JUEGO || estadoActual == ESTADO_PAUSA || estadoActual == ESTADO_FIN) {
         float cx = BASE_W/2.0f, cy = BASE_H/2.0f;
         float naveX_en_pantalla = nave->objeto->origen.x + camaraX;
         if(naveX_en_pantalla < CAMARA_MARGEN)
@@ -165,6 +169,12 @@ static void DibujaFrame(HWND hwnd) {
             XFORM id = {1,0,0,1,0,0};
             SetWorldTransform(hdcBase,&id);
             SetGraphicsMode(hdcBase, GM_COMPATIBLE);
+        }
+
+        if (estadoActual == ESTADO_PAUSA) {
+            dibujarOverlayPausa(hdcBase, tiempo, puntuacion_partida);
+        } else if (estadoActual == ESTADO_FIN) {
+            dibujarOverlayFin(hdcBase, tiempo, puntuacion_partida);
         }
 
         dibujarHUD(hdcBase);
@@ -263,15 +273,49 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 }
             }
         } else if (estadoActual==ESTADO_JUEGO) {
-            if (GetAsyncKeyState(VK_ESCAPE)&0x8000) {
-                esc_presionado=1;
-                SendMessage(hwnd,WM_SYSCOMMAND,SC_RESTORE,0);
+            if (wParam==VK_ESCAPE) {
+                estadoActual = ESTADO_PAUSA;
+                fisicas = DESACTIVADAS;
+                break;
             }
             if (GetAsyncKeyState(VK_UP) & 0x8000) pulsar_tecla(ARRIBA);
             if (GetAsyncKeyState(VK_LEFT) & 0x8000) pulsar_tecla(IZQUIERDA);
             if (GetAsyncKeyState(VK_RIGHT) & 0x8000) pulsar_tecla(DERECHA);
             if (GetAsyncKeyState(VK_SPACE) & 0x8000) pulsar_tecla(ESPACIO);
             if (GetAsyncKeyState(0x35) & 0x8000 || GetAsyncKeyState(VK_NUMPAD5) & 0x8000) pulsar_tecla(MONEDA);
+        } else if (estadoActual==ESTADO_PAUSA) {
+            procesarEventoOverlayPausa(uMsg,wParam);
+            if (wParam==VK_RETURN) {
+                switch(obtenerOpcionPausa()) {
+                    case PAUSE_OPCION_CONTINUAR:
+                        estadoActual = ESTADO_JUEGO;
+                        fisicas = ACTIVADAS;
+                        break;
+                    case PAUSE_OPCION_INSERT_COIN:
+                        anyadirMoneda();
+                        break;
+                    case PAUSE_OPCION_MENU:
+                        estadoActual = ESTADO_MENU;
+                        findeJuego();
+                        break;
+                }
+            }
+        } else if (estadoActual==ESTADO_FIN) {
+            procesarEventoOverlayFin(uMsg,wParam);
+            if (wParam==VK_RETURN) {
+                switch(obtenerOpcionFin()) {
+                    case FIN_OPCION_INSERT_COIN:
+                        anyadirMoneda();
+                        inicializarPartida();
+                        comenzarPartida();
+                        estadoActual = ESTADO_JUEGO;
+                        break;
+                    case FIN_OPCION_MENU:
+                        estadoActual = ESTADO_MENU;
+                        findeJuego();
+                        break;
+                }
+            }
         } else if (estadoActual==ESTADO_OPTIONS) {
             procesarEventoOpciones(hwnd,uMsg,wParam,lParam);
             if(wParam==VK_ESCAPE) estadoActual = ESTADO_MENU;
@@ -293,8 +337,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     // Evento de temporizador
     case WM_TIMER:
         if (wParam==TIMER_ID) {
-            manejar_instante();
-            manejar_teclas();
+            if (estadoActual == ESTADO_JUEGO) {
+                manejar_instante();
+                manejar_teclas();
+            }
             InvalidateRect(hwnd,NULL,FALSE);
         }
         break;

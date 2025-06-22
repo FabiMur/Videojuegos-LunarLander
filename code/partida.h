@@ -33,6 +33,10 @@ extern uint16_t fisicas;
 // Terreno de juego actual
 extern struct Dibujable* terreno;
 
+extern uint16_t puntuacion_partida;
+
+void informarFinPartida(void);
+
 void dibujar_escena(HDC hdc);
 
 void dibujarHUD(HDC hdc);
