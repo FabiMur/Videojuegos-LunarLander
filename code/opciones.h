@@ -16,5 +16,6 @@ void destruirOpciones(void);
 void dibujarOpcionesEnBuffer(HDC hdc);
 LRESULT procesarEventoOpciones(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 int obtenerValorFlag(OpcionFlag flag);
+int obtenerOpcionSeleccionadaOpc(void);
 
 #endif // OPCIONES_H

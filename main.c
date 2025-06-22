@@ -300,6 +300,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                         estadoActual = ESTADO_MENU;
                         findeJuego();
                         break;
+                    default:
+                        break;
                 }
             }
         } else if (estadoActual==ESTADO_FIN) {
@@ -316,11 +318,17 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                         estadoActual = ESTADO_MENU;
                         findeJuego();
                         break;
+                    default:
+                        break;
                 }
             }
         } else if (estadoActual==ESTADO_OPTIONS) {
             procesarEventoOpciones(hwnd,uMsg,wParam,lParam);
-            if(wParam==VK_ESCAPE) estadoActual = ESTADO_MENU;
+            if (wParam==VK_RETURN && obtenerOpcionSeleccionadaOpc() == NUM_FLAGS) {
+                estadoActual = ESTADO_MENU;
+            } else if(wParam==VK_ESCAPE) {
+                estadoActual = ESTADO_MENU;
+            }
         }
         break;
 
