@@ -8,6 +8,7 @@
 #include "config.h"
 #include "opciones.h"
 #include "math.h"
+#include <stdlib.h>
 
 #define fuel_por_moneda 500
 #define masa_nave 1000
@@ -107,6 +108,14 @@ uint16_t evaluar_aterrizaje(uint16_t bonificador, uint16_t es_arista_aterrizable
 	return puntuacion;
 }
 
+static void respawn_nave(){
+	Sleep(1000);
+	struct Punto destino = {offsetTerrenoIzquerda + rand()%ANCHURA_TERRENO, 50};
+	colocarDibujable(nave->objeto, destino);
+	nave->rotacion = 0;
+	fisicas = ACTIVADAS;
+}
+
 void se_ha_aterrizado(){
 	nave->velocidad[0] = 0;
 	nave->velocidad[1] = 0;
@@ -114,6 +123,11 @@ void se_ha_aterrizado(){
 	nave->aceleracion[1] = 0;
 	fisicas = DESACTIVADAS;
 	printf("Combustible restante: %d\n", combustible);
+	if(combustible > 0){
+			respawn_nave();
+	}else{
+			finalizarPartida();
+	}
 }
 
 void gestionar_colisiones() {
@@ -144,7 +158,6 @@ void gestionar_colisiones() {
 		puntuacion_partida += puntos_conseguidos;
 		printf("Has conseguido %d puntos en este aterrizaje\n", puntos_conseguidos);
 		se_ha_aterrizado();
-		finalizarPartida();		
 	}
 }
 
@@ -351,7 +364,8 @@ void comenzarPartida(){
     nave -> aceleracion[1] = 0;
     nave -> masa = masa_nave;
 	nave -> rotacion = 0;
-    trasladarDibujable(nave -> objeto, (struct Punto){50, 50});
+    struct Punto spawn = {offsetTerrenoIzquerda + rand()%ANCHURA_TERRENO, 50};
+    colocarDibujable(nave->objeto, spawn);
 
 	motor_debil = crearDibujable(&Nave_Propulsion_Minima);
 	motor_medio = crearDibujable(&Nave_Propulsion_Media);
