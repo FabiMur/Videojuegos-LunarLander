@@ -50,7 +50,7 @@ void manejar_teclas(){
             if(estado_teclas[MONEDA]){
                 anyadirMoneda();
             }
-            if(estado_teclas[ARRIBA]){
+            if(estado_teclas[ARRIBA] && combustible >= combustible_motor){
                 activar_propulsor();
                 propulsar();
             } else {
