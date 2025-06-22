@@ -20,7 +20,6 @@ static const int espacioEntreOpciones = 30;
 // Cadena de cada opción en mayúsculas.
 static const char* cadenasOpciones[NUM_OPCIONES] = {
     "PLAY",
-    "TEST DIBUJABLES",
     "OPTIONS",
     "EXIT"
 };

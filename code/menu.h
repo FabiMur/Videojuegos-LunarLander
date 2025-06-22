@@ -5,7 +5,6 @@
 
 typedef enum {
     OPCION_PLAY,
-    OPCION_TEST_DIBUJABLES,
     OPCION_OPTIONS,
     OPCION_EXIT,
     NUM_OPCIONES 

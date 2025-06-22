@@ -42,7 +42,7 @@ typedef struct { int internalW, internalH, offsetX, offsetY; } Letterbox;
 static Letterbox lb = { BASE_W, BASE_H, 0, 0 };
 
 // Constantes de la aplicación
-typedef enum { ESTADO_MENU, ESTADO_JUEGO, ESTADO_TEST_DIBUJABLES, ESTADO_OPTIONS } EstadoAplicacion;
+typedef enum { ESTADO_MENU, ESTADO_JUEGO, ESTADO_OPTIONS } EstadoAplicacion;
 static EstadoAplicacion estadoActual = ESTADO_MENU;
 
 // Calcula la coordenada Y del terreno para una posición X concreta
@@ -170,8 +170,6 @@ static void DibujaFrame(HWND hwnd) {
         dibujarHUD(hdcBase);
     } else if (estadoActual == ESTADO_OPTIONS) {
         dibujarOpcionesEnBuffer(hdcBase);
-    } else {
-        pruebasDibujables(hdcBase);
     }
 
     // Draw border inside internal
@@ -258,8 +256,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                     estadoActual = ESTADO_JUEGO;
                     inicializarPartida();
                     comenzarPartida();
-                } else if (op==OPCION_TEST_DIBUJABLES) {
-                    estadoActual = ESTADO_TEST_DIBUJABLES;
                 } else if (op==OPCION_OPTIONS) {
                     estadoActual = ESTADO_OPTIONS;
                 } else if (op==OPCION_EXIT) {
@@ -279,8 +275,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         } else if (estadoActual==ESTADO_OPTIONS) {
             procesarEventoOpciones(hwnd,uMsg,wParam,lParam);
             if(wParam==VK_ESCAPE) estadoActual = ESTADO_MENU;
-        } else if (estadoActual==ESTADO_TEST_DIBUJABLES && wParam==VK_ESCAPE) {
-            estadoActual=ESTADO_MENU;
         }
         break;
 
