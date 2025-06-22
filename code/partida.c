@@ -358,12 +358,7 @@ void anyadirMoneda(){
     combustible += fuel_por_moneda;
 }
 
-void comenzarPartida(){
-	extern int tiempo;
-    extern int tiempo_ms;
-    tiempo = 0;
-    tiempo_ms = 0;
-
+static void iniciarPartidaComun(){
     nave = (struct objetoFisico*)malloc(sizeof(struct objetoFisico));
     nave -> objeto = crearDibujable(&Nave_Base);
     nave -> velocidad[0] = 0;
@@ -380,9 +375,22 @@ void comenzarPartida(){
 	motor_fuerte = crearDibujable(&Nave_Propulsion_Maxima);
 
     fisicas = ACTIVADAS;
-	inicio = 1;
-	printf("Combustible inicial: %d\n", combustible);
+    inicio = 1;
+    printf("Combustible inicial: %d\n", combustible);
 }
+
+void comenzarPartida(){
+	extern int tiempo;
+    extern int tiempo_ms;
+    tiempo = 0;
+    tiempo_ms = 0;
+    iniciarPartidaComun();
+}
+void continuarPartida(){
+    iniciarPartidaComun();
+}
+
+
 
 void finalizarPartida(){
     //destruirObjetoFisico(nave);

@@ -309,7 +309,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                     case FIN_OPCION_INSERT_COIN:
                         inicializarPartida();
                         anyadirMoneda();
-                        comenzarPartida();
+                        continuarPartida();
                         estadoActual = ESTADO_JUEGO;
                         break;
                     case FIN_OPCION_MENU:

@@ -50,6 +50,7 @@ void inicializarPartida();
 void anyadirMoneda();
 
 void comenzarPartida();
+void continuarPartida();
 
 void finalizarPartida();
 

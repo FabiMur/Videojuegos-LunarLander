@@ -3,6 +3,7 @@
 #include "config.h"
 #include "../resources/caracteres.h"
 #include <stdio.h>
+#include <string.h>
 
 static OpcionFin opcionFin = FIN_OPCION_INSERT_COIN;
 static OpcionPausa opcionPausa = PAUSE_OPCION_CONTINUAR;
@@ -51,21 +52,24 @@ static void dibujarRecuadro(HDC hdc, int ancho, int alto, int* outX, int* outY) 
 void dibujarOverlayFin(HDC hdc, int tiempo, int puntuacion) {
     int x,y; const int w=400,h=220; dibujarRecuadro(hdc,w,h,&x,&y);
     int salto = ALTURA_CARACTER_MAX + 5;
-    struct Texto* t; struct Punto o; char buf[64];
+    struct Texto* t; struct Punto o; char buf[64]; int ancho;
 
-    o = (struct Punto){ x+20, y+20 };
+    ancho = strlen("GAME OVER")*ANCHURA_CARACTER_MAX + (strlen("GAME OVER")-1)*SEPARACION_CARACTER;
+    o = (struct Punto){ x + (w - ancho)/2, y+20 };
     t = crearTextoDesdeCadena("GAME OVER", o); dibujar_texto(t,hdc); destruir_texto(t);
 
     sprintf(buf,"TIME %02d:%02d",tiempo/60,tiempo%60);
-    o = (struct Punto){ x+20, y+20+salto };
+    ancho = strlen(buf)*ANCHURA_CARACTER_MAX + (strlen(buf)-1)*SEPARACION_CARACTER;
+    o = (struct Punto){ x + (w - ancho)/2, y+20+salto*2 };
     t = crearTextoDesdeCadena(buf,o); dibujar_texto(t,hdc); destruir_texto(t);
 
     sprintf(buf,"SCORE %04d",puntuacion);
-    o = (struct Punto){ x+20, y+20+salto*2 };
+    ancho = strlen(buf)*ANCHURA_CARACTER_MAX + (strlen(buf)-1)*SEPARACION_CARACTER;
+    o = (struct Punto){ x + (w - ancho)/2, y+20+salto*3 };
     t = crearTextoDesdeCadena(buf,o); dibujar_texto(t,hdc); destruir_texto(t);
 
     for(int i=0;i<FIN_NUM_OPCIONES;i++) {
-        o = (struct Punto){ x+60, y+20+salto*(4+i) };
+        o = (struct Punto){ x+60, y+20+salto*(5+i) };
         t = crearTextoDesdeCadena(opcionesFin[i], o);
         if(i==opcionFin) {
             struct Punto ind={ o.x-2*ANCHURA_CARACTER_MAX, o.y };
@@ -78,21 +82,24 @@ void dibujarOverlayFin(HDC hdc, int tiempo, int puntuacion) {
 void dibujarOverlayPausa(HDC hdc, int tiempo, int puntuacion) {
     int x,y; const int w=400,h=220; dibujarRecuadro(hdc,w,h,&x,&y);
     int salto = ALTURA_CARACTER_MAX + 5;
-    struct Texto* t; struct Punto o; char buf[64];
+    struct Texto* t; struct Punto o; char buf[64]; int ancho;
 
-    o = (struct Punto){ x+20, y+20 };
+    ancho = strlen("PAUSE")*ANCHURA_CARACTER_MAX + (strlen("PAUSE")-1)*SEPARACION_CARACTER;
+    o = (struct Punto){ x + (w - ancho)/2, y+20 };
     t = crearTextoDesdeCadena("PAUSE", o); dibujar_texto(t,hdc); destruir_texto(t);
 
     sprintf(buf,"TIME %02d:%02d",tiempo/60,tiempo%60);
-    o = (struct Punto){ x+20, y+20+salto };
+    ancho = strlen(buf)*ANCHURA_CARACTER_MAX + (strlen(buf)-1)*SEPARACION_CARACTER;
+    o = (struct Punto){ x + (w - ancho)/2, y+20+salto*2 };
     t = crearTextoDesdeCadena(buf,o); dibujar_texto(t,hdc); destruir_texto(t);
 
     sprintf(buf,"SCORE %04d",puntuacion);
-    o = (struct Punto){ x+20, y+20+salto*2 };
+    ancho = strlen(buf)*ANCHURA_CARACTER_MAX + (strlen(buf)-1)*SEPARACION_CARACTER;
+    o = (struct Punto){ x + (w - ancho)/2, y+20+salto*3 };
     t = crearTextoDesdeCadena(buf,o); dibujar_texto(t,hdc); destruir_texto(t);
 
     for(int i=0;i<PAUSE_NUM_OPCIONES;i++) {
-        o = (struct Punto){ x+60, y+20+salto*(4+i) };
+        o = (struct Punto){ x+60, y+20+salto*(5+i) };
         t = crearTextoDesdeCadena(opcionesPausa[i], o);
         if(i==opcionPausa) {
             struct Punto ind={ o.x-2*ANCHURA_CARACTER_MAX, o.y };
