@@ -10,7 +10,7 @@
 #include "math.h"
 #include <stdlib.h>
 
-#define fuel_por_moneda 500
+#define fuel_por_moneda 750
 #define masa_nave 1000
 
 #define aterrizaje_perfecto_vel 0.5
@@ -131,10 +131,10 @@ void se_ha_aterrizado(){
 	nave->aceleracion[1] = 0;
 	fisicas = DESACTIVADAS;
 	printf("Combustible restante: %d\n", combustible);
-	if(combustible > 0){
-			respawn_nave();
+	if(combustible >= combustible_motor){
+		respawn_nave();
 	} else {
-			informarFinPartida();
+		informarFinPartida();
 	}
 }
 

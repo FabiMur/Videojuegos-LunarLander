@@ -25,4 +25,8 @@ OpcionPausa obtenerOpcionPausa(void);
 void dibujarOverlayFin(HDC hdc, int tiempo, int puntuacion);
 void dibujarOverlayPausa(HDC hdc, int tiempo, int puntuacion);
 
+// Reinicia la opción seleccionada de cada overlay al valor por defecto
+void reiniciarOverlayFin(void);
+void reiniciarOverlayPausa(void);
+
 #endif // OVERLAYS_H

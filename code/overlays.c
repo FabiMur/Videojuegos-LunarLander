@@ -27,6 +27,9 @@ void procesarEventoOverlayPausa(UINT uMsg, WPARAM wParam) {
 OpcionFin obtenerOpcionFin(void) { return opcionFin; }
 OpcionPausa obtenerOpcionPausa(void) { return opcionPausa; }
 
+void reiniciarOverlayFin(void) { opcionFin = FIN_OPCION_INSERT_COIN; }
+void reiniciarOverlayPausa(void) { opcionPausa = PAUSE_OPCION_CONTINUAR; }
+
 static void dibujarRecuadro(HDC hdc, int ancho, int alto, int* outX, int* outY) {
     int x = (BASE_W - ancho)/2;
     int y = (BASE_H - alto)/2;

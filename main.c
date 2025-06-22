@@ -69,6 +69,7 @@ uint16_t fullscreen = 0, esc_presionado = 0;
 RECT rectVentanaAnterior;
 
 void informarFinPartida(void) {
+    reiniciarOverlayFin();
     estadoActual = ESTADO_FIN;
 }
 
@@ -274,6 +275,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             }
         } else if (estadoActual==ESTADO_JUEGO) {
             if (wParam==VK_ESCAPE) {
+                reiniciarOverlayPausa();
                 estadoActual = ESTADO_PAUSA;
                 fisicas = DESACTIVADAS;
                 break;
@@ -305,8 +307,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             if (wParam==VK_RETURN) {
                 switch(obtenerOpcionFin()) {
                     case FIN_OPCION_INSERT_COIN:
-                        anyadirMoneda();
                         inicializarPartida();
+                        anyadirMoneda();
                         comenzarPartida();
                         estadoActual = ESTADO_JUEGO;
                         break;
