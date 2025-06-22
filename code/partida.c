@@ -112,7 +112,15 @@ static void respawn_nave(){
 	Sleep(1000);
 	struct Punto destino = {offsetTerrenoIzquerda + rand()%ANCHURA_TERRENO, 50};
 	colocarDibujable(nave->objeto, destino);
-	nave->rotacion = 0;
+	while(nave->rotacion != 0){
+		if(nave->rotacion > 180){
+			rotar_nave(1);
+			nave->rotacion = (nave->rotacion + ANGULO_ROTACION) % 360;
+		} else {
+			rotar_nave(0);
+			nave->rotacion = (nave->rotacion - ANGULO_ROTACION + 360) % 360;
+		}
+	}
 	fisicas = ACTIVADAS;
 }
 
