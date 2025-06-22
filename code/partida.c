@@ -124,9 +124,9 @@ void se_ha_aterrizado(){
 	fisicas = DESACTIVADAS;
 	printf("Combustible restante: %d\n", combustible);
 	if(combustible > 0){
-			respawn_nave();
+		respawn_nave();
 	}else{
-			finalizarPartida();
+		finalizarPartida();
 	}
 }
 

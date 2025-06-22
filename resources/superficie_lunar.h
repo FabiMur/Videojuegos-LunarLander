@@ -4,7 +4,7 @@
 
 #include "../code/dibujable.h"
 
-#define ANCHURA_TERRENO 2300
+#define ANCHURA_TERRENO 2359
 #define ALTURA_TERRENO 324
 
 #define PLATAFORMA_X2 50
