@@ -90,13 +90,10 @@ void ai_actualizar(void) {
 
     float vel_x = nave->velocidad[0];
     float vel_y = nave->velocidad[1];
-    float acc_x = nave->aceleracion[0];
-    float acc_y = nave->aceleracion[1];
 
     float pos_x = nave->objeto->origen.x;
     float pos_y = nave->objeto->origen.y;
-    
-    float rotacion = nave->rotacion;
+
 
     float dx = objetivo_x - pos_x;
     float base_nave_y = pos_y + (ALTURA_NAVE - 5);

@@ -267,10 +267,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 if (op==OPCION_PLAY) {
                     estadoActual = ESTADO_JUEGO;
                     inicializarPartida();
+                    comenzarPartida();
                     if(obtenerValorFlag(FLAG_AI)) {
                         anyadirMoneda();
-                        comenzarPartida();
                         cambiar_estado(JUGANDO);
+                    } else {
+                        cambiar_estado(PEDIR);
                     }
                     } else if (op==OPCION_OPTIONS) {
                     estadoActual = ESTADO_OPTIONS;
