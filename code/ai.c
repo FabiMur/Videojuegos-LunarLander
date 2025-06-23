@@ -44,13 +44,15 @@ void ai_iniciar(void) {
     spawn_x = nave->objeto->origen.x;
     struct PlataformaCercana dists[MAX_PLATAFORMAS];
 
+    // Buscar la plataforma mas cercana al spawn
     for(uint16_t i = 0; i < numero_plataformas; i++) {
         struct Dibujable* lin = plataformas_partida[i].linea;
         float centro_x = lin->origen.x + (lin->puntos[0].x + lin->puntos[1].x) / 2.0f;
         dists[i].dist = fabsf(centro_x - spawn_x);
         dists[i].idx = i;
     }
-
+    
+    // Ordenar las plataformas por distancia al spawn
     qsort(dists, numero_plataformas, sizeof(struct PlataformaCercana), cmp_dist);
     uint16_t elegido = dists[0].idx; // Seleccionar la plataforma mas cercana
     struct Dibujable* linea = plataformas_partida[elegido].linea;
@@ -58,6 +60,12 @@ void ai_iniciar(void) {
     objetivo_y = linea->origen.y + linea->puntos[0].y;
     printf("IA: plataforma objetivo en (%.2f, %.2f)\n", objetivo_x, objetivo_y);
 }
+
+// La AI primero va alternando entre MANTENER_ALTURA y MOVER_HORIZONTAL, y luego DESCENSO y ATERRIZAJE.
+// En MANTENER_ALTURA, la nave se mantiene a una altura fija y ajusta la propulsión para no descender demasiado.
+// En MOVER_HORIZONTAL, la nave se mueve hacia la plataforma objetivo, ajustando su rotación y propulsión para llegar a la posición horizontal.
+// En DESCENSO, la nave se prepara para aterrizar, ajustando su rotación y propulsión para descender suavemente.
+// Finalmente, en ATERRIZAJE, la nave se asegura de que su velocidad vertical sea adecuada
 
 void ai_actualizar(void) {
     if(!ai_activa() || fisicas != ACTIVADAS) return;
@@ -101,9 +109,9 @@ void ai_actualizar(void) {
 
         case AI_MOVER_HORIZONTAL: {
             int16_t rot_obj = 0;
-            if(dx > 100.0f && vel_x < 0.5f) {
+            if(dx > 10.0f && vel_x < 0.3f) {
                 rot_obj = 90;
-            } else if (dx < -100.0f && vel_x > -0.5f) {
+            } else if (dx < -3.0f && vel_x > -0.3f) {
                 rot_obj = 270;
             }
 
@@ -116,29 +124,8 @@ void ai_actualizar(void) {
                 desactivar_propulsor();
             }
 
-            
-
-
-            // Para cuando estamos cerca de la plataforma. Anular velocidad horizontal
-            // y pasar a estado de DESCENSO
+            // Si estamos en la posición correcta, cambiamos a DESCENSO
             if(fabsf(dx) < 3.0f && abs(vel_x) < 0.1f) {
-
-                if(dx > 7.0f && vel_x < 0.1f) {
-                    rot_obj = 90;
-                } else if (dx < -7.0f && vel_x > -0.5f) {
-                    rot_obj = 270;
-                }
-
-                rotar_hacia(rot_obj);
-
-                if(nave->rotacion == rot_obj) {
-                    activar_propulsor();
-                    propulsar();
-                } else {
-                    desactivar_propulsor();
-                }
-
-
                 desactivar_propulsor();
                 estado_ai = AI_DESCENSO;
                 printf("IA: cambio a estado DESCENSO\n");
