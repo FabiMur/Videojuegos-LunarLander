@@ -30,33 +30,28 @@ void ai_iniciar(void) {
     estado_ai = AI_MANTENER_ALTURA;
     altura_objetivo = nave->objeto->origen.y;
     spawn_x = nave->objeto->origen.x;
+    float min_dist = FLT_MAX;
+    uint16_t candidatos[MAX_PLATAFORMAS];
+    uint16_t num_candidatos = 0;
 
-    if(numero_plataformas > 0) {
- float min_dist = FLT_MAX;
-        uint16_t candidatos[MAX_PLATAFORMAS];
-        uint16_t num_candidatos = 0;
-
-        for(uint16_t i = 0; i < numero_plataformas; i++) {
-            struct Dibujable* lin = plataformas_partida[i].linea;
-            float centro_x = lin->origen.x + (lin->puntos[0].x + lin->puntos[1].x) / 2.0f;
-            float dist = fabsf(centro_x - spawn_x);
-            if(dist < min_dist - 0.1f) {
-                min_dist = dist;
-                candidatos[0] = i;
-                num_candidatos = 1;
-            } else if(fabsf(dist - min_dist) <= 10.0f && num_candidatos < MAX_PLATAFORMAS) {
-                candidatos[num_candidatos++] = i;
-            }
+    for(uint16_t i = 0; i < numero_plataformas; i++) {
+        struct Dibujable* lin = plataformas_partida[i].linea;
+        float centro_x = lin->origen.x + (lin->puntos[0].x + lin->puntos[1].x) / 2.0f;
+        float dist = fabsf(centro_x - spawn_x);
+        if(dist < min_dist - 0.1f) {
+            min_dist = dist;
+            candidatos[0] = i;
+            num_candidatos = 1;
+        } else if(fabsf(dist - min_dist) <= 10.0f && num_candidatos < MAX_PLATAFORMAS) {
+            candidatos[num_candidatos++] = i;
         }
-
-        uint16_t elegido = candidatos[rand() % num_candidatos];
-        struct Dibujable* linea = plataformas_partida[elegido].linea;
-        objetivo_x = linea->origen.x + (linea->puntos[0].x + linea->puntos[1].x) / 2.0f;
-        objetivo_y = linea->origen.y + linea->puntos[0].y;
-    } else {
-        objetivo_x = nave->objeto->origen.x;
-        objetivo_y = nave->objeto->origen.y + 200.0f;
     }
+
+    uint16_t elegido = candidatos[rand() % num_candidatos];
+    struct Dibujable* linea = plataformas_partida[elegido].linea;
+    objetivo_x = linea->origen.x + (linea->puntos[0].x + linea->puntos[1].x) / 2.0f;
+    objetivo_y = linea->origen.y + linea->puntos[0].y;
+    printf("IA: plataforma objetivo en (%.2f, %.2f)\n", objetivo_x, objetivo_y);
 }
 
 void ai_actualizar(void) {
@@ -65,6 +60,8 @@ void ai_actualizar(void) {
     float dx = objetivo_x - nave->objeto->origen.x;
     float dy_plat = objetivo_y - nave->objeto->origen.y;
     float dy_spawn = altura_objetivo - nave->objeto->origen.y;
+
+    printf("IA DEBUG -> Estado:%d DX:%.2f DY:%.2f\n", estado_ai, dx, dy_plat);
 
     switch(estado_ai) {
     case AI_MANTENER_ALTURA:
@@ -75,8 +72,10 @@ void ai_actualizar(void) {
         } else {
             desactivar_propulsor();
         }
-        if(fabsf(dy_spawn) <= 2.0f && fabsf(dx) > 3.0f)
+        if(fabsf(dy_spawn) <= 2.0f && fabsf(dx) > 3.0f) {
             estado_ai = AI_MOVER_HORIZONTAL;
+            printf("IA: cambio a estado MOVER_HORIZONTAL\n");
+        }
         break;
 
     case AI_MOVER_HORIZONTAL: {
@@ -96,9 +95,11 @@ void ai_actualizar(void) {
         if(fabsf(dy_spawn) > 3.0f) {
             desactivar_propulsor();
             estado_ai = AI_MANTENER_ALTURA;
+            printf("IA: regreso a estado MANTENER_ALTURA\n");
         } else if(fabsf(dx) < 3.0f && fabsf(nave->velocidad[0]) < 0.3f) {
             desactivar_propulsor();
             estado_ai = AI_DESCENSO;
+            printf("IA: cambio a estado DESCENSO\n");
         }
         break; }
 
@@ -118,6 +119,7 @@ void ai_actualizar(void) {
             desactivar_propulsor();
         }
         if(dy_plat < 20.0f)
+            printf("IA: cambio a estado ATERRIZAJE\n");
             estado_ai = AI_ATERRIZAJE;
         break; }
 
