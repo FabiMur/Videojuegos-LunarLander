@@ -91,31 +91,37 @@ void ai_actualizar(void) {
                 desactivar_propulsor();
             }
 
-            if(fabsf(dy_hover) <= 2.0f && fabsf(vel_y) < 0.3f) {
+            if(dy_hover >= 1.0f && vel_y < 1.0f) {
                 estado_ai = AI_MOVER_HORIZONTAL;
                 printf("IA: cambio a estado MOVER_HORIZONTAL\n");
             }
             break;
 
         case AI_MOVER_HORIZONTAL: {
-            int16_t rot_obj;
-            if(fabsf(dx) > 3.0f) {
-                rot_obj = dx > 0 ? 90 : 270;
-            } else {
-                rot_obj = vel_x > 0 ? 270 : 90;
+            int16_t rot_obj = 0;
+            if(dx > 3.0f && vel_x < 0.3f) {
+                rot_obj = 90;
+            } else if (dx < -3.0f && vel_x > -0.3f) {
+                rot_obj = 270;
             }
+
             rotar_hacia(rot_obj);
+
             if(nave->rotacion == rot_obj) {
                 activar_propulsor();
                 propulsar();
             } else {
                 desactivar_propulsor();
             }
-            if(fabsf(dy_hover) > 3.0f) {
+
+            // Si perdemos altura, volvemos a MANTENER_ALTURA
+            if(dy_hover >= 6.0f) {
                 desactivar_propulsor();
                 estado_ai = AI_MANTENER_ALTURA;
                 printf("IA: regreso a estado MANTENER_ALTURA\n");
-            } else if(fabsf(dx) < 3.0f && fabsf(vel_x) < 0.3f) {
+
+            // Si estamos en la posición correcta, cambiamos a DESCENSO
+            } else if(fabsf(dx) < 3.0f) {
                 desactivar_propulsor();
                 estado_ai = AI_DESCENSO;
                 printf("IA: cambio a estado DESCENSO\n");
