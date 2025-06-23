@@ -6,9 +6,12 @@ void Sound_Init(){
 }
 
 void Sound_Play(TipoSonido sonido){
+    if(!obtenerValorFlag(FLAG_SOUND)) {
+        return;
+    }
     const char* nombre_sonido = obtener_nombre_sonido(sonido);
     if (nombre_sonido != NULL) {
-        PlaySound(nombre_sonido, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOWAIT);
+        PlaySound(nombre_sonido, NULL, SND_FILENAME | SND_ASYNC);
         playing = sonido;
     } else {
         printf("Error: Tipo de sonido no valido\n");
@@ -17,6 +20,10 @@ void Sound_Play(TipoSonido sonido){
 }
 
 void Sound_Loop(TipoSonido sonido){
+    if(!obtenerValorFlag(FLAG_SOUND)) {
+        return;
+    }
+    
     if (playing == sonido) {
         return; // No hacer nada si el sonido ya está reproduciéndose
     }   
