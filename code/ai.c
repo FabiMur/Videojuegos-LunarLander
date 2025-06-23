@@ -29,7 +29,7 @@ void ai_iniciar(void) {
     if(!ai_activa()) return;
     
     estado_ai = AI_MANTENER_ALTURA;
-    altura_objetivo = nave->objeto->origen.y;
+    altura_objetivo = 50.0f;
     spawn_x = nave->objeto->origen.x;
     float min_dist = FLT_MAX;
     uint16_t candidatos[MAX_PLATAFORMAS];
@@ -73,18 +73,20 @@ void ai_actualizar(void) {
     float dy_plat = objetivo_y - pos_y;
     float dy_hover = altura_objetivo - pos_y;
 
-    printf("IA DEBUG -> Estado:%d DX:%.2f DY:%.2f\n", estado_ai, dx, dy_plat);
+    printf("IA DEBUG -> Estado:%d DX:%.2f DY:%.2f DY_HOVER:%.2f POS_X:%.2f POS_Y:%.2f VEL_X:%.2f VEL_Y:%.2f\n",
+        estado_ai, dx, dy_plat, dy_hover, pos_x, pos_y, vel_x, vel_y);
 
     switch(estado_ai) {
         case AI_MANTENER_ALTURA:
             rotar_hacia(0);
-            if(vel_y < -0.2f || dy_hover < -2.0f) {
+            if(pos_y > altura_objetivo + 1.0f || vel_y < -0.05f) {
                 activar_propulsor();
                 propulsar();
             } else {
                 desactivar_propulsor();
             }
-            if(fabsf(dy_hover) <= 2.0f && fabsf(dx) > 3.0f) {
+
+            if(fabsf(dy_hover) <= 2.0f && fabsf(vel_y) < 0.3f) {
                 estado_ai = AI_MOVER_HORIZONTAL;
                 printf("IA: cambio a estado MOVER_HORIZONTAL\n");
             }
