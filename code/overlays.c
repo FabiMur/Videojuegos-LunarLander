@@ -2,6 +2,7 @@
 #include "texto.h"
 #include "config.h"
 #include "../resources/caracteres.h"
+#include "sonidos.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -13,15 +14,29 @@ static const char* opcionesPausa[PAUSE_NUM_OPCIONES] = { "CONTINUE", "INSERT COI
 
 void procesarEventoOverlayFin(UINT uMsg, WPARAM wParam) {
     if(uMsg==WM_KEYDOWN) {
-        if(wParam==VK_UP && opcionFin>0) opcionFin--;
-        else if(wParam==VK_DOWN && opcionFin<FIN_NUM_OPCIONES-1) opcionFin++;
+        if(wParam==VK_UP && opcionFin>0) {
+            opcionFin--;
+            Sound_Play(SONIDO_CAMBIAR_OPCION_MENU);
+        } else if(wParam==VK_DOWN && opcionFin<FIN_NUM_OPCIONES-1) {
+            opcionFin++;
+            Sound_Play(SONIDO_CAMBIAR_OPCION_MENU);
+        } else if(wParam==VK_RETURN) {
+            Sound_Play(SONIDO_SELECCIONAR_OPCION_MENU);
+        }
     }
 }
 
 void procesarEventoOverlayPausa(UINT uMsg, WPARAM wParam) {
     if(uMsg==WM_KEYDOWN) {
-        if(wParam==VK_UP && opcionPausa>0) opcionPausa--;
-        else if(wParam==VK_DOWN && opcionPausa<PAUSE_NUM_OPCIONES-1) opcionPausa++;
+        if(wParam==VK_UP && opcionPausa>0) {
+            opcionPausa--;
+            Sound_Play(SONIDO_CAMBIAR_OPCION_MENU);
+        } else if(wParam==VK_DOWN && opcionPausa<PAUSE_NUM_OPCIONES-1) {
+            opcionPausa++;
+            Sound_Play(SONIDO_CAMBIAR_OPCION_MENU);
+        } else if(wParam==VK_RETURN) {
+            Sound_Play(SONIDO_SELECCIONAR_OPCION_MENU);
+        }
     }
 }
 

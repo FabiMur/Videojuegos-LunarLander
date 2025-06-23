@@ -3,6 +3,7 @@
 #include "../resources/caracteres.h"
 #include "../code/transformaciones.h"
 #include "../code/config.h"
+#include "../code/sonidos.h"
 #include <stdio.h>
 #include <windows.h>
 
@@ -112,24 +113,35 @@ LRESULT procesarEventoOpciones(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
     if(uMsg == WM_KEYDOWN) {
         switch(wParam) {
             case VK_UP:
-                if(opcionSeleccionadaOpc > 0) opcionSeleccionadaOpc--;
+                if(opcionSeleccionadaOpc > 0) {
+                    opcionSeleccionadaOpc--;
+                    Sound_Play(SONIDO_CAMBIAR_OPCION_MENU);
+                }
                 InvalidateRect(hwnd, NULL, TRUE);
                 break;
             case VK_DOWN:
-                if(opcionSeleccionadaOpc < NUM_OPCIONES_MENU  - 1) opcionSeleccionadaOpc++;
+                if(opcionSeleccionadaOpc < NUM_OPCIONES_MENU  - 1) {
+                    opcionSeleccionadaOpc++;
+                    Sound_Play(SONIDO_CAMBIAR_OPCION_MENU);
+                }
                 InvalidateRect(hwnd, NULL, TRUE);
                 break;
             case VK_LEFT:
                 if(opcionSeleccionadaOpc < NUM_FLAGS) {
                     flags[opcionSeleccionadaOpc] = !flags[opcionSeleccionadaOpc];
+                    Sound_Play(SONIDO_CAMBIAR_OPCION_MENU);
                     InvalidateRect(hwnd, NULL, TRUE);
                 }
                 break;
             case VK_RIGHT:
                 if(opcionSeleccionadaOpc < NUM_FLAGS) {
                     flags[opcionSeleccionadaOpc] = !flags[opcionSeleccionadaOpc];
+                    Sound_Play(SONIDO_CAMBIAR_OPCION_MENU);
                     InvalidateRect(hwnd, NULL, TRUE);
                 }
+                break;
+            case VK_RETURN:
+                Sound_Play(SONIDO_SELECCIONAR_OPCION_MENU);
                 break;
             default:
                 break;

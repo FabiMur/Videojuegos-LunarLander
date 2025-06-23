@@ -1,4 +1,5 @@
 #include "sonidos.h"
+#include "opciones.h"
 
 void Sound_Init(){
     // pass
