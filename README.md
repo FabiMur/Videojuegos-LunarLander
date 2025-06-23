@@ -14,7 +14,7 @@ Este proyecto es una implementación en C del clásico **Lunar Lander** desarrol
 
 ## Controles
 
-Durante el juego las teclas son:
+Durante la partida las teclas son:
 
 | Tecla                   | Acción                                    |
 |-------------------------|-------------------------------------------|
@@ -39,7 +39,7 @@ Las opciones se manipulan con las **flechas**.
 
 ## Compilación
 
-El proyecto incluye un `MakeFile` para compilar con MinGW en Windows. Basta con ejecutar:
+Se incluye un `MakeFile` para compilar con MinGW en Windows. Se ejecuta con:
 
 ```bash
 make -f MakeFile
@@ -49,4 +49,4 @@ El ejecutable generado será `lunar_lander.exe`.
 
 ## Ejecución
 
-Una vez compilado, ejecuta el binario para disfrutar de tu propio **Lunar Lander**. ¡Gestiona el combustible, esquiva los asteroides y aterriza con suavidad para conseguir la mayor puntuación!
+Una vez compilado, ejecuta el binario jugar al clon de **Lunar Lander**.
