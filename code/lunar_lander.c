@@ -28,6 +28,8 @@ void manejar_teclas(){
         case PEDIR:
             if(obtenerValorFlag(FLAG_AI)) {
                 anyadirMoneda();
+                anyadirMoneda();
+                anyadirMoneda();
                 comenzarPartida();
                 estado = JUGANDO;
                 break;

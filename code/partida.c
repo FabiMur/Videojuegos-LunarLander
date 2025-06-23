@@ -71,41 +71,43 @@ void escalar_escena_partida(float factor_x, float factor_y){
 	}
 }
 
-uint16_t evaluar_aterrizaje(uint16_t bonificador, uint16_t es_arista_aterrizable){
+uint16_t evaluar_aterrizaje(uint16_t bonificador, uint16_t es_arista_aterrizable,
+                            uint8_t* exito){
 	uint16_t puntuacion = 0;
+	*exito = 0;
 
 	if(es_arista_aterrizable == 1){
-		if(nave->velocidad[1] > -aterrizaje_perfecto_vel &&
-			(aterrizaje_perfecto_vel > nave->velocidad[0] &&
-			nave->velocidad[0] > -aterrizaje_perfecto_vel) &&
-			(nave->rotacion < aterrizaje_perfecto_rot ||
-			nave->rotacion > 360 - aterrizaje_perfecto_rot)) {
-			// Aterrizaje perfecto
-			printf("Aterrizaje perfecto\n");
-			puntuacion = 50 * bonificador;
-			combustible += 50;
-		}
-		else if(nave->velocidad[1] > -aterrizaje_brusco_vel &&
-			(aterrizaje_brusco_vel > nave->velocidad[0] &&
-			nave->velocidad[0] > -aterrizaje_brusco_vel) &&
-			(nave->rotacion < aterrizaje_brusco_rot ||
-			nave->rotacion > 360 - aterrizaje_brusco_rot)) {
-			// Aterrizaje brusco
-			printf("Aterrizaje brusco\n");
-			puntuacion = 15 * bonificador;
-		}
-		else{
+			if(nave->velocidad[1] > -aterrizaje_perfecto_vel &&
+					(aterrizaje_perfecto_vel > nave->velocidad[0] &&
+					nave->velocidad[0] > -aterrizaje_perfecto_vel) &&
+					(nave->rotacion < aterrizaje_perfecto_rot ||
+					nave->rotacion > 360 - aterrizaje_perfecto_rot)) {
+					// Aterrizaje perfecto
+					printf("Aterrizaje perfecto\n");
+					puntuacion = 50 * bonificador;
+					combustible += 50;
+					*exito = 1;
+			}
+			else if(nave->velocidad[1] > -aterrizaje_brusco_vel &&
+					(aterrizaje_brusco_vel > nave->velocidad[0] &&
+					nave->velocidad[0] > -aterrizaje_brusco_vel) &&
+					(nave->rotacion < aterrizaje_brusco_rot ||
+					nave->rotacion > 360 - aterrizaje_brusco_rot)) {
+					// Aterrizaje brusco
+					printf("Aterrizaje brusco\n");
+					puntuacion = 15 * bonificador;
+					*exito = 1;
+			} else {
+					// Colision
+					printf("Colision\n");
+					puntuacion = 5 * bonificador;
+			}
+	} else {
 			// Colision
 			printf("Colision\n");
 			puntuacion = 5 * bonificador;
-		}
 	}
-	else {
-		// Colision
-		printf("Colision\n");
-		puntuacion = 5 * bonificador;
-	}
-	
+
 	return puntuacion;
 }
 
@@ -163,11 +165,17 @@ void gestionar_colisiones() {
 		}
 	}
 	if(se_produce_colision == 1){
-		// Determinar tipo de aterrizaje y puntos conseguidos
-		uint16_t puntos_conseguidos = evaluar_aterrizaje(bonificador, es_arista_aterrizable);
-		puntuacion_partida += puntos_conseguidos;
-		printf("Has conseguido %d puntos en este aterrizaje\n", puntos_conseguidos);
-		se_ha_aterrizado();
+			uint8_t exito = 0;
+			// Determinar tipo de aterrizaje y puntos conseguidos
+			uint16_t puntos_conseguidos = evaluar_aterrizaje(bonificador, es_arista_aterrizable, &exito);
+			puntuacion_partida += puntos_conseguidos;
+			printf("Has conseguido %d puntos en este aterrizaje\n", puntos_conseguidos);
+			if(exito){
+					se_ha_aterrizado();
+			} else {
+					fisicas = DESACTIVADAS;
+					informarFinPartida();
+			}
 	}
 }
 
@@ -213,7 +221,8 @@ void gestionar_colisiones_asteroides() {
 		for(uint8_t j = 0; j < 3; j++){
 			trasladarDibujable(asteroides[i].objeto, despl[j]);
 			if(hay_colision(nave->objeto, asteroides[i].objeto, &arista_colision)){
-				se_ha_aterrizado();
+				fisicas = DESACTIVADAS;
+				informarFinPartida();
 				trasladarDibujable(asteroides[i].objeto, (struct Punto){-despl[j].x, -despl[j].y});
 				return;
 			}

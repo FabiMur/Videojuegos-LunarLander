@@ -24,10 +24,14 @@ void calcularFisicas(struct objetoFisico* elemento){
 	orden_girar_derecha = 0;
 
 	if(propulsor && combustible >= combustible_motor){
-		elemento -> aceleracion[0] += propulsor_m_ms * SIN_TABLA[elemento -> rotacion];
-		elemento -> aceleracion[1] += propulsor_m_ms * COS_TABLA[elemento -> rotacion];
-		combustible -= combustible_motor;
+			elemento -> aceleracion[0] += propulsor_m_ms * SIN_TABLA[elemento -> rotacion];
+			elemento -> aceleracion[1] += propulsor_m_ms * COS_TABLA[elemento -> rotacion];
+			combustible -= combustible_motor;
+	} else if(propulsor && combustible < combustible_motor) {
+			propulsor = 0;
+			propulsor_activado = 0;
 	}
+
 
     // Calculo de la aceleracion
     elemento -> aceleracion[1] += gravedad_m_ms;

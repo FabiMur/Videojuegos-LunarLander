@@ -2,6 +2,7 @@
 #include "opciones.h"
 #include "fisicas.h"
 #include "gestor_plataformas.h"
+#include "../resources/nave.h"
 #include <float.h>
 #include <math.h>
 
@@ -21,6 +22,7 @@ static float altura_objetivo = 0.0f; // Y de spawneo
 static float objetivo_x = 0.0f;      // Centro de la plataforma objetivo
 static float objetivo_y = 0.0f;      // Y de la plataforma objetivo
 static float spawn_x = 0.0f;         // X de spawneo
+static float spawn_y = 0.0f;         // Y de spawneo
 
 int ai_activa(void) {
     return obtenerValorFlag(FLAG_AI);
@@ -53,13 +55,17 @@ void ai_iniciar(void) {
     estado_ai = AI_MANTENER_ALTURA;
     altura_objetivo = 50.0f;
     spawn_x = nave->objeto->origen.x;
+    spawn_y = nave->objeto->origen.y;
     struct PlataformaCercana dists[MAX_PLATAFORMAS];
 
     // Buscar la plataforma mas cercana al spawn
     for(uint16_t i = 0; i < numero_plataformas; i++) {
         struct Dibujable* lin = plataformas_partida[i].linea;
         float centro_x = lin->origen.x + (lin->puntos[0].x + lin->puntos[1].x) / 2.0f;
-        dists[i].dist = fabsf(centro_x - spawn_x);
+        float centro_y = lin->origen.y + lin->puntos[0].y;
+        float dx = centro_x - spawn_x;
+        float dy = centro_y - spawn_y;
+        dists[i].dist = sqrtf(dx*dx + dy*dy);
         dists[i].idx = i;
     }
     
@@ -93,7 +99,8 @@ void ai_actualizar(void) {
     float rotacion = nave->rotacion;
 
     float dx = objetivo_x - pos_x;
-    float dy_plat = objetivo_y - pos_y;
+    float base_nave_y = pos_y + (ALTURA_NAVE - 5);
+    float dy_plat = objetivo_y - base_nave_y;
     float dy_hover = altura_objetivo - pos_y;
 
     printf("IA DEBUG -> Estado:%d DX:%.2f DY:%.2f DY_HOVER:%.2f POS_X:%.2f POS_Y:%.2f VEL_X:%.2f VEL_Y:%.2f\n",
@@ -119,7 +126,7 @@ void ai_actualizar(void) {
 
         case AI_MOVER_HORIZONTAL: {
             int16_t rot_obj = 0;
-            if(dx > 10.0f && vel_x < 0.05f) {
+            if(dx > 3.0f && vel_x < 0.05f) {
                 rot_obj = 90;
             } else if (dx < -3.0f && vel_x > -0.05f) {
                 rot_obj = 270;
@@ -145,27 +152,26 @@ void ai_actualizar(void) {
             int16_t rot_obj = 0;
             desactivar_propulsor();
 
-            if(dx > 7.0f && vel_x < 0.1f) {
-                rot_obj = 55;
-                propulsar_hacia(rot_obj);
-                printf("IA: rotando a 55\n");
-            } else if(dx < -7.0f && vel_x > -0.1f) {
-                rot_obj = 305;
-                propulsar_hacia(rot_obj);
-                printf("IA: rotando a 305\n");
-            }
-
-
-            
             // Si estamos en la posición correcta y a una altura adecuada, cambiamos a ATERRIZAJE
-            if(fabsf(dx) <= 1.0f && abs(vel_x) < 0.3f && abs(dy_plat) < 5.0f) {
+            if(fabsf(dx) <= 2.0f && abs(vel_x) < 0.3f && abs(dy_plat) <= 700.0f) {
                 printf("IA: cambio a estado ATERRIZAJE\n");
                 estado_ai = AI_ATERRIZAJE;
             }
-            break; 
+
+            if(dx > 3.0f && vel_x < 0.1f) {
+                rot_obj = 70;
+                propulsar_hacia(rot_obj);
+                printf("IA: rotando a 70\n");
+            } else if(dx < -3.0f && vel_x > -0.1f) {
+                rot_obj = 290;
+                propulsar_hacia(rot_obj);
+                printf("IA: rotando a 290\n");
+            }
+
+            break;
 
         case AI_ATERRIZAJE:
-            if(vel_y < -0.3f) {
+            if(vel_y > 0.2f) {
                 propulsar_hacia(0);
             } else {
                 desactivar_propulsor();
