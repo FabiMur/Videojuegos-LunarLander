@@ -275,6 +275,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                     comenzarPartida();
                     if(obtenerValorFlag(FLAG_AI)) {
                         anyadirMoneda();
+                        anyadirMoneda();
+                        anyadirMoneda();
                         cambiar_estado(JUGANDO);
                     } else {
                         cambiar_estado(PEDIR);
