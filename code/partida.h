@@ -35,6 +35,10 @@ extern struct Dibujable* terreno;
 
 extern uint16_t puntuacion_partida;
 
+// Plataformas generadas para la partida actual
+extern struct Plataforma* plataformas_partida;
+extern uint16_t numero_plataformas;
+
 void informarFinPartida(void);
 
 void dibujar_escena(HDC hdc);

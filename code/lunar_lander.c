@@ -1,6 +1,7 @@
 #include "lunar_lander.h"
 #include "partida.h"
 #include "fisicas.h"
+#include "opciones.h"
 
 extern int tiempo;
 extern int tiempo_ms;
@@ -25,6 +26,12 @@ void levantar_tecla(int tecla){
 void manejar_teclas(){
     switch(estado){
         case PEDIR:
+            if(obtenerValorFlag(FLAG_AI)) {
+                anyadirMoneda();
+                comenzarPartida();
+                estado = JUGANDO;
+                break;
+            }
             if(estado_teclas[MONEDA]){
                 printf("Moneda insertada\n");
                 anyadirMoneda();
@@ -34,6 +41,11 @@ void manejar_teclas(){
             break;
 
         case MENU:
+            if(obtenerValorFlag(FLAG_AI)) {
+                comenzarPartida();
+                estado = JUGANDO;
+                break;
+            }
             if(estado_teclas[MONEDA]){
                 printf("Moneda insertada\n");
                 estado_teclas[MONEDA] = 0;
@@ -50,18 +62,19 @@ void manejar_teclas(){
             if(estado_teclas[MONEDA]){
                 anyadirMoneda();
             }
-            if(estado_teclas[ARRIBA] && combustible >= combustible_motor){
-                activar_propulsor();
-                propulsar();
-            } else {
-                desactivar_propulsor();
-            }
-
-            if(estado_teclas[IZQUIERDA]){
-                girar_izquierda();
-            }
-            if(estado_teclas[DERECHA]){
-                girar_derecha();
+            if(!obtenerValorFlag(FLAG_AI)) {
+                if(estado_teclas[ARRIBA] && combustible >= combustible_motor){
+                    activar_propulsor();
+                    propulsar();
+                } else {
+                    desactivar_propulsor();
+                }
+                if(estado_teclas[IZQUIERDA]){
+                    girar_izquierda();
+                }
+                if(estado_teclas[DERECHA]){
+                    girar_derecha();
+                }
             }
             break;
 

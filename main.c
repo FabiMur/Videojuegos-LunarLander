@@ -9,6 +9,7 @@
 #include "resources/asteroides.h"
 #include "code/partida.h"
 #include "code/overlays.h"
+#include "code/ai.h"
 #include <stdio.h>
 #include <windows.h>
 #include <stdlib.h>
@@ -266,8 +267,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 if (op==OPCION_PLAY) {
                     estadoActual = ESTADO_JUEGO;
                     inicializarPartida();
-                    comenzarPartida();
-                } else if (op==OPCION_OPTIONS) {
+                    if(obtenerValorFlag(FLAG_AI)) {
+                        anyadirMoneda();
+                        comenzarPartida();
+                        cambiar_estado(JUGANDO);
+                    }
+                    } else if (op==OPCION_OPTIONS) {
                     estadoActual = ESTADO_OPTIONS;
                 } else if (op==OPCION_EXIT) {
                     PostQuitMessage(0);
@@ -349,6 +354,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         if (wParam==TIMER_ID) {
             if (estadoActual == ESTADO_JUEGO) {
                 manejar_instante();
+                ai_actualizar();
                 manejar_teclas();
             }
             InvalidateRect(hwnd,NULL,FALSE);

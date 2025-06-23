@@ -7,6 +7,7 @@
 #include "gestor_colisiones.h"
 #include "config.h"
 #include "opciones.h"
+#include "ai.h"
 #include "math.h"
 #include <stdlib.h>
 
@@ -121,7 +122,8 @@ static void respawn_nave(){
 			nave->rotacion = (nave->rotacion - ANGULO_ROTACION + 360) % 360;
 		}
 	}
-	fisicas = ACTIVADAS;
+    fisicas = ACTIVADAS;
+    ai_iniciar();
 }
 
 void se_ha_aterrizado(){
@@ -376,6 +378,7 @@ static void iniciarPartidaComun(){
 
     fisicas = ACTIVADAS;
     inicio = 1;
+    ai_iniciar();
     printf("Combustible inicial: %d\n", combustible);
 }
 
