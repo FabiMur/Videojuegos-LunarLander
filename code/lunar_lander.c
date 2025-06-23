@@ -2,9 +2,10 @@
 #include "partida.h"
 #include "fisicas.h"
 #include "opciones.h"
-
+#include "sonidos.h"
 extern int tiempo;
 extern int tiempo_ms;
+
 
 static int estado = PEDIR;
 static int estado_teclas[5] = {
@@ -66,10 +67,14 @@ void manejar_teclas(){
             }
             if(!obtenerValorFlag(FLAG_AI)) {
                 if(estado_teclas[ARRIBA] && combustible >= combustible_motor){
+                    Sound_Loop(SONIDO_PROPULSION);
                     activar_propulsor();
                     propulsar();
                 } else {
                     desactivar_propulsor();
+                    if(Get_Playing_Sound() == SONIDO_PROPULSION){
+                        Sound_Stop();
+                    }
                 }
                 if(estado_teclas[IZQUIERDA]){
                     girar_izquierda();

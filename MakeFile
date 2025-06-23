@@ -21,6 +21,7 @@ else
     MAKE = make
 endif
 
+
 # Compilador y flags de compilación
 CC      = gcc
 CFLAGS  = -Wall -Wextra -Wpedantic -g
@@ -37,7 +38,10 @@ RES_DIR = resources
 SRCS    = $(wildcard $(SRC_DIR)/*.c $(RES_DIR)/*.c) main.c
 OBJS    = $(SRCS:.c=.o)
 
-# Target por defecto
+# Archivos objeto (se reemplaza .c por .o)
+OBJS = $(SRCS:.c=.o)
+
+# Regla principal
 all: $(TARGET)
 
 # Regla de link
@@ -47,6 +51,7 @@ $(TARGET): $(OBJS)
 # Regla genérica para compilar .c → .o
 %.o: %.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -c $< -o $@ $(LDLIBS)
+
 
 # Limpieza
 clean:

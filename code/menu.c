@@ -3,6 +3,7 @@
 #include "../resources/caracteres.h"
 #include "../code/transformaciones.h"
 #include "../code/config.h"
+#include "../code/sonidos.h"
 #include <stdio.h>
 #include <windows.h>
 
@@ -125,13 +126,15 @@ LRESULT procesarEventoMenu(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if(uMsg == WM_KEYDOWN) {
         switch(wParam) {
             case VK_UP:
-                if(opcionSeleccionada > OPCION_PLAY)
+                if(opcionSeleccionada > OPCION_PLAY){
                     opcionSeleccionada--;
+                }
                 InvalidateRect(hwnd, NULL, TRUE);  // repintado
                 break;
             case VK_DOWN:
-                if(opcionSeleccionada < NUM_OPCIONES - 1)
+                if(opcionSeleccionada < NUM_OPCIONES - 1){
                     opcionSeleccionada++;
+                }
                 InvalidateRect(hwnd, NULL, TRUE); // repintado
                 break;
             default:

@@ -10,14 +10,16 @@
 #include "ai.h"
 #include "math.h"
 #include <stdlib.h>
+#include "sonidos.h"
+
 
 #define fuel_por_moneda 750
 #define masa_nave 1000
 
-#define aterrizaje_perfecto_vel 0.5
-#define aterrizaje_brusco_vel 1
-#define aterrizaje_perfecto_rot 5
-#define aterrizaje_brusco_rot 10
+#define aterrizaje_perfecto_vel 1
+#define aterrizaje_brusco_vel 2
+#define aterrizaje_perfecto_rot 10
+#define aterrizaje_brusco_rot 20
 
 int inicio = 0;
 
@@ -99,15 +101,15 @@ uint16_t evaluar_aterrizaje(uint16_t bonificador, uint16_t es_arista_aterrizable
 					*exito = 1;
 			} else {
 					// Colision
+					Sound_Play(SONIDO_EXPLOSION);
 					printf("Colision\n");
 					puntuacion = 5 * bonificador;
 			}
 	} else {
-			// Colision
-			printf("Colision\n");
-			puntuacion = 5 * bonificador;
+		// Colision
+		Sound_Play(SONIDO_EXPLOSION);
+		printf("Colision\n");
 	}
-
 	return puntuacion;
 }
 
@@ -124,6 +126,7 @@ static void respawn_nave(){
 			nave->rotacion = (nave->rotacion - ANGULO_ROTACION + 360) % 360;
 		}
 	}
+
     fisicas = ACTIVADAS;
     ai_iniciar();
 }
@@ -165,17 +168,17 @@ void gestionar_colisiones() {
 		}
 	}
 	if(se_produce_colision == 1){
-			uint8_t exito = 0;
-			// Determinar tipo de aterrizaje y puntos conseguidos
-			uint16_t puntos_conseguidos = evaluar_aterrizaje(bonificador, es_arista_aterrizable, &exito);
-			puntuacion_partida += puntos_conseguidos;
-			printf("Has conseguido %d puntos en este aterrizaje\n", puntos_conseguidos);
-			if(exito){
-					se_ha_aterrizado();
-			} else {
-					fisicas = DESACTIVADAS;
-					informarFinPartida();
-			}
+		uint8_t exito = 0;
+		// Determinar tipo de aterrizaje y puntos conseguidos
+		uint16_t puntos_conseguidos = evaluar_aterrizaje(bonificador, es_arista_aterrizable, &exito);
+		puntuacion_partida += puntos_conseguidos;
+		printf("Has conseguido %d puntos en este aterrizaje\n", puntos_conseguidos);
+		if(exito){
+				se_ha_aterrizado();
+		} else {
+				fisicas = DESACTIVADAS;
+				informarFinPartida();
+		}
 	}
 }
 
@@ -257,8 +260,7 @@ void dibujar_escena(HDC hdc){
 			break;
 		default:
 			break;
-	}
-	
+	}	
 }
 
 void dibujarHUD(HDC hdc) {
@@ -366,6 +368,7 @@ void inicializarPartida(){
 }
 
 void anyadirMoneda(){
+	Sound_Play(SONIDO_MONEDA);
     combustible += fuel_por_moneda;
 }
 
