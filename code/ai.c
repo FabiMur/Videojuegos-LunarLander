@@ -143,16 +143,26 @@ void ai_actualizar(void) {
 
         case AI_DESCENSO: {
             int16_t rot_obj = 0;
-            if(dx > 1.0f && vel_x < 0.1f) rot_obj = 45; printf("IA: rotando a 45\n");
-            if(dx < -1.0f && vel_x > -0.1f) rot_obj = 315; printf("IA: rotando a 315\n");
+            desactivar_propulsor();
 
-            propulsar_hacia(rot_obj);
+            if(dx > 7.0f && vel_x < 0.1f) {
+                rot_obj = 55;
+                propulsar_hacia(rot_obj);
+                printf("IA: rotando a 55\n");
+            } else if(dx < -7.0f && vel_x > -0.1f) {
+                rot_obj = 305;
+                propulsar_hacia(rot_obj);
+                printf("IA: rotando a 305\n");
+            }
+
+
             
             // Si estamos en la posición correcta y a una altura adecuada, cambiamos a ATERRIZAJE
-            if(fabsf(dx) <= 1.0f && abs(vel_x) < 0.1f && abs(dy_plat) < 5.0f) {
+            if(fabsf(dx) <= 1.0f && abs(vel_x) < 0.3f && abs(dy_plat) < 5.0f) {
                 printf("IA: cambio a estado ATERRIZAJE\n");
                 estado_ai = AI_ATERRIZAJE;
-            break; }
+            }
+            break; 
 
         case AI_ATERRIZAJE:
             if(vel_y < -0.3f) {
