@@ -5,6 +5,17 @@
 #include <float.h>
 #include <math.h>
 
+struct PlataformaCercana {
+    float dist;
+    uint16_t idx;
+};
+
+static int cmp_dist(const void* a, const void* b) {
+    float da = ((const struct PlataformaCercana*)a)->dist;
+    float db = ((const struct PlataformaCercana*)b)->dist;
+    return (da > db) - (da < db);
+}
+
 static EstadoAI estado_ai = AI_MANTENER_ALTURA;
 static float altura_objetivo = 0.0f; // Y de spawneo
 static float objetivo_x = 0.0f;      // Centro de la plataforma objetivo
@@ -31,24 +42,18 @@ void ai_iniciar(void) {
     estado_ai = AI_MANTENER_ALTURA;
     altura_objetivo = 50.0f;
     spawn_x = nave->objeto->origen.x;
-    float min_dist = FLT_MAX;
-    uint16_t candidatos[MAX_PLATAFORMAS];
-    uint16_t num_candidatos = 0;
+    struct PlataformaCercana dists[MAX_PLATAFORMAS];
 
     for(uint16_t i = 0; i < numero_plataformas; i++) {
         struct Dibujable* lin = plataformas_partida[i].linea;
         float centro_x = lin->origen.x + (lin->puntos[0].x + lin->puntos[1].x) / 2.0f;
-        float dist = fabsf(centro_x - spawn_x);
-        if(dist < min_dist - 0.1f) {
-            min_dist = dist;
-            candidatos[0] = i;
-            num_candidatos = 1;
-        } else if(fabsf(dist - min_dist) <= 10.0f && num_candidatos < MAX_PLATAFORMAS) {
-            candidatos[num_candidatos++] = i;
-        }
+        dists[i].dist = fabsf(centro_x - spawn_x);
+        dists[i].idx = i;
     }
 
-    uint16_t elegido = candidatos[rand() % num_candidatos];
+    qsort(dists, numero_plataformas, sizeof(struct PlataformaCercana), cmp_dist);
+    uint16_t num_candidatos = numero_plataformas < 10 ? numero_plataformas : 10;
+    uint16_t elegido = dists[rand() % num_candidatos].idx;
     struct Dibujable* linea = plataformas_partida[elegido].linea;
     objetivo_x = linea->origen.x + (linea->puntos[0].x + linea->puntos[1].x) / 2.0f;
     objetivo_y = linea->origen.y + linea->puntos[0].y;

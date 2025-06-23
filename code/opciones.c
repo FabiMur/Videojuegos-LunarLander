@@ -9,7 +9,7 @@
 #define NUM_FLAGS 3
 #define NUM_OPCIONES_MENU (NUM_FLAGS + 1)
 
-static int flags[NUM_FLAGS] = {1, 0, 0}; // valores por defecto
+static int flags[NUM_FLAGS] = {1, 0, 1}; // valores por defecto
 static struct Texto* opcionesTextuales[NUM_OPCIONES_MENU] = {0};
 static int opcionSeleccionadaOpc = 0;
 static int opcionesPosX = 0;
