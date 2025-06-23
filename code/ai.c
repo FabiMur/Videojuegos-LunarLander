@@ -36,6 +36,17 @@ static void rotar_hacia(int16_t rot_deseada) {
     }
 }
 
+static void propulsar_hacia(int16_t rot_deseada) {
+    rotar_hacia(rot_deseada);
+
+    if(nave->rotacion == rot_deseada) {
+        activar_propulsor();
+        propulsar();
+    } else {
+        desactivar_propulsor();
+    }
+}
+
 void ai_iniciar(void) {
     if(!ai_activa()) return;
     
@@ -95,8 +106,7 @@ void ai_actualizar(void) {
 
             if(dy_hover <= 1.0f || vel_y < -0.4f && nave->rotacion == 0) {
 
-                activar_propulsor();
-                propulsar();
+                propulsar_hacia(0);
             } else {
                 desactivar_propulsor();
             }
@@ -109,23 +119,16 @@ void ai_actualizar(void) {
 
         case AI_MOVER_HORIZONTAL: {
             int16_t rot_obj = 0;
-            if(dx > 10.0f && vel_x < 0.3f) {
+            if(dx > 10.0f && vel_x < 0.05f) {
                 rot_obj = 90;
-            } else if (dx < -3.0f && vel_x > -0.3f) {
+            } else if (dx < -3.0f && vel_x > -0.05f) {
                 rot_obj = 270;
             }
 
-            rotar_hacia(rot_obj);
-
-            if(nave->rotacion == rot_obj) {
-                activar_propulsor();
-                propulsar();
-            } else {
-                desactivar_propulsor();
-            }
+            propulsar_hacia(rot_obj);
 
             // Si estamos en la posición correcta, cambiamos a DESCENSO
-            if(fabsf(dx) < 3.0f && abs(vel_x) < 0.1f) {
+            if(fabsf(dx) < 3.0f && abs(vel_x) < 0.3f) {
                 desactivar_propulsor();
                 estado_ai = AI_DESCENSO;
                 printf("IA: cambio a estado DESCENSO\n");
@@ -140,40 +143,20 @@ void ai_actualizar(void) {
 
         case AI_DESCENSO: {
             int16_t rot_obj = 0;
-            if(dx > 1.0f && vel_x < 0.1f) rot_obj = 45;
-            else if(dx < -1.0f && vel_x > -0.1f) rot_obj = 315;
-            rotar_hacia(rot_obj);
-            
-            if(nave->rotacion == rot_obj) {
-                activar_propulsor();
-                propulsar();
-            } else {
-                desactivar_propulsor();
-            }
-            
-            
-            if(vel_y < -0.4f) {
-                rotar_hacia(0);
-                activar_propulsor();
-                propulsar();
-            } else if(dy_hover > 20.0f && vel_y < -0.1f) {
-                activar_propulsor();
-                propulsar();
-            } else {
-                desactivar_propulsor();
-            }
+            if(dx > 1.0f && vel_x < 0.1f) rot_obj = 45; printf("IA: rotando a 45\n");
+            if(dx < -1.0f && vel_x > -0.1f) rot_obj = 315; printf("IA: rotando a 315\n");
 
-
-            if(fabsf(dx) <= 3.0f && abs(vel_x) < 0.3f && abs(dy_plat) < 5.0f) {
+            propulsar_hacia(rot_obj);
+            
+            // Si estamos en la posición correcta y a una altura adecuada, cambiamos a ATERRIZAJE
+            if(fabsf(dx) <= 1.0f && abs(vel_x) < 0.1f && abs(dy_plat) < 5.0f) {
                 printf("IA: cambio a estado ATERRIZAJE\n");
                 estado_ai = AI_ATERRIZAJE;
             break; }
 
         case AI_ATERRIZAJE:
-            rotar_hacia(0);
             if(vel_y < -0.3f) {
-                activar_propulsor();
-                propulsar();
+                propulsar_hacia(0);
             } else {
                 desactivar_propulsor();
             }
