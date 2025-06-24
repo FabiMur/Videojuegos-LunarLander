@@ -1,18 +1,10 @@
 # Detectar el sistema operativo
 ifeq ($(OS),Windows_NT)
-    ifeq ($(shell uname),) # CMD
-        RM = del /Q
-        TARGET = lunar_lander.exe
-        EXEC = .\$(TARGET)
-        CLEAN_NULL = 2>nul
-        MAKE = mingw32-make -f MakeFile
-    else # Git Bash
-        RM = rm -f
-        TARGET = lunar_lander.exe
-        EXEC = ./$(TARGET)
-        CLEAN_NULL =
-        MAKE = make
-    endif
+    RM = del /Q
+    TARGET = lunar_lander.exe
+    EXEC = .\$(TARGET)
+    CLEAN_NULL = 2>nul
+    MAKE = mingw32-make -f MakeFile
 else
     RM = rm -f
     TARGET = lunar_lander
