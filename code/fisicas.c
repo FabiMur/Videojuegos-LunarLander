@@ -37,13 +37,22 @@ void calcularFisicas(struct objetoFisico* elemento){
     elemento -> aceleracion[1] += gravedad_m_ms;
 
     // Calculo de la velocidad en cada eje
-    elemento -> velocidad[0] += elemento -> aceleracion[0] * (intervalo_fisicas_ms / 1000.0);
-    elemento -> velocidad[1] += elemento -> aceleracion[1] * (intervalo_fisicas_ms / 1000.0);
-
+    elemento -> velocidad[0] += elemento -> aceleracion[0] * intervalo_fisicas_ms;
+    elemento -> velocidad[1] += elemento -> aceleracion[1] * intervalo_fisicas_ms;
+	
+	// Desaceleracion horizontal
+	if(elemento -> velocidad[0] > 0){
+		elemento -> velocidad[0] -= desaceleracion_horizontal;
+		if (elemento->velocidad[0] < 0) elemento->velocidad[0] = 0;
+	} else if(elemento -> velocidad[0] < 0){
+		elemento -> velocidad[0] += desaceleracion_horizontal;
+		if (elemento->velocidad[0] > 0) elemento->velocidad[0] = 0;
+	}
+	
     // Calculo de la nueva posicion dadas las velocidades
     struct Punto nueva_posicion = {
-        elemento -> velocidad[0] * (intervalo_fisicas_ms / 1000.0) / pixels_por_metro,
-        -(elemento -> velocidad[1] * (intervalo_fisicas_ms / 1000.0) / pixels_por_metro)
+        elemento -> velocidad[0] * intervalo_fisicas_ms / pixels_por_metro,
+        -(elemento -> velocidad[1] * intervalo_fisicas_ms / pixels_por_metro)
     };
 
     // Trasladar el objeto

@@ -1,10 +1,18 @@
 # Detectar el sistema operativo
 ifeq ($(OS),Windows_NT)
-    RM = del /Q
-    TARGET = lunar_lander.exe
-    EXEC = .\$(TARGET)
-    CLEAN_NULL = 2>nul
-    MAKE = mingw32-make -f MakeFile
+    ifeq ($(shell uname),) # CMD
+        RM = del /Q
+        TARGET = lunar_lander.exe
+        EXEC = .\$(TARGET)
+        CLEAN_NULL = 2>nul
+        MAKE = mingw32-make -f MakeFile
+    else # Git Bash
+        RM = rm -f
+        TARGET = lunar_lander.exe
+        EXEC = ./$(TARGET)
+        CLEAN_NULL =
+        MAKE = make
+    endif
 else
     RM = rm -f
     TARGET = lunar_lander
@@ -47,7 +55,7 @@ $(TARGET): $(OBJS)
 
 # Limpieza
 clean:
-	-$(RM) $(SRC_DIR)/*.o $(RES_DIR)/*.o main.o $(TARGET) $(CLEAN_NULL)
+	-$(RM) $(SRC_DIR)\*.o $(RES_DIR)\*.o main.o $(TARGET) $(CLEAN_NULL)
 
 # Ejecutar tras recompilar
 run:
