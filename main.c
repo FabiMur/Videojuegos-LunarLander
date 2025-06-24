@@ -219,6 +219,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     // Evento de creación de la ventana
     case WM_CREATE:
         AttachConsoleToStdout();
+        Sound_Init();
         SetTimer(hwnd,TIMER_ID,intervalo_fisicas_ms,NULL);
         inicializarMenu();
         inicializarOpciones();
@@ -379,6 +380,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     // Evento de cierre de ventana
     case WM_DESTROY:
         if (dib_borde) destruirDibujable(dib_borde);
+        Sound_Cleanup();
         destruirOpciones();
         KillTimer(hwnd,TIMER_ID);
         PostQuitMessage(0);

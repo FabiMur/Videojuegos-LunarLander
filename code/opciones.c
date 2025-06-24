@@ -111,37 +111,37 @@ void dibujarOpcionesEnBuffer(HDC hdc) {
 LRESULT procesarEventoOpciones(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     (void)lParam;
     if(uMsg == WM_KEYDOWN) {
+        if(wParam == VK_ESCAPE) {
+            Sound_Play(SONIDO_SELECCIONAR_OPCION_MENU);
+        }else if(wParam == VK_UP || wParam == VK_DOWN || wParam == VK_LEFT || wParam == VK_RIGHT || wParam == VK_RETURN) {
+            Sound_Play(SONIDO_CAMBIAR_OPCION_MENU);
+        }
         switch(wParam) {
             case VK_UP:
                 if(opcionSeleccionadaOpc > 0) {
                     opcionSeleccionadaOpc--;
-                    Sound_Play(SONIDO_CAMBIAR_OPCION_MENU);
                 }
                 InvalidateRect(hwnd, NULL, TRUE);
                 break;
             case VK_DOWN:
                 if(opcionSeleccionadaOpc < NUM_OPCIONES_MENU  - 1) {
                     opcionSeleccionadaOpc++;
-                    Sound_Play(SONIDO_CAMBIAR_OPCION_MENU);
                 }
                 InvalidateRect(hwnd, NULL, TRUE);
                 break;
             case VK_LEFT:
                 if(opcionSeleccionadaOpc < NUM_FLAGS) {
                     flags[opcionSeleccionadaOpc] = !flags[opcionSeleccionadaOpc];
-                    Sound_Play(SONIDO_CAMBIAR_OPCION_MENU);
                     InvalidateRect(hwnd, NULL, TRUE);
                 }
                 break;
             case VK_RIGHT:
                 if(opcionSeleccionadaOpc < NUM_FLAGS) {
                     flags[opcionSeleccionadaOpc] = !flags[opcionSeleccionadaOpc];
-                    Sound_Play(SONIDO_CAMBIAR_OPCION_MENU);
                     InvalidateRect(hwnd, NULL, TRUE);
                 }
                 break;
             case VK_RETURN:
-                Sound_Play(SONIDO_SELECCIONAR_OPCION_MENU);
                 break;
             default:
                 break;

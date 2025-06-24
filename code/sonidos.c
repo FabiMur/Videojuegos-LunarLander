@@ -1,67 +1,84 @@
 #include "sonidos.h"
 #include "opciones.h"
 
-void Sound_Init(){
-    // pass
+Sonido sonidos[6];
+TipoSonido playing = NO_SOUND;
+
+void Sound_Init() {
+    playing = NO_SOUND;
+
+    for (int i = 0; i < 6; i++) {
+        FILE* file = fopen(rutas_sonidos[i], "rb");
+        if (!file) {
+            printf("Error: No se pudo abrir el archivo %s\n", rutas_sonidos[i]);
+            continue;
+        }
+
+        fseek(file, 0, SEEK_END);
+        DWORD size = ftell(file);
+        rewind(file);
+
+        sonidos[i].buffer = (BYTE*)malloc(size);
+        if (!sonidos[i].buffer) {
+            printf("Error: No se pudo asignar memoria para el sonido %d\n", i);
+            fclose(file);
+            continue;
+        }
+
+        fread(sonidos[i].buffer, 1, size, file);
+        sonidos[i].size = size;
+
+        fclose(file);
+    }
 }
 
-void Sound_Play(TipoSonido sonido){
-    if(!obtenerValorFlag(FLAG_SOUND)) {
+void Sound_Play(TipoSonido sonido) {
+    if (!obtenerValorFlag(FLAG_SOUND)) {
         return;
     }
-    const char* nombre_sonido = obtener_nombre_sonido(sonido);
-    if (nombre_sonido != NULL) {
-        PlaySound(nombre_sonido, NULL, SND_FILENAME | SND_ASYNC);
-        playing = sonido;
-    } else {
-        printf("Error: Tipo de sonido no valido\n");
+    if (playing != NO_SOUND) {
+        Sound_Stop();
     }
-    
+    if (sonido < 0 || sonido >= 6 || sonidos[sonido].buffer == NULL) {
+        printf("Error: Tipo de sonido no válido\n");
+        return;
+    }
+
+    PlaySound((LPCSTR)sonidos[sonido].buffer, NULL, SND_MEMORY | SND_ASYNC);
+    playing = sonido;
 }
 
-void Sound_Loop(TipoSonido sonido){
-    if(!obtenerValorFlag(FLAG_SOUND)) {
+void Sound_Loop(TipoSonido sonido) {
+    if (!obtenerValorFlag(FLAG_SOUND)) {
         return;
     }
-    
     if (playing == sonido) {
-        return; // No hacer nada si el sonido ya está reproduciéndose
-    }   
-    const char* nombre_sonido = obtener_nombre_sonido(sonido);
-
-    if (nombre_sonido != NULL) {
-        PlaySound(nombre_sonido, NULL, SND_FILENAME | SND_ASYNC | SND_LOOP );
-        playing = sonido;
-    } else {
-        printf("Error: Tipo de sonido no valido\n");
+        return; // Ya está sonando
     }
+    if (sonido < 0 || sonido >= 6 || sonidos[sonido].buffer == NULL) {
+        printf("Error: Tipo de sonido no válido\n");
+        return;
+    }
+
+    PlaySound((LPCSTR)sonidos[sonido].buffer, NULL, SND_MEMORY | SND_ASYNC | SND_LOOP);
+    playing = sonido;
 }
 
-const char* obtener_nombre_sonido(TipoSonido tipo){
-    switch(tipo){
-        case SONIDO_SELECCIONAR_OPCION_MENU:
-            return sonido_seleccionar_opcion_menu;
-        case SONIDO_CAMBIAR_OPCION_MENU:
-            return sonido_cambiar_opcion_menu;
-        case SONIDO_MONEDA:
-            return sonido_moneda;
-        case SONIDO_ATERRIZAJE:
-            return sonido_aterrizaje;
-        case SONIDO_EXPLOSION:
-            return sonido_explosion;
-        case SONIDO_PROPULSION:
-            return sonido_propulsion;
-        default:
-            printf("Error: No existe archivo para el tipo de sonido especificado\n");
-            return NULL; 
-    }
-}
-
-void Sound_Stop(){
+void Sound_Stop() {
     PlaySound(NULL, NULL, SND_PURGE);
     playing = NO_SOUND;
 }
 
-TipoSonido Get_Playing_Sound(){
+TipoSonido Get_Playing_Sound() {
     return playing;
+}
+
+void Sound_Cleanup() {
+    for (int i = 0; i < 6; i++) {
+        if (sonidos[i].buffer != NULL) {
+            free(sonidos[i].buffer);
+            sonidos[i].buffer = NULL;
+            sonidos[i].size = 0;
+        }
+    }
 }
