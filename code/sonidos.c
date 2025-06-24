@@ -15,10 +15,10 @@ void Sound_Init() {
         }
 
         fseek(file, 0, SEEK_END);
-        DWORD size = ftell(file);
+        uint64_t size = ftell(file);
         rewind(file);
 
-        sonidos[i].buffer = (BYTE*)malloc(size);
+        sonidos[i].buffer = (uint8_t*)malloc(size);
         if (!sonidos[i].buffer) {
             printf("Error: No se pudo asignar memoria para el sonido %d\n", i);
             fclose(file);
@@ -36,9 +36,7 @@ void Sound_Play(TipoSonido sonido) {
     if (!obtenerValorFlag(FLAG_SOUND)) {
         return;
     }
-    if (playing != NO_SOUND) {
-        Sound_Stop();
-    }
+    
     if (sonido < 0 || sonido >= 6 || sonidos[sonido].buffer == NULL) {
         printf("Error: Tipo de sonido no válido\n");
         return;

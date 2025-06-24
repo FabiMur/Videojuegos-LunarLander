@@ -78,13 +78,15 @@ uint16_t evaluar_aterrizaje(uint16_t bonificador, uint16_t es_arista_aterrizable
 	uint16_t puntuacion = 0;
 	*exito = 0;
 
-	if(es_arista_aterrizable == 1){
+	if(es_arista_aterrizable){
 			if(nave->velocidad[1] > -aterrizaje_perfecto_vel &&
 					(aterrizaje_perfecto_vel > nave->velocidad[0] &&
 					nave->velocidad[0] > -aterrizaje_perfecto_vel) &&
 					(nave->rotacion < aterrizaje_perfecto_rot ||
 					nave->rotacion > 360 - aterrizaje_perfecto_rot)) {
 					// Aterrizaje perfecto
+					Sound_Play(SONIDO_ATERRIZAJE);
+
 					printf("Aterrizaje perfecto\n");
 					puntuacion = 50 * bonificador;
 					combustible += 50;
@@ -96,6 +98,7 @@ uint16_t evaluar_aterrizaje(uint16_t bonificador, uint16_t es_arista_aterrizable
 					(nave->rotacion < aterrizaje_brusco_rot ||
 					nave->rotacion > 360 - aterrizaje_brusco_rot)) {
 					// Aterrizaje brusco
+					Sound_Play(SONIDO_ATERRIZAJE);
 					printf("Aterrizaje brusco\n");
 					puntuacion = 15 * bonificador;
 					*exito = 1;
@@ -224,6 +227,7 @@ void gestionar_colisiones_asteroides() {
 		for(uint8_t j = 0; j < 3; j++){
 			trasladarDibujable(asteroides[i].objeto, despl[j]);
 			if(hay_colision(nave->objeto, asteroides[i].objeto, &arista_colision)){
+				Sound_Play(SONIDO_EXPLOSION);
 				fisicas = DESACTIVADAS;
 				informarFinPartida();
 				trasladarDibujable(asteroides[i].objeto, (struct Punto){-despl[j].x, -despl[j].y});

@@ -13,7 +13,7 @@
 
 #define intervalo_fisicas_ms 16
 #define pixels_por_metro 32
-#define gravedad_m_ms -0.0005625
+#define gravedad_m_ms -0.005625
 #define propulsor_m_ms 0.003
 #define combustible_motor 3
 
