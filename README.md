@@ -42,7 +42,7 @@ Las opciones se manipulan con las **flechas**.
 Se incluye un `MakeFile` para compilar con MinGW en Windows. Se ejecuta con:
 
 ```bash
-make -f MakeFile
+make all
 ```
 
 El ejecutable generado será `lunar_lander.exe`.

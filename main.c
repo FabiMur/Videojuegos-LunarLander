@@ -150,10 +150,11 @@ static void DibujaFrame(HWND hwnd) {
         float alt = obtener_y_terreno(nave->objeto->origen.x) - nave->objeto->origen.y;
         const float ALT_ZOOM_INI = 200.0f;
         const float ALT_ZOOM_MIN = 50.0f;
-        float zoom = 1.0f;
+        const float ZOOM_DEFAULT = 0.8f;
+        float zoom = ZOOM_DEFAULT;
         if (alt < ALT_ZOOM_INI) {
             float a = alt < ALT_ZOOM_MIN ? ALT_ZOOM_MIN : alt;
-            zoom = 1.0f + (ALT_ZOOM_INI - a) / (ALT_ZOOM_INI - ALT_ZOOM_MIN);
+            zoom = ZOOM_DEFAULT + (ALT_ZOOM_INI - a) / (ALT_ZOOM_INI - ALT_ZOOM_MIN);
         }
 
         XFORM xf = { zoom, 0, 0, zoom, (1.0f - zoom) * cx, (1.0f - zoom) * cy };
