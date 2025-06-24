@@ -237,7 +237,9 @@ void gestionar_colisiones_asteroides() {
 }
 
 void dibujar_escena(HDC hdc){
-    dibujarDibujable(hdc, nave -> objeto);
+   if(obtener_estado() == JUGANDO) {
+        dibujarDibujable(hdc, nave -> objeto);
+    }
 
 	dibujar_terreno(hdc);
 
@@ -247,22 +249,24 @@ void dibujar_escena(HDC hdc){
 		dibujar_plataforma(hdc, plataformas_partida[i]);
 	}
 
-	switch(obtener_propulsor()){
-		case 1:
-			colocar_dibujable(motor_debil, nave -> objeto -> origen);
-			dibujarDibujable(hdc, motor_debil);
-			break;
-		case 2:
-			colocar_dibujable(motor_medio, nave -> objeto -> origen);
-			dibujarDibujable(hdc, motor_medio);
-			break;
-		case 3:
-			colocar_dibujable(motor_fuerte, nave -> objeto -> origen);
-			dibujarDibujable(hdc, motor_fuerte);
-			break;
-		default:
-			break;
-	}	
+    if(obtener_estado() == JUGANDO) {
+        switch(obtener_propulsor()){
+			case 1:
+					colocar_dibujable(motor_debil, nave -> objeto -> origen);
+					dibujarDibujable(hdc, motor_debil);
+					break;
+			case 2:
+					colocar_dibujable(motor_medio, nave -> objeto -> origen);
+					dibujarDibujable(hdc, motor_medio);
+					break;
+			case 3:
+					colocar_dibujable(motor_fuerte, nave -> objeto -> origen);
+					dibujarDibujable(hdc, motor_fuerte);
+					break;
+			default:
+					break;
+        }
+    }
 }
 
 void dibujarHUD(HDC hdc) {
@@ -404,12 +408,12 @@ void anyadirMoneda(){
 static void iniciarPartidaComun(){
     nave = (struct objetoFisico*)malloc(sizeof(struct objetoFisico));
     nave -> objeto = crearDibujable(&Nave_Base);
-    nave -> velocidad[0] = 0;
+    nave -> velocidad[0] = 5.0;
     nave -> velocidad[1] = 0;
     nave -> aceleracion[0] = 0;
     nave -> aceleracion[1] = 0;
     nave -> masa = masa_nave;
-	nave -> rotacion = 0;
+	nave -> rotacion = 270;
 
     struct Punto spawn = {offsetTerrenoIzquerda + rand()%ANCHURA_TERRENO, ALTURA_SPAWN_NAVE};
     colocarDibujable(nave->objeto, spawn);
@@ -417,6 +421,10 @@ static void iniciarPartidaComun(){
 	motor_debil = crearDibujable(&Nave_Propulsion_Minima);
 	motor_medio = crearDibujable(&Nave_Propulsion_Media);
 	motor_fuerte = crearDibujable(&Nave_Propulsion_Maxima);
+
+    for(int i=0;i<27;i++) {
+        rotar_nave(1);
+    }
 
     fisicas = ACTIVADAS;
     inicio = 1;
