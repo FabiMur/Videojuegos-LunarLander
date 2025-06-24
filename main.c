@@ -182,6 +182,9 @@ static void DibujaFrame(HWND hwnd) {
         }
 
         dibujarHUD(hdcBase);
+        if(obtener_estado() != JUGANDO) {
+            dibujarIndicacionesInicio(hdcBase);
+        }
     } else if (estadoActual == ESTADO_OPTIONS) {
         dibujarOpcionesEnBuffer(hdcBase);
     }

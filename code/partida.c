@@ -10,7 +10,9 @@
 #include "ai.h"
 #include "math.h"
 #include <stdlib.h>
+#include <string.h>
 #include "sonidos.h"
+#include "textos_juego.h"
 
 
 #define fuel_por_moneda 750
@@ -317,6 +319,32 @@ void dibujarHUD(HDC hdc) {
     txt = crearTextoDesdeCadena(buf, origen);
     dibujar_texto(txt, hdc);
     destruir_texto(txt);
+}
+
+// Dibuja las indicaciones mientras la partida no ha comenzado
+void dibujarIndicacionesInicio(HDC hdc) {
+    const char* lineas[3];
+    lineas[0] = combustible == 0 ? "INSERT COINS" : "";
+    lineas[1] = "SIDE ARROWS TO STEER";
+    lineas[2] = "UP ARROW TO THRUST AND START";
+
+    int lineCount = 0;
+    for(int i=0;i<3;i++) if(strlen(lineas[i])>0) lineCount++;
+    if(lineCount==0) return;
+
+    int salto = ALTURA_CARACTER_MAX + 5;
+    int altoTotal = lineCount*ALTURA_CARACTER_MAX + (lineCount-1)*5;
+    int yInicio = (BASE_H - altoTotal)/2;
+    int indice=0;
+    for(int i=0;i<3;i++) {
+        if(strlen(lineas[i])==0) continue;
+        int ancho = strlen(lineas[i])*ANCHURA_CARACTER_MAX +
+                    (strlen(lineas[i])-1)*SEPARACION_CARACTER;
+        struct Punto o = { (BASE_W - ancho)/2, yInicio + indice*salto };
+        struct Texto* t = crearTextoDesdeCadena(lineas[i], o);
+        dibujar_texto(t, hdc); destruir_texto(t);
+        indice++;
+    }
 }
 
 void rotar_nave(uint16_t direccion){

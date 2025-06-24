@@ -45,6 +45,8 @@ void dibujar_escena(HDC hdc);
 
 void dibujarHUD(HDC hdc);
 
+void dibujarIndicacionesInicio(HDC hdc);
+
 void rotar_nave(uint16_t direccion);
 
 void manejar_instante_partida();

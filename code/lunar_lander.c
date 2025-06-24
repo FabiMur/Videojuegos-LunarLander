@@ -54,8 +54,9 @@ void manejar_teclas(){
                 estado_teclas[MONEDA] = 0;
                 anyadirMoneda();
             }
-            else if(estado_teclas[ESPACIO]){
+            else if(estado_teclas[ARRIBA] && combustible > 0){
                 printf("Partida Comenzada\n");
+                estado_teclas[ARRIBA] = 0;
                 comenzarPartida();
                 estado = JUGANDO;
             }
@@ -107,4 +108,8 @@ void cambiar_estado(int nuevo_estado){
 
 void escalar_escena(float factor_x, float factor_y) {
     escalar_escena_partida(factor_x, factor_y);
+}
+
+int obtener_estado(void){
+    return estado;
 }
