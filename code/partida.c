@@ -117,7 +117,7 @@ uint16_t evaluar_aterrizaje(uint16_t bonificador, uint16_t es_arista_aterrizable
 
 static void respawn_nave(){
 	Sleep(1000);
-	struct Punto destino = {offsetTerrenoIzquerda + rand()%ANCHURA_TERRENO, 50};
+    struct Punto destino = {offsetTerrenoIzquerda + rand()%ANCHURA_TERRENO, ALTURA_SPAWN_NAVE};
 	colocarDibujable(nave->objeto, destino);
 	while(nave->rotacion != 0){
 		if(nave->rotacion > 180){
@@ -410,7 +410,8 @@ static void iniciarPartidaComun(){
     nave -> aceleracion[1] = 0;
     nave -> masa = masa_nave;
 	nave -> rotacion = 0;
-    struct Punto spawn = {offsetTerrenoIzquerda + rand()%ANCHURA_TERRENO, 50};
+
+    struct Punto spawn = {offsetTerrenoIzquerda + rand()%ANCHURA_TERRENO, ALTURA_SPAWN_NAVE};
     colocarDibujable(nave->objeto, spawn);
 
 	motor_debil = crearDibujable(&Nave_Propulsion_Minima);

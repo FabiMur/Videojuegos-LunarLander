@@ -18,6 +18,10 @@
 #define ALTURA_CINTURON_ASTEROIDES_1 100
 #define ALTURA_CINTURON_ASTEROIDES_2 250
 
+// Altura de spawn para la nave, situada justo entre los dos cinturones
+#define ALTURA_SPAWN_NAVE ((ALTURA_CINTURON_ASTEROIDES_1 + \
+                           ALTURA_CINTURON_ASTEROIDES_2) / 2)
+
 #define VELOCIDAD_ASTEROIDES 2
 
 #define MAX_ASTEROIDES 15

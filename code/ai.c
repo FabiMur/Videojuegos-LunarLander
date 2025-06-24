@@ -3,6 +3,7 @@
 #include "fisicas.h"
 #include "gestor_plataformas.h"
 #include "../resources/nave.h"
+#include "../resources/asteroides.h"
 #include "sonidos.h"
 #include <float.h>
 #include <math.h>
@@ -58,7 +59,7 @@ void ai_iniciar(void) {
     if(!ai_activa()) return;
     
     estado_ai = AI_MANTENER_ALTURA;
-    altura_objetivo = 50.0f;
+    altura_objetivo = ALTURA_SPAWN_NAVE;
     spawn_x = nave->objeto->origen.x;
     spawn_y = nave->objeto->origen.y;
     struct PlataformaCercana dists[MAX_PLATAFORMAS];
