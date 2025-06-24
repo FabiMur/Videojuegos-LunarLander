@@ -323,20 +323,21 @@ void dibujarHUD(HDC hdc) {
 
 // Dibuja las indicaciones mientras la partida no ha comenzado
 void dibujarIndicacionesInicio(HDC hdc) {
-    const char* lineas[3];
+    const char* lineas[4];
     lineas[0] = combustible == 0 ? "INSERT COINS" : "";
-    lineas[1] = "SIDE ARROWS TO STEER";
-    lineas[2] = "UP ARROW TO THRUST AND START";
+	lineas[1] = " ";
+    lineas[2] = "SIDE ARROWS TO STEER";
+    lineas[3] = "UP ARROW TO THRUST AND START";
 
     int lineCount = 0;
-    for(int i=0;i<3;i++) if(strlen(lineas[i])>0) lineCount++;
+    for(int i=0;i<4;i++) if(strlen(lineas[i])>0) lineCount++;
     if(lineCount==0) return;
 
     int salto = ALTURA_CARACTER_MAX + 5;
     int altoTotal = lineCount*ALTURA_CARACTER_MAX + (lineCount-1)*5;
     int yInicio = (BASE_H - altoTotal)/2;
     int indice=0;
-    for(int i=0;i<3;i++) {
+    for(int i=0;i<4;i++) {
         if(strlen(lineas[i])==0) continue;
         int ancho = strlen(lineas[i])*ANCHURA_CARACTER_MAX +
                     (strlen(lineas[i])-1)*SEPARACION_CARACTER;
