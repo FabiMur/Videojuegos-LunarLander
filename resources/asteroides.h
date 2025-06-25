@@ -24,7 +24,7 @@
 
 #define VELOCIDAD_ASTEROIDES 2
 
-#define MAX_ASTEROIDES 30
+#define MAX_ASTEROIDES 60
 
 /**
  * @brief Constantes que representan los asteroides
