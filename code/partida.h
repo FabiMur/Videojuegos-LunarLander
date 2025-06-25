@@ -56,6 +56,10 @@ void anyadirMoneda();
 void comenzarPartida();
 void continuarPartida();
 
+void iniciarTrozosNave();
+
+void centrarTrozosEnNave();
+
 void finalizarPartida();
 
 void findeJuego();

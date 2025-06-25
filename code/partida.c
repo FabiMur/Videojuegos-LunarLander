@@ -24,6 +24,8 @@
 int inicio = 0;
 
 struct objetoFisico* nave = NULL;
+struct objetoFisico* trozos_nave[4] = {NULL, NULL, NULL, NULL};
+
 struct Dibujable* motor_debil = NULL;
 struct Dibujable* motor_medio = NULL;
 struct Dibujable* motor_fuerte = NULL;
@@ -33,6 +35,7 @@ struct Plataforma* plataformas_partida = NULL;
 uint16_t numero_plataformas = 0;
 uint8_t numero_asteroides = 0;
 
+uint8_t nave_rota = 0;
 
 int combustible = 0;
 uint16_t puntuacion_partida = 0;
@@ -64,6 +67,13 @@ void escalar_escena_partida(float factor_x, float factor_y){
 		escalar_dibujable_en_escena_dados_ejes(motor_medio, factor_x, factor_y);
 		escalar_dibujable_en_escena_dados_ejes(motor_debil, factor_x, factor_y);
 		escalar_dibujable_en_escena_dados_ejes(nave->objeto, factor_x, factor_y);
+		if(nave_rota) {
+			for(uint8_t i = 0; i < 4; i++) {
+				if(trozos_nave[i]) {
+					escalar_dibujable_en_escena_dados_ejes(trozos_nave[i]->objeto, factor_x, factor_y);
+				}
+			}
+		}
 		for(uint16_t i = 0; i < numero_plataformas; i++) {
 			escalar_dibujable_en_escena_dados_ejes(plataformas_partida[i].linea, factor_x, factor_y);
 			for(uint16_t j = 0; j < plataformas_partida[i].texto->num_caracteres; j++){
@@ -79,37 +89,41 @@ uint16_t evaluar_aterrizaje(uint16_t bonificador, uint16_t es_arista_aterrizable
 	*exito = 0;
 
 	if(es_arista_aterrizable){
-			if(nave->velocidad[1] > -aterrizaje_perfecto_vel &&
-					(aterrizaje_perfecto_vel > nave->velocidad[0] &&
-					nave->velocidad[0] > -aterrizaje_perfecto_vel) &&
-					(nave->rotacion < aterrizaje_perfecto_rot ||
-					nave->rotacion > 360 - aterrizaje_perfecto_rot)) {
-					// Aterrizaje perfecto
-					Sound_Play(SONIDO_ATERRIZAJE);
+		if(nave->velocidad[1] > -aterrizaje_perfecto_vel &&
+			(aterrizaje_perfecto_vel > nave->velocidad[0] &&
+			nave->velocidad[0] > -aterrizaje_perfecto_vel) &&
+			(nave->rotacion < aterrizaje_perfecto_rot ||
+			nave->rotacion > 360 - aterrizaje_perfecto_rot)) {
+			// Aterrizaje perfecto
+			Sound_Play(SONIDO_ATERRIZAJE);
 
-					printf("Aterrizaje perfecto\n");
-					puntuacion = 50 * bonificador;
-					combustible += 50;
-					*exito = 1;
-			}
-			else if(nave->velocidad[1] > -aterrizaje_brusco_vel &&
-					(aterrizaje_brusco_vel > nave->velocidad[0] &&
-					nave->velocidad[0] > -aterrizaje_brusco_vel) &&
-					(nave->rotacion < aterrizaje_brusco_rot ||
-					nave->rotacion > 360 - aterrizaje_brusco_rot)) {
-					// Aterrizaje brusco
-					Sound_Play(SONIDO_ATERRIZAJE);
-					printf("Aterrizaje brusco\n");
-					puntuacion = 15 * bonificador;
-					*exito = 1;
-			} else {
-					// Colision
-					Sound_Play(SONIDO_EXPLOSION);
-					printf("Colision\n");
-					puntuacion = 5 * bonificador;
-			}
+			printf("Aterrizaje perfecto\n");
+			puntuacion = 50 * bonificador;
+			combustible += 50;
+			*exito = 1;
+		}
+		else if(nave->velocidad[1] > -aterrizaje_brusco_vel &&
+			(aterrizaje_brusco_vel > nave->velocidad[0] &&
+			nave->velocidad[0] > -aterrizaje_brusco_vel) &&
+			(nave->rotacion < aterrizaje_brusco_rot ||
+			nave->rotacion > 360 - aterrizaje_brusco_rot)) {
+			// Aterrizaje brusco
+			Sound_Play(SONIDO_ATERRIZAJE);
+			printf("Aterrizaje brusco\n");
+			puntuacion = 15 * bonificador;
+			*exito = 1;
+		} else {
+			// Colision
+			nave_rota = 1;
+			centrarTrozosEnNave();
+			Sound_Play(SONIDO_EXPLOSION);
+			printf("Colision\n");
+			puntuacion = 5 * bonificador;
+		}
 	} else {
 		// Colision
+		nave_rota = 1;
+		centrarTrozosEnNave();
 		Sound_Play(SONIDO_EXPLOSION);
 		printf("Colision\n");
 	}
@@ -118,6 +132,7 @@ uint16_t evaluar_aterrizaje(uint16_t bonificador, uint16_t es_arista_aterrizable
 
 static void respawn_nave(){
 	Sleep(1000);
+	nave_rota = 0;
 	struct Punto destino = {offsetTerrenoIzquerda + rand()%ANCHURA_TERRENO, 50};
 	colocarDibujable(nave->objeto, destino);
 	while(nave->rotacion != 0){
@@ -139,7 +154,7 @@ void se_ha_aterrizado(){
 	nave->velocidad[1] = 0;
 	nave->aceleracion[0] = 0;
 	nave->aceleracion[1] = 0;
-	fisicas = DESACTIVADAS;
+	//fisicas = DESACTIVADAS;
 	printf("Combustible restante: %d\n", combustible);
 	if(combustible >= combustible_motor){
 		respawn_nave();
@@ -177,10 +192,11 @@ void gestionar_colisiones() {
 		puntuacion_partida += puntos_conseguidos;
 		printf("Has conseguido %d puntos en este aterrizaje\n", puntos_conseguidos);
 		if(exito){
-				se_ha_aterrizado();
+			se_ha_aterrizado();
 		} else {
-				fisicas = DESACTIVADAS;
-				informarFinPartida();
+			nave_rota = 1;
+			centrarTrozosEnNave();
+			informarFinPartida();
 		}
 	}
 }
@@ -228,7 +244,8 @@ void gestionar_colisiones_asteroides() {
 			trasladarDibujable(asteroides[i].objeto, despl[j]);
 			if(hay_colision(nave->objeto, asteroides[i].objeto, &arista_colision)){
 				Sound_Play(SONIDO_EXPLOSION);
-				fisicas = DESACTIVADAS;
+				nave_rota = 1;
+				centrarTrozosEnNave();
 				informarFinPartida();
 				trasladarDibujable(asteroides[i].objeto, (struct Punto){-despl[j].x, -despl[j].y});
 				return;
@@ -239,7 +256,14 @@ void gestionar_colisiones_asteroides() {
 }
 
 void dibujar_escena(HDC hdc){
-    dibujarDibujable(hdc, nave -> objeto);
+	if(!nave_rota){
+		dibujarDibujable(hdc, nave -> objeto);
+	}else{
+		dibujarDibujable(hdc, trozos_nave[0]->objeto);
+		dibujarDibujable(hdc, trozos_nave[1]->objeto);
+		dibujarDibujable(hdc, trozos_nave[2]->objeto);
+		dibujarDibujable(hdc, trozos_nave[3]->objeto);
+	}
 
 	dibujar_terreno(hdc);
 
@@ -332,27 +356,33 @@ void rotar_nave(uint16_t direccion){
 
 void manejar_instante_partida(){
     if(fisicas == ACTIVADAS) {
-		calcularFisicas(nave);
-		if(nave->objeto->origen.x > offsetTerrenoDerecha) {
+		if (!nave_rota) {
+			calcularFisicas(nave);
+			if(nave->objeto->origen.x > offsetTerrenoDerecha) {
 				struct Punto traslacion = {ANCHURA_TERRENO, 0};
 				trasladar_superficie_lunar(terreno, plataformas_partida, numero_plataformas, traslacion);
 				trasladar_asteroides(asteroides, numero_asteroides, traslacion);
 				offsetTerrenoDerecha += ANCHURA_TERRENO;
 				offsetTerrenoIzquerda += ANCHURA_TERRENO;
-		}
-		else if(nave->objeto->origen.x < offsetTerrenoIzquerda) {
+			}
+			else if(nave->objeto->origen.x < offsetTerrenoIzquerda) {
 				struct Punto traslacion = {-ANCHURA_TERRENO, 0};
 				trasladar_superficie_lunar(terreno, plataformas_partida, numero_plataformas, traslacion);
 				trasladar_asteroides(asteroides, numero_asteroides, traslacion);
 				offsetTerrenoDerecha -= ANCHURA_TERRENO;
 				offsetTerrenoIzquerda -= ANCHURA_TERRENO;
+			}
+		}else{
+			calcularFisicasTrozosNave(trozos_nave, 4);
 		}
 		calcualarFisicasAsteroides(asteroides, numero_asteroides);
 		gestionar_colisiones_asteroides();
 		gestionar_colisiones();
 	}
 }
+
 void inicializarPartida(){
+	nave_rota = 0;
     combustible = 0;
 	terreno = crearDibujable(&Terreno);
 	
@@ -377,6 +407,7 @@ void anyadirMoneda(){
 }
 
 static void iniciarPartidaComun(){
+	nave_rota = 0;
     nave = (struct objetoFisico*)malloc(sizeof(struct objetoFisico));
     nave -> objeto = crearDibujable(&Nave_Base);
     nave -> velocidad[0] = 0;
@@ -392,10 +423,35 @@ static void iniciarPartidaComun(){
 	motor_medio = crearDibujable(&Nave_Propulsion_Media);
 	motor_fuerte = crearDibujable(&Nave_Propulsion_Maxima);
 
+	iniciarTrozosNave();
+
     fisicas = ACTIVADAS;
     inicio = 1;
     ai_iniciar();
     printf("Combustible inicial: %d\n", combustible);
+}
+
+void iniciarTrozosNave(){
+	for(uint8_t i = 0; i < 4; i++){
+		trozos_nave[i] = (struct objetoFisico*)malloc(sizeof(struct objetoFisico));
+		trozos_nave[i]->velocidad[0] = 1 + (i % 4) / 5;
+		trozos_nave[i]->velocidad[1] = 2;
+		trozos_nave[i]->aceleracion[0] = 0;
+		trozos_nave[i]->aceleracion[1] = 0;
+		trozos_nave[i]->masa = masa_nave / 4;
+		trozos_nave[i]->rotacion = 0;
+	}
+
+	trozos_nave[0]->objeto = crearDibujable(&Trozo_Pata_Izquierda);
+	trozos_nave[1]->objeto = crearDibujable(&Trozo_Pata_Derecha);
+	trozos_nave[2]->objeto = crearDibujable(&Trozo_Cupula_Superior);
+	trozos_nave[3]->objeto = crearDibujable(&Trozo_Base_Central);
+}
+
+void centrarTrozosEnNave(){
+	for(uint8_t i = 0; i < 4; i++){
+		trasladarDibujable(trozos_nave[i]->objeto, nave->objeto->origen);
+	}
 }
 
 void comenzarPartida(){

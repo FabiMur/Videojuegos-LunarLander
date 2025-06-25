@@ -72,6 +72,20 @@ void calcularFisicas(struct objetoFisico* elemento){
 	}
 }
 
+void calcularFisicasTrozosNave(struct objetoFisico* trozos[], uint8_t num_trozos){
+	for(uint8_t i = 0; i < num_trozos; i++){
+		struct Punto desplazamiento = {0, 0};
+
+		trozos[i]->rotacion = (trozos[i]->rotacion + ANGULO_ROTACION) % 360;
+		rotarDibujable(trozos[i]->objeto, 1);
+
+		desplazamiento.x = trozos[i]->velocidad[0] * intervalo_fisicas_ms / pixels_por_metro;
+		desplazamiento.y = trozos[i]->velocidad[1] * intervalo_fisicas_ms / pixels_por_metro; 
+
+		trasladarDibujable(trozos[i]->objeto, desplazamiento);
+	}
+}
+
 void calcualarFisicasAsteroides(struct Asteroide* asteroides, uint8_t numAsteroides){
 	for(uint8_t i = 0; i < numAsteroides; i++){
 		struct Punto desplazamiento = {0, 0};

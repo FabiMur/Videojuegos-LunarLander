@@ -13,5 +13,9 @@ extern const struct DibujableConstante Nave_Propulsion_Maxima;
 extern const struct DibujableConstante Nave_Propulsion_Media;
 extern const struct DibujableConstante Nave_Propulsion_Minima;
 
+extern const struct DibujableConstante Trozo_Pata_Izquierda;
+extern const struct DibujableConstante Trozo_Base_Central;
+extern const struct DibujableConstante Trozo_Cupula_Superior;
+extern const struct DibujableConstante Trozo_Pata_Derecha;
 
 #endif // NAVE_H

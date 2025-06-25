@@ -11,7 +11,7 @@
 #include "../resources/asteroides.h"
 
 
-#define intervalo_fisicas_ms 32
+#define intervalo_fisicas_ms 16
 #define pixels_por_metro 32
 #define gravedad_m_ms -0.0005625
 #define desaceleracion_horizontal 0.0015
@@ -31,6 +31,8 @@ void destruirObjetoFisico(struct objetoFisico* objeto);
 void calcularFisicas(struct objetoFisico* objeto);
 
 void calcualarFisicasAsteroides(struct Asteroide* asteroides, uint8_t numAsteroides);
+
+void calcularFisicasTrozosNave(struct objetoFisico* trozos[], uint8_t num_trozos);
 
 void propulsar();
 
