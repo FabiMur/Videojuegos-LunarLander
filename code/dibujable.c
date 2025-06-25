@@ -67,7 +67,9 @@ void DrawLine(HDC hdc, int x1, int y1, int x2, int y2, COLORREF color) {
 
 
 uint16_t es_horizontal(struct Arista arista_colision){
-    if(arista_colision.origen->y == arista_colision.destino->y) {
+    
+    if(abs(arista_colision.origen->y - arista_colision.destino->y) < 7 &&
+       abs(arista_colision.origen->x - arista_colision.destino->x) > 4) {
         return 1;
     }
     return 0;

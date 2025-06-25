@@ -14,6 +14,7 @@
 #define intervalo_fisicas_ms 16
 #define pixels_por_metro 32
 #define gravedad_m_ms -0.0005
+#define desaceleracion_horizontal 0.0015
 #define propulsor_m_ms 0.0020
 #define combustible_motor 3
 
@@ -30,6 +31,8 @@ void destruirObjetoFisico(struct objetoFisico* objeto);
 void calcularFisicas(struct objetoFisico* objeto);
 
 void calcualarFisicasAsteroides(struct Asteroide* asteroides, uint8_t numAsteroides);
+
+void calcularFisicasTrozosNave(struct objetoFisico* trozos[], uint8_t num_trozos);
 
 void propulsar();
 

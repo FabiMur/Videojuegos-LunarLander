@@ -63,3 +63,55 @@ const struct DibujableConstante Nave_Propulsion_Minima = {
     3,
     3
 };
+
+const struct DibujableConstante Trozo_Pata_Izquierda = {
+    CENTRO_CONST_NAVE,
+    (struct Punto[]) {
+        {0, ALTURA_NAVE}, {1, ALTURA_NAVE}, {2, ALTURA_NAVE}, {3, 12}
+    },
+    (struct UnionAristas[]) {
+        {0, 1}, {1, 2}, {1, 3}
+    },
+    4,
+    3
+};
+
+const struct DibujableConstante Trozo_Base_Central = {
+    CENTRO_CONST_NAVE,
+    (struct Punto[]) {
+        {3, 12}, {3, 10}, {6, 10}, {12, 10}, {15, 10}, {15, 12}, 
+        {12, 12}, {6, 12}
+
+    },
+    (struct UnionAristas[]) {
+       {0, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 0}
+    },
+    8,
+    8
+};
+
+
+const struct DibujableConstante Trozo_Cupula_Superior = {
+    CENTRO_CONST_NAVE,
+    (struct Punto[]) {
+        {6, 10}, {4, 8}, {4, 2}, {6, 0}, {12, 0},
+        {14, 2}, {14, 8}, {12, 10}    
+    },
+    (struct UnionAristas[]) {
+        {0, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 0}, {4, 6}
+    },
+    8,
+    7
+};
+
+const struct DibujableConstante Trozo_Pata_Derecha = {
+    CENTRO_CONST_NAVE,
+    (struct Punto[]) {
+        {15, 12}, {17, ALTURA_NAVE}, {16, ALTURA_NAVE}, {ANCHURA_NAVE, ALTURA_NAVE}
+    },
+    (struct UnionAristas[]) {
+        {0, 1}, {2, 1}, {1, 3}
+    },
+    4,
+    3
+};

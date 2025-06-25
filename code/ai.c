@@ -125,7 +125,6 @@ void ai_actualizar(void) {
         case AI_MANTENER_ALTURA:
             rotar_hacia(0);
 
-
             if(dy_hover <= 1.0f || vel_y < -0.4f && nave->rotacion == 0) {
 
                 propulsar_hacia(0);
@@ -193,13 +192,14 @@ void ai_actualizar(void) {
 
             break;
 
-        case AI_ATERRIZAJE:
+        }
+        case AI_ATERRIZAJE:{
             if(vel_y > 0.2f) {
                 propulsar_hacia(0);
             } else {
                 desactivar_propulsor();
                 if(Get_Playing_Sound()==SONIDO_PROPULSION)
-                    Sound_Stop();
+                Sound_Stop();
             }
             break;
         }

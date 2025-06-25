@@ -39,7 +39,16 @@ void calcularFisicas(struct objetoFisico* elemento){
     // Calculo de la velocidad en cada eje
     elemento -> velocidad[0] += elemento -> aceleracion[0] * intervalo_fisicas_ms;
     elemento -> velocidad[1] += elemento -> aceleracion[1] * intervalo_fisicas_ms;
-
+	
+	// Desaceleracion horizontal
+	if(elemento -> velocidad[0] > 0){
+		elemento -> velocidad[0] -= desaceleracion_horizontal;
+		if (elemento->velocidad[0] < 0) elemento->velocidad[0] = 0;
+	} else if(elemento -> velocidad[0] < 0){
+		elemento -> velocidad[0] += desaceleracion_horizontal;
+		if (elemento->velocidad[0] > 0) elemento->velocidad[0] = 0;
+	}
+	
     // Calculo de la nueva posicion dadas las velocidades
     struct Punto nueva_posicion = {
         elemento -> velocidad[0] * intervalo_fisicas_ms / pixels_por_metro,
@@ -60,6 +69,20 @@ void calcularFisicas(struct objetoFisico* elemento){
 				propulsor--;
 				break;
 		}
+	}
+}
+
+void calcularFisicasTrozosNave(struct objetoFisico* trozos[], uint8_t num_trozos){
+	for(uint8_t i = 0; i < num_trozos; i++){
+		struct Punto desplazamiento = {0, 0};
+
+		trozos[i]->rotacion = (trozos[i]->rotacion + ANGULO_ROTACION) % 360;
+		rotarDibujable(trozos[i]->objeto, 1);
+
+		desplazamiento.x = trozos[i]->velocidad[0] * intervalo_fisicas_ms / pixels_por_metro;
+		desplazamiento.y = trozos[i]->velocidad[1] * intervalo_fisicas_ms / pixels_por_metro; 
+
+		trasladarDibujable(trozos[i]->objeto, desplazamiento);
 	}
 }
 
