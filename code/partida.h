@@ -49,11 +49,14 @@ void rotar_nave(uint16_t direccion);
 
 void manejar_instante_partida();
 
+void manejar_instante_pausa();
+
 void inicializarPartida();
 
 void anyadirMoneda();
 
 void comenzarPartida();
+
 void continuarPartida();
 
 void iniciarTrozosNave();

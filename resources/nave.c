@@ -67,12 +67,12 @@ const struct DibujableConstante Nave_Propulsion_Minima = {
 const struct DibujableConstante Trozo_Pata_Izquierda = {
     CENTRO_CONST_NAVE,
     (struct Punto[]) {
-        {0, ALTURA_NAVE}, {1, ALTURA_NAVE}, {2, ALTURA_NAVE}
+        {0, ALTURA_NAVE}, {1, ALTURA_NAVE}, {2, ALTURA_NAVE}, {3, 12}
     },
     (struct UnionAristas[]) {
         {0, 1}, {1, 2}, {1, 3}
     },
-    3,
+    4,
     3
 };
 
@@ -110,7 +110,7 @@ const struct DibujableConstante Trozo_Pata_Derecha = {
         {15, 12}, {17, ALTURA_NAVE}, {16, ALTURA_NAVE}, {ANCHURA_NAVE, ALTURA_NAVE}
     },
     (struct UnionAristas[]) {
-        {0, 1}, {2, 1}, {1, 4}
+        {0, 1}, {2, 1}, {1, 3}
     },
     4,
     3

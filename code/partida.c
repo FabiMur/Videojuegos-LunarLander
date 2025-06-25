@@ -259,10 +259,9 @@ void dibujar_escena(HDC hdc){
 	if(!nave_rota){
 		dibujarDibujable(hdc, nave -> objeto);
 	}else{
-		dibujarDibujable(hdc, trozos_nave[0]->objeto);
-		dibujarDibujable(hdc, trozos_nave[1]->objeto);
-		dibujarDibujable(hdc, trozos_nave[2]->objeto);
-		dibujarDibujable(hdc, trozos_nave[3]->objeto);
+		for(int i = 0; i < 4; i++){
+			dibujarDibujable(hdc, trozos_nave[i]->objeto);	
+		}
 	}
 
 	dibujar_terreno(hdc);
@@ -372,12 +371,17 @@ void manejar_instante_partida(){
 				offsetTerrenoDerecha -= ANCHURA_TERRENO;
 				offsetTerrenoIzquerda -= ANCHURA_TERRENO;
 			}
-		}else{
-			calcularFisicasTrozosNave(trozos_nave, 4);
 		}
 		calcualarFisicasAsteroides(asteroides, numero_asteroides);
 		gestionar_colisiones_asteroides();
 		gestionar_colisiones();
+	}
+}
+
+void manejar_instante_pausa(){
+	if(nave_rota){
+		calcularFisicasTrozosNave(trozos_nave, 4);
+		calcualarFisicasAsteroides(asteroides, numero_asteroides);
 	}
 }
 
@@ -434,8 +438,8 @@ static void iniciarPartidaComun(){
 void iniciarTrozosNave(){
 	for(uint8_t i = 0; i < 4; i++){
 		trozos_nave[i] = (struct objetoFisico*)malloc(sizeof(struct objetoFisico));
-		trozos_nave[i]->velocidad[0] = 1 + (i % 4) / 5;
-		trozos_nave[i]->velocidad[1] = 2;
+		trozos_nave[i]->velocidad[0] = (rand() % 10) - 5;
+		trozos_nave[i]->velocidad[1] = (rand() % 10) - 5;
 		trozos_nave[i]->aceleracion[0] = 0;
 		trozos_nave[i]->aceleracion[1] = 0;
 		trozos_nave[i]->masa = masa_nave / 4;
@@ -464,8 +468,6 @@ void comenzarPartida(){
 void continuarPartida(){
     iniciarPartidaComun();
 }
-
-
 
 void finalizarPartida(){
     //destruirObjetoFisico(nave);

@@ -363,10 +363,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     // Evento de temporizador
     case WM_TIMER:
         if (wParam==TIMER_ID) {
-            if (estadoActual == ESTADO_JUEGO || estadoActual == ESTADO_PAUSA) {
+            if (estadoActual == ESTADO_JUEGO) {
                 manejar_instante();
                 ai_actualizar();
                 manejar_teclas();
+            }
+            else if (estadoActual == ESTADO_FIN){
+                manejar_instante_pausa();
             }
             InvalidateRect(hwnd,NULL,FALSE);
         }
