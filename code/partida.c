@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include "sonidos.h"
 
-
 #define fuel_por_moneda 750
 #define masa_nave 1000
 
@@ -67,13 +66,12 @@ void escalar_escena_partida(float factor_x, float factor_y){
 		escalar_dibujable_en_escena_dados_ejes(motor_medio, factor_x, factor_y);
 		escalar_dibujable_en_escena_dados_ejes(motor_debil, factor_x, factor_y);
 		escalar_dibujable_en_escena_dados_ejes(nave->objeto, factor_x, factor_y);
-		if(nave_rota) {
-			for(uint8_t i = 0; i < 4; i++) {
-				if(trozos_nave[i]) {
-					escalar_dibujable_en_escena_dados_ejes(trozos_nave[i]->objeto, factor_x, factor_y);
-				}
+		for(uint8_t i = 0; i < 4; i++) {
+			if(trozos_nave[i]) {
+				escalar_dibujable_en_escena_dados_ejes(trozos_nave[i]->objeto, factor_x, factor_y);
 			}
 		}
+		
 		for(uint16_t i = 0; i < numero_plataformas; i++) {
 			escalar_dibujable_en_escena_dados_ejes(plataformas_partida[i].linea, factor_x, factor_y);
 			for(uint16_t j = 0; j < plataformas_partida[i].texto->num_caracteres; j++){
@@ -115,7 +113,6 @@ uint16_t evaluar_aterrizaje(uint16_t bonificador, uint16_t es_arista_aterrizable
 		} else {
 			// Colision
 			nave_rota = 1;
-			centrarTrozosEnNave();
 			Sound_Play(SONIDO_EXPLOSION);
 			printf("Colision\n");
 			puntuacion = 5 * bonificador;
@@ -123,7 +120,6 @@ uint16_t evaluar_aterrizaje(uint16_t bonificador, uint16_t es_arista_aterrizable
 	} else {
 		// Colision
 		nave_rota = 1;
-		centrarTrozosEnNave();
 		Sound_Play(SONIDO_EXPLOSION);
 		printf("Colision\n");
 	}
