@@ -348,7 +348,7 @@ void dibujarHUD(HDC hdc) {
 // Dibuja las indicaciones mientras la partida no ha comenzado
 void dibujarIndicacionesInicio(HDC hdc) {
     const char* lineas[4];
-    lineas[0] = combustible == 0 ? "INSERT COINS" : "";
+    lineas[0] = combustible == 0 ? "INSERT COINS: PRESS 5" : "";
 	lineas[1] = " ";
     lineas[2] = "SIDE ARROWS TO STEER";
     lineas[3] = "UP ARROW TO THRUST AND START";
@@ -440,7 +440,7 @@ static void iniciarPartidaComun(){
 	nave_rota = 0;
     nave = (struct objetoFisico*)malloc(sizeof(struct objetoFisico));
     nave -> objeto = crearDibujable(&Nave_Base);
-    nave -> velocidad[0] = 5.0;
+    nave -> velocidad[0] = 2.5;
     nave -> velocidad[1] = 0;
     nave -> aceleracion[0] = 0;
     nave -> aceleracion[1] = 0;
