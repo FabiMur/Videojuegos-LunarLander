@@ -454,7 +454,7 @@ static void iniciarPartidaComun(){
 	motor_medio = crearDibujable(&Nave_Propulsion_Media);
 	motor_fuerte = crearDibujable(&Nave_Propulsion_Maxima);
 
-    for(int i=0;i<27;i++) {
+    for(int i = 0; i < 270 / ANGULO_ROTACION; i++) {
         rotar_nave(1);
     }
 
