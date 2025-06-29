@@ -67,9 +67,6 @@ void DrawLine(HDC hdc, int x1, int y1, int x2, int y2, COLORREF color) {
 
 
 uint16_t es_horizontal(struct Arista* arista_colision){
-    printf("Evaluando si la arista es horizontal: origen (%f, %f), destino (%f, %f)\n",
-        arista_colision->origen->x, arista_colision->origen->y,
-        arista_colision->destino->x, arista_colision->destino->y);
     if(arista_colision->origen->y == arista_colision->destino->y) {
         return 1;
     }
