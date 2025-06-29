@@ -69,7 +69,7 @@ void ai_iniciar(void) {
     // Buscar la plataforma mas cercana al spawn
     for(uint16_t i = 0; i < numero_plataformas; i++) {
         struct Dibujable* lin = plataformas_partida[i].linea;
-        float centro_x = lin->origen.x + (lin->puntos[0].x + lin->puntos[1].x) / 2.0f;
+        float centro_x = (lin->puntos[0].x + lin->puntos[1].x) / 2.0f;
         float dx = centro_x - spawn_x;
         if(dx > ANCHURA_TERRENO/2) dx -= ANCHURA_TERRENO;
         else if(dx < -ANCHURA_TERRENO/2) dx += ANCHURA_TERRENO;
