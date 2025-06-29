@@ -21,7 +21,7 @@
  * @param y Coordenada y del punto
  */
 struct Punto{
-    float x, y;
+    double x, y;
 };
 
 /**
@@ -105,6 +105,6 @@ void destruirArista(struct Arista* arista);
 void dibujarDibujable(HDC hdc, const struct Dibujable* dibujable);
 
 
-uint16_t es_horizontal(struct Arista arista_colision);
+uint16_t es_horizontal(struct Arista* arista_colision);
 
 #endif // DIBUJABLE_H

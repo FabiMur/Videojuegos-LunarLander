@@ -4,6 +4,7 @@
 
 // Angulo de la rotacion de la nave por cada pulsacion de las teclas
 #define ANGULO_ROTACION 5
+#define ANGULO_ROTACION_TROZOS 10
 
 // Declaración de las tablas de seno y coseno para las rotaciones de angulos
 extern const float SIN_TABLA[360];

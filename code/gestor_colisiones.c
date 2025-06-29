@@ -1,6 +1,6 @@
 #include "gestor_colisiones.h"
 #include <stdio.h>
-
+#include <math.h>
 
 /**
  * @brief Funcion que comprueba si un punto esta en un segmento
@@ -31,7 +31,7 @@ uint16_t punto_en_segmento(struct Punto p, struct Punto q, struct Punto r) {
  *         2 si es sentido contrario
  */
 int orientacion(struct Punto p, struct Punto q, struct Punto r) { 
-    int val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y); 
+    double val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y); 
     if (val == 0) return 0;  // Colineal
     return (val > 0)? 1: 2; // Sentido agujas del reloj o contrario
 } 
