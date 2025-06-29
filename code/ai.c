@@ -2,6 +2,7 @@
 #include "opciones.h"
 #include "fisicas.h"
 #include "gestor_plataformas.h"
+#include "../resources/superficie_lunar.h"
 #include "../resources/nave.h"
 #include "../resources/asteroides.h"
 #include "sonidos.h"
@@ -23,6 +24,7 @@ static EstadoAI estado_ai = AI_MANTENER_ALTURA;
 static float altura_objetivo = 0.0f; // Y de spawneo
 static float objetivo_x = 0.0f;      // Centro de la plataforma objetivo
 static float objetivo_y = 0.0f;      // Y de la plataforma objetivo
+static uint16_t plataforma_objetivo_idx = 0; // Indice de la plataforma objetivo
 static float spawn_x = 0.0f;         // X de spawneo
 static float spawn_y = 0.0f;         // Y de spawneo
 
@@ -70,6 +72,8 @@ void ai_iniciar(void) {
         float centro_x = lin->origen.x + (lin->puntos[0].x + lin->puntos[1].x) / 2.0f;
         float centro_y = lin->origen.y + lin->puntos[0].y;
         float dx = centro_x - spawn_x;
+        if(dx > ANCHURA_TERRENO/2) dx -= ANCHURA_TERRENO;
+        else if(dx < -ANCHURA_TERRENO/2) dx += ANCHURA_TERRENO;
         float dy = centro_y - spawn_y;
         dists[i].dist = sqrtf(dx*dx + dy*dy);
         dists[i].idx = i;
@@ -80,7 +84,8 @@ void ai_iniciar(void) {
 
     // Seleccionar la plataforma mas cercana.
     uint16_t elegido = dists[0].idx;
-    struct Dibujable* linea = plataformas_partida[elegido].linea;
+    plataforma_objetivo_idx = elegido;
+    struct Dibujable* linea = plataformas_partida[plataforma_objetivo_idx].linea;
     objetivo_x = linea->origen.x + (linea->puntos[0].x + linea->puntos[1].x) / 2.0f;
     objetivo_y = linea->origen.y + linea->puntos[0].y;
     printf("IA: plataforma objetivo en (%.2f, %.2f)\n", objetivo_x, objetivo_y);
