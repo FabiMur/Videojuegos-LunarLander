@@ -78,15 +78,8 @@ void ai_iniciar(void) {
     // Ordenar las plataformas por distancia al spawn
     qsort(dists, numero_plataformas, sizeof(struct PlataformaCercana), cmp_dist);
 
-    // Seleccionar la plataforma x2 mas cercana. Suponemos que siempre existe
+    // Seleccionar la plataforma mas cercana.
     uint16_t elegido = dists[0].idx;
-    for(uint16_t i = 0; i < numero_plataformas; i++) {
-        uint16_t idx = dists[i].idx;
-        if(plataformas_partida[idx].bonificador == 2) {
-            elegido = idx;
-            break;
-        }
-    }
     struct Dibujable* linea = plataformas_partida[elegido].linea;
     objetivo_x = linea->origen.x + (linea->puntos[0].x + linea->puntos[1].x) / 2.0f;
     objetivo_y = linea->origen.y + linea->puntos[0].y;
