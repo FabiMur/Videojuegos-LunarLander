@@ -42,6 +42,10 @@ void Sound_Play(TipoSonido sonido) {
         return;
     }
 
+    if (playing != NO_SOUND && playing != sonido) {
+        Sound_Stop();
+    }
+
     PlaySound((LPCSTR)sonidos[sonido].buffer, NULL, SND_MEMORY | SND_ASYNC);
     playing = sonido;
 }

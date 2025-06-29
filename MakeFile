@@ -55,7 +55,7 @@ $(TARGET): $(OBJS)
 
 # Limpieza
 clean:
-	-$(RM) $(OBJS) $(TARGET) $(CLEAN_NULL)
+	-$(RM) $(SRC_DIR)\*.o $(RES_DIR)\*.o main.o $(TARGET) $(CLEAN_NULL)
 
 # Ejecutar tras recompilar
 run:

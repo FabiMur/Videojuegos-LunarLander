@@ -7,16 +7,22 @@
 #define ANCHURA_TERRENO 1024
 #define ALTURA_TERRENO 324
 
-#define PLATAFORMA_X2 50
-#define PLATAFORMA_X3 14
-#define PLATAFORMA_X4 10
-#define PLATAFORMA_X5 8
+#define PLATAFORMA_X2 58
+#define PLATAFORMA_X3 21
+#define PLATAFORMA_X4 17
+#define PLATAFORMA_X5 15
 
 // Declaración anticipada de los structs que se referencian
 struct DibujableConstante;
 struct Palabra;
 
-// Definición de la estructura Plataforma
+/**
+ * @brief Estructura que representa una plataforma en el juego
+ * 
+ * @param linea Puntero a la estructura `Dibujable` que representa la línea de la plataforma.
+ * @param bonificador Valor de bonificación asociado a la plataforma.
+ * @param texto Puntero a la estructura `Texto` que representa el texto asociado a la plataforma.
+ */
 struct Plataforma {
     struct Dibujable* linea;
     uint8_t bonificador;
