@@ -10,7 +10,7 @@
 #define NUM_FLAGS 3
 #define NUM_OPCIONES_MENU (NUM_FLAGS + 1)
 
-static int flags[NUM_FLAGS] = {1, 0, 1}; // valores por defecto
+static int flags[NUM_FLAGS] = {0, 0, 0}; // valores por defecto
 static struct Texto* opcionesTextuales[NUM_OPCIONES_MENU] = {0};
 static int opcionSeleccionadaOpc = 0;
 static int opcionesPosX = 0;
@@ -20,6 +20,16 @@ static const int espacioEntreOpciones = 30;
 static const int paddingValor = 100;
 // Ancho total de cada fila (texto + padding + valor)
 static int anchoFilaOpciones = 0;
+
+static void toggle_flag(int idx) {
+    flags[idx] = !flags[idx];
+
+    if(idx == FLAG_ASTEROIDS && flags[idx]) {
+        flags[FLAG_AI] = 0;
+    } else if(idx == FLAG_AI && flags[idx]) {
+        flags[FLAG_ASTEROIDS] = 0;
+    }
+}
 
 static const char* cadenasOpciones[NUM_OPCIONES_MENU] = {
     "SOUND",
@@ -131,13 +141,13 @@ LRESULT procesarEventoOpciones(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
                 break;
             case VK_LEFT:
                 if(opcionSeleccionadaOpc < NUM_FLAGS) {
-                    flags[opcionSeleccionadaOpc] = !flags[opcionSeleccionadaOpc];
+                    toggle_flag(opcionSeleccionadaOpc);
                     InvalidateRect(hwnd, NULL, TRUE);
                 }
                 break;
             case VK_RIGHT:
                 if(opcionSeleccionadaOpc < NUM_FLAGS) {
-                    flags[opcionSeleccionadaOpc] = !flags[opcionSeleccionadaOpc];
+                    toggle_flag(opcionSeleccionadaOpc);
                     InvalidateRect(hwnd, NULL, TRUE);
                 }
                 break;

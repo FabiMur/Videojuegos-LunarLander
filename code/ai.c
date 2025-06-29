@@ -57,6 +57,12 @@ static void propulsar_hacia(int16_t rot_deseada) {
     }
 }
 
+static void desactivar_propulsor_wrapper(void) {
+    desactivar_propulsor();
+    if(Get_Playing_Sound()==SONIDO_PROPULSION)
+        Sound_Stop();
+}
+
 void ai_iniciar(void) {
     if(!ai_activa()) return;
     
@@ -84,16 +90,15 @@ void ai_iniciar(void) {
     uint16_t elegido = dists[0].idx;
     plataforma_objetivo_idx = elegido;
     struct Dibujable* linea = plataformas_partida[plataforma_objetivo_idx].linea;
-    objetivo_x = linea->origen.x + (linea->puntos[0].x + linea->puntos[1].x) / 2.0f;
-    objetivo_y = linea->origen.y + linea->puntos[0].y;
+    objetivo_x = (linea->puntos[0].x + linea->puntos[1].x) / 2.0f;
+    objetivo_y = linea->puntos[0].y;
     printf("IA: plataforma objetivo en (%.2f, %.2f)\n", objetivo_x, objetivo_y);
 }
 
-// La AI primero va alternando entre MANTENER_ALTURA y MOVER_HORIZONTAL, y luego DESCENSO y ATERRIZAJE.
+// La AI primero va alternando entre MANTENER_ALTURA y MOVER_HORIZONTAL, y luego Aterrizaje.
 // En MANTENER_ALTURA, la nave se mantiene a una altura fija y ajusta la propulsión para no descender demasiado.
 // En MOVER_HORIZONTAL, la nave se mueve hacia la plataforma objetivo, ajustando su rotación y propulsión para llegar a la posición horizontal.
-// En DESCENSO, la nave se prepara para aterrizar, ajustando su rotación y propulsión para descender suavemente.
-// Finalmente, en ATERRIZAJE, la nave se asegura de que su velocidad vertical sea adecuada
+// Finalmente, en Aterrizaje, la nave se asegura de que su velocidad vertical sea adecuada
 
 void ai_actualizar(void) {
     if(!ai_activa() || fisicas != ACTIVADAS) return;
@@ -114,88 +119,79 @@ void ai_actualizar(void) {
     float dy_plat = objetivo_y - base_nave_y;
     float dy_hover = altura_objetivo - pos_y;
 
-    printf("IA DEBUG -> Estado:%d DX:%.2f DY:%.2f DY_HOVER:%.2f POS_X:%.2f POS_Y:%.2f VEL_X:%.2f VEL_Y:%.2f\n",
-        estado_ai, dx, dy_plat, dy_hover, pos_x, pos_y, vel_x, vel_y);
+printf("\r\33"
+       "IA DEBUG -> Estado:%d DX:%.2f DY:%.2f DY_HOVER:%.2f "
+       "POS_X:%.2f POS_Y:%.2f VEL_X:%.2f VEL_Y:%.2f",
+       estado_ai, dx, dy_plat, dy_hover,
+       pos_x, pos_y, vel_x, vel_y);
 
     switch(estado_ai) {
         case AI_MANTENER_ALTURA:
-            rotar_hacia(0);
-
-            if(dy_hover <= 1.0f || vel_y < -0.4f && nave->rotacion == 0) {
-
+            if(dy_hover <= 1.0f || vel_y < -0.4f) {
                 propulsar_hacia(0);
-            } else {
-                desactivar_propulsor();
-                if(Get_Playing_Sound()==SONIDO_PROPULSION)
-                    Sound_Stop();
-            }
-
-            if(vel_y < 0.3f) {
+            } else if(vel_y < 0.3f) {
+                desactivar_propulsor_wrapper();
                 estado_ai = AI_MOVER_HORIZONTAL;
-                printf("IA: cambio a estado MOVER_HORIZONTAL\n");
+                printf("\nIA: cambio a estado MOVER_HORIZONTAL\n");
+            } else if(fabsf(dx) < 3.0f && abs(vel_x) < 0.3f) {
+                estado_ai = AI_ATERRIZAJE;
+                nave->velocidad[0] = 0.0f;
+                printf("\n3IA: cambio a estado DESCENSO\n");
+            } else {
+                desactivar_propulsor_wrapper();
             }
             break;
 
         case AI_MOVER_HORIZONTAL: {
             int16_t rot_obj = 0;
-            if(dx > 3.0f && vel_x < 0.05f) {
+            if(dx > 3.0f && vel_x < 0.5f) {
                 rot_obj = 90;
-            } else if (dx < -3.0f && vel_x > -0.05f) {
+                propulsar_hacia(rot_obj);
+            } else if (dx < -3.0f && vel_x > -0.5f) {
                 rot_obj = 270;
-            }
-
-            propulsar_hacia(rot_obj);
-
-            // Si estamos en la posición correcta, cambiamos a DESCENSO
-            if(fabsf(dx) < 3.0f && abs(vel_x) < 0.3f) {
-                desactivar_propulsor();
-                if(Get_Playing_Sound()==SONIDO_PROPULSION)
-                    Sound_Stop();
-                estado_ai = AI_DESCENSO;
-                printf("IA: cambio a estado DESCENSO\n");
-            
-            // Si perdemos altura, volvemos a MANTENER_ALTURA
-            } else if(dy_hover >= 6.0f) {
-                desactivar_propulsor();
-                if(Get_Playing_Sound()==SONIDO_PROPULSION)
-                    Sound_Stop();
+                propulsar_hacia(rot_obj);
+            } else if(fabsf(dx) < 1.0f && abs(vel_x) < 0.3f) {  // Si estamos en la posición correcta, cambiamos a DESCENSO
+                desactivar_propulsor_wrapper();
+                estado_ai = AI_ATERRIZAJE;
+                nave->velocidad[0] = 0.0f;
+                printf("\n3IA: cambio a estado ATERRIZAJE\n");
+            } else if(dy_hover <= 6.0f) { // Si perdemos altura, volvemos a MANTENER_ALTURA
+                desactivar_propulsor_wrapper();
                 estado_ai = AI_MANTENER_ALTURA;
-                printf("IA: regreso a estado MANTENER_ALTURA\n");
+                printf("\nIA: regreso a estado MANTENER_ALTURA\n");
+            } else {
+                desactivar_propulsor_wrapper();
             }
             break; }
 
         case AI_DESCENSO: {
-            int16_t rot_obj = 0;
-            desactivar_propulsor();
-            if(Get_Playing_Sound()==SONIDO_PROPULSION)
-                Sound_Stop();
+/*             int16_t rot_obj = 0;
+            desactivar_propulsor_wrapper();
 
             // Si estamos en la posición correcta y a una altura adecuada, cambiamos a ATERRIZAJE
             if(fabsf(dx) <= 2.0f && abs(vel_x) < 0.3f && abs(dy_plat) <= 700.0f) {
-                printf("IA: cambio a estado ATERRIZAJE\n");
+                printf("\r\33IA: cambio a estado ATERRIZAJE\n");
                 estado_ai = AI_ATERRIZAJE;
             }
 
             if(dx > 3.0f &&  acc_x <= 0) {
                 rot_obj = 70;
                 propulsar_hacia(rot_obj);
-                printf("IA: rotando a 70\n");
+                printf("\r\33IA: rotando a 70\n");
             } else if(dx < -3.0f && acc_x >= 0) {
                 rot_obj = 290;
                 propulsar_hacia(rot_obj);
-                printf("IA: rotando a 290\n");
+                printf("\r\33IA: rotando a 290\n");
             }
 
-            break;
-
+            break; */
         }
         case AI_ATERRIZAJE:{
-            if(vel_y > 0.2f) {
+            rotar_hacia(0);
+            if(vel_y < - 0.2f && dy_plat < 130.0f)  {
                 propulsar_hacia(0);
             } else {
-                desactivar_propulsor();
-                if(Get_Playing_Sound()==SONIDO_PROPULSION)
-                Sound_Stop();
+                desactivar_propulsor_wrapper();
             }
             break;
         }
